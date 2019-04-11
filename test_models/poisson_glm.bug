@@ -1,0 +1,10 @@
+model{
+    ## Likelihood
+    for(i in 1:N){
+      y[i] ~ dpois(lambda[i])
+      log(lambda[i]) <- mu[i]
+      mu[i] <- inprod(beta[],X[i,])
+      }     
+    ## Priors 
+    beta ~ dmnorm(mu.beta,tau.beta)  # multivariate Normal prior
+}

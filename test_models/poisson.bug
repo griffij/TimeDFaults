@@ -1,0 +1,9 @@
+model{
+   for (i in 1:N){
+  # Likelihood (can't have formulas in distribution functions)
+    Y[i]  ~  dpois(mu[i])
+    mu[i] <- lambda
+    }
+# Prior
+    lambda ~ dunif(0, 100)
+ }

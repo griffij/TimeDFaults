@@ -1,0 +1,17 @@
+model{
+  for (j in 1:k){
+   for (i in 1:N){	
+  # Likelihood 
+    Y[j,i] ~ dexp(lambda_k[j[i]]) # Nested indexing for multiple samples
+    }
+#    }
+#    for (j in 1:k){
+    lambda_k[j] ~ dbeta(lambda, sigma)
+    }
+
+     lambda ~ dgamma(0.01, 0.01)
+#    r ~ dgamma(0.01, 0.01)
+#    lambda <- lambda_k[1]*lambda_k[2] 
+     sigma ~ dlnorm(0.0, 1)
+     mu = 1./lambda
+}

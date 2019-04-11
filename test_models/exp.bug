@@ -1,0 +1,10 @@
+model{
+   for (i in 1:N){
+  # Likelihood (can't have formulas in distribution functions)
+    Y[i] ~ dexp(lambda)
+#    mu <- 1/lambda
+    }
+    mu <- 1/lambda 
+# Prior
+    lambda ~ dgamma(0.01, 0.01)
+ }
