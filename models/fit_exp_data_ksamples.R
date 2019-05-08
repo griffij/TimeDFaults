@@ -12,31 +12,31 @@ setwd('.')
 ###########
 # Real data
 
-#datafile = '/Users/PCUser/Documents/PhD/modelling/QuakeRates/dataman/chronologies100.csv'
+datafile = '../../dataman/testdata/chronologies1000.csv'
 #datafile = 'chronologies100.csv'
-#data = read.csv(datafile, header=FALSE)#, delimiter=',')
+data = read.csv(datafile, header=FALSE)#, delimiter=',')
 
-#k=100
+k=1000
 
 # Convert data to inter-event times
-#m = data.matrix(data)
-#inter_event_m = t(diff(t(m))) # Transpose, take difference and transpose back
-#Y = inter_event_m
+m = data.matrix(data)
+inter_event_m = t(diff(t(m))) # Transpose, take difference and transpose back
+Y = inter_event_m
 #print(Y)
 
 ##############
 # Test data
-n.sim <- 100
-lam <- 1./100 # Define as inverse of rate
-mean_time <- 1./lam
-y_init <- rexp(n=n.sim, rate=lam) # Exponential DV
-k = 10 #2 # 10
+#n.sim <- 100
+#lam <- 1./100 # Define as inverse of rate
+#mean_time <- 1./lam
+#y_init <- rexp(n=n.sim, rate=lam) # Exponential DV
+#k = 10 #2 # 10
 ##y = cbind(y_init, y_init) # if k=2
-y = cbind(y_init, y_init, y_init, y_init, y_init, y_init, y_init, y_init, y_init, y_init) # k=10
-y = data.matrix(y)
+#y = cbind(y_init, y_init, y_init, y_init, y_init, y_init, y_init, y_init, y_init, y_init) # k=10
+#y = data.matrix(y)
 ##print(y)
-print(t(y))
-Y = t(y)
+#print(t(y))
+#Y = t(y)
 #################
 N <- length(Y[1,])
 print(N)
@@ -52,7 +52,7 @@ print(mean(Y))
 sim.data.jags <- list("Y", "N", "k")
 
 # Define the parameters whose posterior distributions we want to calculate
-bayes.mod.params <- c( "mu", "muk", "sigma")
+bayes.mod.params <- c( "mu")#, "lambda_k") #Don't plot out many lambdas
 
 #Define starting values
 bayes.mod.inits <- function(){
