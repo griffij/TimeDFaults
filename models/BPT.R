@@ -5,7 +5,7 @@
 # University of Otago, March 2020
 
 brownian_oscillator <- function(lambda, t, sigma, mu=0, dt=0.01, x0=0, xf=1,
-    plot=TRUE, healing=FALSE, fsc = 0.8){
+    plot=TRUE, healing=FALSE, fsc = 0.8, rseed=NULL){
     
     #' Simulate a Brownian motion oscillator
     #' Based on Matthews et al. 2002. A Brownian Model for Recurrent Earthquakes. BSSA
@@ -40,7 +40,15 @@ brownian_oscillator <- function(lambda, t, sigma, mu=0, dt=0.01, x0=0, xf=1,
     #'     intial value xf to simulate fault healing. This is intended to promote clusters.
     #' @param fsc = failure strenght scale. Scale inital value of failure threshold xf by fsc
     #'     to model weakning fault, i.e. post-failure threshold xff = fsc*xf.
+    #' @param seed = random seed, which can be fixed to ensure repeatability of simulations
+    #' @returns oscillator = dataframe (t, Y(t), event_times), where event times is a vector
+    #'     of t|(Y(t)>xf
 
+    # Set random seed to be fixed
+    if (!(is.null(rseed))){
+        print('Fixing random seed')
+	set.seed(rseed)
+	}
     delta=xf-x0
 
     # Vector of timesteps  
@@ -77,7 +85,8 @@ brownian_oscillator <- function(lambda, t, sigma, mu=0, dt=0.01, x0=0, xf=1,
     xff = fsc*xf0 # Value of failure state immediately after failure, if fault
     	  	  # healing is being modelled.
     hc = 0
-    print(X)
+    event_times = vector()
+#    print(X)
     for (i in seq_along(X)) {
     	if (hc > 0) {
        	    xf = xf0 - log10(hc)*0.05
@@ -96,6 +105,7 @@ brownian_oscillator <- function(lambda, t, sigma, mu=0, dt=0.01, x0=0, xf=1,
        	    Y[i] = xf
        	    xs = x0
        	    Xt = X[i]
+	    event_times = c(event_times, n[i])
 	    if (healing){
 	       xf = xff
        	       hc = 50} # Healing counter
@@ -109,4 +119,11 @@ brownian_oscillator <- function(lambda, t, sigma, mu=0, dt=0.01, x0=0, xf=1,
 	       asp=0.5, ylim=c(-2,2))
        }
    dev.off()
+
+   # Return data frame of timesteps and values of Y(t), and vector of event_times
+   realisation = data.frame(n, Y)
+   output = list()
+   output$realisation = realisation
+   output$event_times = event_times
+   return(output)
    }
