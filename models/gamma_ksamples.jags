@@ -1,0 +1,12 @@
+model{
+  for (j in 1:k){
+   for (i in 1:N){	
+  # Likelihood 
+    Y[j,i] ~ dgamma(alpha_k[j], theta_k[j]) # Nested indexing for multiple samples
+    }
+    alpha_k[j] ~ dgamma(0.001,0.001)
+    theta_k[j] ~ dgamma(0.001,0.001)
+}
+   alpha = mean(alpha_k)
+   theta = mean(theta_k)
+}
