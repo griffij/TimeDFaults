@@ -1,15 +1,24 @@
-# Simple simulator of Brownian motion
+# Simulate a Brownian motion oscillator
+# Based on Matthews et al. 2002. A Brownian Model for Recurrent Earthquakes. BSSA
+# Note that to reproduce their results in Figure 2 of the paper we must assume that
+# these authors are giving values of the variance (sigma^2, i.e. the perturbation
+# rate paramaeter) rather than the standard deviation (sigma) as reported.
 
-# Number of simulations
+# Jonathan Griffin
+# University of Otago, March 2020
+
+
+# Define simulation parameters
 t = 4 # Total simulation time
 dt = 0.01 # Timestep
-x0 = 0
-xf = 1
+x0 = 0 # Value immediatly after failure
+xf = 1 # Failure threshold value
 delta = xf-x0
-mu = 0
-sigma = 1. # Scale parameter for Brownian motion
-sigma_b = sigma 
-lambda = 1
+mu = 0 # Mean value of normally distributed white noise, set to zero
+var = 1/2. # Perturbation rate parameter for Brownian oscillator, variance of
+      	   # normal distribution
+sigma = sqrt(var) # Standard deviation
+lambda = 1 # Mean loading rate (i.e. simulates constant tectonic loading)
 
 # File for saving figures
 fig_filename = paste('brownian_oscillator', 'sig', sigma, 'lambda', lambda,
@@ -21,7 +30,7 @@ pdf(fig_filename)
 n=rep(dt, t/dt)
 n = cumsum(n)
 # Simulate Brownian motion
-gauss_n = rnorm(t/dt, mu, sigma_b)
+gauss_n = rnorm(t/dt, mu, sigma)
 bro = cumsum(gauss_n)*sqrt(dt) # Check this scaling for timestep
 # Plot Brownian motion
 title = bquote('Brownian Motion in 1D ,' ~  sigma == .(sigma))
@@ -53,7 +62,7 @@ for (i in seq_along(X)) {
        y = xs + X[i] - Xt
        Y = y
        }
-    else {
+    else {xs
     	 y = xs + X[i] - Xt
 	 Y = c(Y,y)
 	 }
