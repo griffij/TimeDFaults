@@ -1,12 +1,14 @@
 # Plot pdf of gamma distribution
-alphas = list(2.001, 2.001, 2.063, 2.129, 2.129)
-thetas = list(3.182e-03, 3.404e-03, 3.284e-03, 3.182e-03,3.404e-03)
+#alphas = list(2.001, 2.001, 2.063, 2.129, 2.129)
+#thetas = list(3.182e-03, 3.404e-03, 3.284e-03, 3.182e-03,3.404e-03)
+alphas = list(0.0001)
+thetas = list(0.0001)
 
 pdf('gamma_density.pdf')
 x = cumsum(rep(1, 2000))
 #fn = dgamma(x, alpha, scale=1/theta)
 #plot(density(fn))
-xrange = range(0,2000)
+xrange = range(0,200)
 yrange = range(0, 0.0015)
 plot(xrange, yrange, type='n', xlab = 'Interevent time (years)',
 	ylab = 'Probability')

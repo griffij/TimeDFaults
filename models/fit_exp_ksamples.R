@@ -8,20 +8,26 @@
 library(R2jags)
 library(lattice)
 
-fit_exp_k_samples <- function(Y, N, k){
+fit_exp_k_samples <- function(Y, N, k, plot_lambda=FALSE){
 	library(lattice)
 	library(R2jags)	
 	sim.data.jags <- list("Y", "N", "k")
 	
 	# Define the parameters whose posterior distributions we want to calculate
-	bayes.mod.params <- c( "mu")#, "lambda_k") #Don't plot out many lambdas
+	if (plot_lambda){
+	   bayes.mod.params <- c( "mu", "lambda_k")
+	   }
+	else{
+	   bayes.mod.params <- c( "mu") #Don't plot out many lambdas
+	   }
 
 	#Define starting values
 	bayes.mod.inits <- function(){
-			list("mu"=1/0.01)
+			#list("mu"=1/0.01)
+			list("lambda_k[i]"=0.01)
 			}
 
-	bayes.mod.fit <- jags(data = sim.data.jags, #inits = bayes.mod.inits,
+	bayes.mod.fit <- jags(data = sim.data.jags, inits = bayes.mod.inits,
 		            parameters.to.save = bayes.mod.params, n.chains = 3,
 			    n.iter = 9000, n.burnin = 1000, model.file = 'exp_ksamples.jags')
 

@@ -3,6 +3,7 @@
 
 library(R2jags)
 library(lattice)
+source('fit_exp_ksamples.R')
 # Fix random seed
 #set.seed(23)
 
@@ -13,10 +14,14 @@ setwd('.')
 # Real data
 
 datafile = '../../dataman/testdata/chronologies1000.csv'
+#datafile = '../../data/Akatore4eventBdy_output_10000_chronologies.csv'
 #datafile = 'chronologies100.csv'
 data = read.csv(datafile, header=FALSE)#, delimiter=',')
 
 k=1000
+
+# Name of figure file
+pdf('exponential_fit.pdf')
 
 # Convert data to inter-event times
 m = data.matrix(data)
@@ -49,37 +54,16 @@ print(mean(Y[4,]))
 print(mean(Y))
 ###############
 
-sim.data.jags <- list("Y", "N", "k")
+bayes.mod.fit.mcmc <- fit_exp_k_samples(Y, N, k)
 
-# Define the parameters whose posterior distributions we want to calculate
-bayes.mod.params <- c( "mu")#, "lambda_k") #Don't plot out many lambdas
-
-#Define starting values
-bayes.mod.inits <- function(){
-		list("mu"=1/0.01)
-			     }
-
-bayes.mod.fit <- jags(data = sim.data.jags, #inits = bayes.mod.inits,
-	      parameters.to.save = bayes.mod.params, n.chains = 3,
-	      n.iter = 9000, n.burnin = 1000, model.file = 'exp_ksamples.jags')
-
-print(bayes.mod.fit)
-plot(bayes.mod.fit)
-traceplot(bayes.mod.fit)
-
-# Convert to an MCMC object
-bayes.mod.fit.mcmc <- as.mcmc(bayes.mod.fit)
-summary(bayes.mod.fit.mcmc)
-
-# Somore more plots
+# Some more plots
 xyplot(bayes.mod.fit.mcmc, layout=c(2,2), aspect="fill")
 
 # Density plot
+print('Densityplot')
 densityplot(bayes.mod.fit.mcmc, layout=c(2,2), aspect="fill")
 
 #Auto-correlation plot
 autocorr.plot(bayes.mod.fit.mcmc)
 
 dev.off()
-
-#summary(glm(sim.dat$y, family=poisson))  
