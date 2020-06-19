@@ -23,7 +23,7 @@ par(mfrow=c(4, 1), mar=c(1.1,4.2,4.1,1.1))
 #for (i in seq_along(sigma)){
 for (i in seq_along(lambda)){
      oscillator = brownian_oscillator(lambda[i], t, sigma, mu, dt,
-    			      	     x0, xf, plot=TRUE,
+    			      	     x0, xf, plot=FALSE,
     	      			     healing=FALSE, rseed=rseed)
     interevent_times = numeric(length(oscillator$event_times))
     plot((oscillator$realisation$n-offset), oscillator$realisation$Y, type = 'l',

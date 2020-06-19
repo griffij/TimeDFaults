@@ -7,7 +7,7 @@ library(R2jags)
 library(lattice)
 source('fit_exp_ksamples.R')
 # Fix random seed
-set.seed(1.2)
+set.seed(1.5)
 
 setwd('.')
 
@@ -16,7 +16,7 @@ pdf('test_exponential_fit.pdf')
 
 # Test data
 k=10
-n.sim <- 10
+n.sim <- 100
 lam <- 1./100 # Define rate
 mean_time <- 1./lam
 for (i in 1:k){
@@ -26,8 +26,6 @@ for (i in 1:k){
        }
     else{y=cbind(y, y_init)}
     }   
-#y = cbind(y_init, y_init) # if k=2
-#y = cbind(y_init, y_init, y_init, y_init, y_init, y_init, y_init, y_init, y_init, y_init) # k=10
 y = data.matrix(y)
 ##print(y)
 #print(t(y))
