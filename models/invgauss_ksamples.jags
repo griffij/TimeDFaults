@@ -1,0 +1,34 @@
+data {
+ for (j in 1:k){
+ for (i in 1:N){
+ zeros[j,i] = 0
+ }}
+ C = 10000
+}
+model{
+  for (j in 1:k){
+  for (i in 1:N){
+   # Prior for lambda parameter
+  zeros[j,i] ~ dpois(zeros.mean[j,i])
+  zeros.mean[j,i] = -l[j,i] + C
+  # Likelihood
+  l1[j,i] = 0.5 * (log(lambda_k[j]) - log(2* 3.14 * Y[j,i]^3))
+  l2[j,i] = -1*lambda_k[j] * (Y[j,i] - mu[j,i])^2 / (2 * mu[j,i]^2 * Y[j,i])
+  l[j,i] = l1[j,i] + l2[j,i]
+  log(mu[j,i]) = eta_k[j]
+#  log(mu[j,i]) = beta[1] + beta[2]*x1[j,i] + beta[3]*x2[j,i]
+#  	       + beta[4]*x3[j,i] + beta[5]*x4[j,i]
+#    Y[j,i] ~ dinvgauss(alpha_k[j], theta_k[j]) # Nested indexing for multiple samples
+    }
+#  for (m in 1:5) { beta[m] ~ dnorm(0.0, 0.001)}
+  eta_k[j] ~ dnorm(0.0, 0.001)
+  lambda_k[j] ~ dgamma(0.01, 0.01)
+#    alpha_k[j] ~ dinvgauss(0.001,0.001)
+#    theta_k[j] ~ dinvgauss(0.001,0.001)
+}
+#   alpha = mean(alpha_k)
+#   theta = mean(theta_k)
+lambda = mean(lambda_k)
+eta = mean(eta_k)
+s2 = -1/lambda
+}
