@@ -1,0 +1,38 @@
+# Use parameterisation from Matthews (2002) BSSA paper
+
+data {
+ for (i in 1:N){
+ zeros[i] = 0
+ }
+ C = 10000
+}
+model{
+  for (i in 1:N){
+   # Prior for lambda parameter
+  zeros[i] ~ dpois(zeros.mean[i])
+  zeros.mean[i] = -l[i] + C
+  # Log-likelihood
+#  l1[j,i] = 0.5 * (log(lambda_k[j]) - log(2* 3.14 * Y[j,i]^3))
+#  l2[j,i] = -1*lambda_k[j] * (Y[j,i] - mu[j,i])^2 / (2 * mu[j,i]^2 * Y[j,i])
+#  l[j,i] = l1[j,i] + l2[j,i]
+#  l[j,i] = 0.5 * (log(lambda_k[j]) - log(2*3.14) - 3*log(Y[j,i])) -
+#       0.5 * lambda_k[j] * pow((Y[j,i] - mu[j,i])/mu[j,i], 2)/Y[j,i]
+  l[i] = 0.5 * (log(mu[i]) - 2*log(2*3.14*alpha) - 3*log(Y[i])) -
+  	 0.5*pow((Y[i] - mu[i]), 2)/(mu[i]*alpha^2*Y[i])
+# Link function
+  log(mu[i]) = eta[i]
+  eta[i] ~ dunif(0,100) #dnorm(0.0, 0.01)
+    }
+#  eta[i] ~ dnorm(0.0, 0.001) #dnorm(6, 0.0001) #dgamma( 0.0001, 0.0001) #dnorm(0.0, 0.001)
+#  mu[j] ~ dgamma(0.0001, 0.0001)
+  alpha ~ dgamma(0.0001, 0.0001)
+#   lambda_k[j] ~ dgamma(0.0001, 0.0001)
+
+
+#lambda = mean(lambda_k)
+#eta = mean(eta_k)
+#s2 = -1/lambda
+eta_m = mean(eta)
+mu_m = mean(mu)
+alpha_m = mean(alpha)
+}

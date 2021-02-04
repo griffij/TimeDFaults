@@ -13,7 +13,7 @@ setwd('.')
 ###########
 # Real data
 
-datafile = '../../dataman/testdata/chronologies1000.csv'
+datafile = '../data/testdata/chronologies1000.csv'
 #datafile = '../../data/Akatore4eventBdy_output_10000_chronologies.csv'
 #datafile = 'chronologies100.csv'
 data = read.csv(datafile, header=FALSE)#, delimiter=',')

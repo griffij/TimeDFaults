@@ -1,4 +1,4 @@
-# Fit gamma distirbution to data for earthquake inter-event times
+# Fit inverse Gaussian (BPT) distirbution to data for earthquake inter-event times
 # i.e. we are assuming the earthquakes occur as a Poisson process
 
 library(R2jags)
@@ -12,15 +12,15 @@ setwd('.')
 ###########
 # Real data
 
-datafile = '../data/testdata/chronologies1000.csv'
+datafile = '../data/testdata/chronologies1.csv'
 #datafile = '../../data/Akatore4eventBdy_output_10000_chronologies.csv'
 #datafile = 'chronologies100.csv'
 data = read.csv(datafile, header=FALSE)#, delimiter=',')
 
-k=1000
+k=1
 
 # Name of figure file
-pdf('gamma_fit.pdf')
+pdf('invgauss_fit_matthews.pdf')
 
 # Convert data to inter-event times
 m = data.matrix(data)
@@ -47,25 +47,25 @@ print(N)
 print(Y[1,1])
 print(Y[1,2])
 print(mean(Y[1,]))
-print(mean(Y[2,]))
-print(mean(Y[3,]))
-print(mean(Y[4,]))
+#print(mean(Y[2,]))
+#print(mean(Y[3,]))
+#print(mean(Y[4,]))
 print(mean(Y))
 ###############
 
 sim.data.jags <- list("Y", "N", "k")
 
 # Define the parameters whose posterior distributions we want to calculate
-bayes.mod.params <- c( "alpha", "theta") 
+bayes.mod.params <- c("eta", "mu",  "alpha", "alpha_m")#, "eta_k") 
 
 #Define starting values
 #bayes.mod.inits <- function(){
-#		list("mu"=1/0.01)
+#		list("etc"=1/0.01)
 #			     }
 
 bayes.mod.fit <- jags(data = sim.data.jags, #inits = bayes.mod.inits,
 	      parameters.to.save = bayes.mod.params, n.chains = 3,
-	      n.iter = 9000, n.burnin = 1000, model.file = 'gamma_ksamples.jags')
+	      n.iter = 9000, n.burnin = 1000, model.file = 'invgauss_matthews.jags')
 
 print(bayes.mod.fit)
 plot(bayes.mod.fit)

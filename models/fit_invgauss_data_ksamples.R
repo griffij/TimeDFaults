@@ -12,12 +12,12 @@ setwd('.')
 ###########
 # Real data
 
-datafile = '../data/testdata/chronologies1000.csv'
+datafile = '../data/testdata/chronologies1.csv'
 #datafile = '../../data/Akatore4eventBdy_output_10000_chronologies.csv'
 #datafile = 'chronologies100.csv'
 data = read.csv(datafile, header=FALSE)#, delimiter=',')
 
-k=1000
+k=1
 
 # Name of figure file
 pdf('invgauss_fit.pdf')
@@ -47,16 +47,16 @@ print(N)
 print(Y[1,1])
 print(Y[1,2])
 print(mean(Y[1,]))
-print(mean(Y[2,]))
-print(mean(Y[3,]))
-print(mean(Y[4,]))
+#print(mean(Y[2,]))
+#print(mean(Y[3,]))
+#print(mean(Y[4,]))
 print(mean(Y))
 ###############
 
 sim.data.jags <- list("Y", "N", "k")
 
 # Define the parameters whose posterior distributions we want to calculate
-bayes.mod.params <- c( "lambda", "eta") 
+bayes.mod.params <- c( "lambda", "eta")#, "eta_k") 
 
 #Define starting values
 #bayes.mod.inits <- function(){
