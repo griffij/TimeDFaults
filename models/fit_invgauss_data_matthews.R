@@ -58,7 +58,7 @@ print(mean(Y))
 sim.data.jags <- list("Y", "N")
 
 # Define the parameters whose posterior distributions we want to calculate
-bayes.mod.params <- c("eta", "mu",  "alpha", "eta_m", "alpha_m", "mu_m")
+bayes.mod.params <- c("alpha", "mu")
 
 #Define starting values
 #bayes.mod.inits <- function(){
@@ -67,7 +67,7 @@ bayes.mod.params <- c("eta", "mu",  "alpha", "eta_m", "alpha_m", "mu_m")
 
 bayes.mod.fit <- jags(data = sim.data.jags, #inits = bayes.mod.inits,
 	      parameters.to.save = bayes.mod.params, n.chains = 3,
-	      n.iter = 9000, n.burnin = 1000, model.file = 'invgauss_matthews.jags')
+	      n.iter = 12000, n.burnin = 1000, model.file = 'invgauss_matthews.jags')
 
 print(bayes.mod.fit)
 plot(bayes.mod.fit)
