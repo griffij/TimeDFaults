@@ -9,8 +9,8 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 alphas = np.arange(0.1, 5.0, 0.1) # Shape parameter; Adjust later to real alpha def
-#means = np.arange(1, 2000, 20)
-means = np.arange(1, 30000, 1000)
+means = np.arange(1, 2000, 20)
+#means = np.arange(1, 30000, 1000)
 
 #data = [-3.414500000000000000e+03,-2.804500000000000000e+03,-2.714500000000000000e+03,-2.034500000000000000e+03,
 #        -1.329500000000000000e+03,-7.695000000000000000e+02,-6.945000000000000000e+02,7.855000000000000000e+02,
@@ -21,18 +21,24 @@ data = np.genfromtxt(datafile, delimiter=',')
 #Cadell
 #data = [[32400, 38500, 45000, 55000, 62500, 70000, 1000000, 2000000, 4500000]]
 # Dunstan
-data = [[-5000, 13600, 15100, 16700, 23000, 50000]]
+#data = [[-5000, 13600, 15100, 16700, 23000, 50000]]
+# Altyn Tagh
+#data = [[450,  170,  515,  785, 490, 170, 1530,  925]]
 # Define a prior distribution on the mean (e.g. based on slip rate and single event displacements
-prior_mean = norm(loc=10000, scale=5000)
+#prior_mean = norm(loc=10000, scale=5000)
+prior_mean = uniform(min(means), max(means)) 
+prior_mean = norm(loc=630, scale=1000) 
 prior_mean_vals = prior_mean.pdf(means)
+
 prior_alpha = uniform(min(alphas), max(alphas))
 prior_alpha_vals = prior_alpha.pdf(alphas)
 prior_matrix = np.outer(prior_mean_vals, prior_alpha_vals)
 ie_times = np.diff(data)
+#ie_times = np.array(data) # If input ie times directly
 print('ie_times', ie_times)
 print('mean ie time', np.mean(ie_times))
 
-def bpt_matthews(mu, alpha, x_vals):
+def bpt_pdf(mu, alpha, x_vals):
     """Probability distributino function using
     parameterisation given in Matthews et al (2002) BSSA.
     Used to generate likelihoods
@@ -41,7 +47,23 @@ def bpt_matthews(mu, alpha, x_vals):
         np.exp(-1*np.power((x_vals - mu), 2)/(2*mu*x_vals*np.power(alpha, 2)))
 #    print(pdf)
     return(pdf)
-    
+
+def bpt_cdf(mu, alpha, x_vals):
+    """Evalue cumulative distribution function at x_vals
+    given parameters mu and alpha"""
+    print('alpha', alpha)
+    u1 = (1/alpha) * (np.power(x_vals, 1/2)*np.power(mu, -1/2) - \
+                      np.power(x_vals, -1/2)*np.power(mu, 1/2))
+    u2 = (1/alpha) * (np.power(x_vals, 1/2)*np.power(mu, -1/2) + \
+                      np.power(x_vals, -1/2)*np.power(mu, 1/2))   
+    cdf = norm.cdf(u1) + np.exp(2/np.power(alpha,2))*norm.cdf((-1*u2))
+    return cdf
+
+def bpt_hazard_function(mu, alpha, x_vals):
+    """Evaluate hazard function of BPT distribution at x_vals 
+    given mu and alpha"""
+    hf = bpt_pdf(mu, alpha, x_vals) / (1 - bpt_cdf(mu, alpha, x_vals))
+    return hf
 
 def bpt_likelihoods(means, alphas, ie_times):
     """Function for calculating likelihoods for parameter values of
@@ -52,7 +74,7 @@ def bpt_likelihoods(means, alphas, ie_times):
         for a in alphas:
             bpt = invgauss(a, scale=b)
             bpt_l = bpt.pdf(ie_times)
-            bpt_matt = bpt_matthews(b, a, ie_times)
+            bpt_matt = bpt_pdf(b, a, ie_times)
             likelihood = np.cumprod(bpt_l)[-1]
             likelihood_matt = np.cumprod(bpt_matt)[-1]   
 #            print(b, a, likelihood)
@@ -135,6 +157,9 @@ plt.clf()
 # Update later with mean of posteriors
 plt.pcolormesh(yi, xi, all_posterior.reshape(xi.shape), shading='gouraud',
                cmap=plt.cm.Greys)
+# Add MLE estimate - Need to convert to same parameterisation
+#alpha_mle, beta_mle, mu_mle = mle2s[0]
+#plt.scatter(mu_mle, alpha_mle)
 plt.xlabel('Mean')
 plt.ylabel('Alpha')
 plt.savefig('BPT_posterior_matthews.png')
