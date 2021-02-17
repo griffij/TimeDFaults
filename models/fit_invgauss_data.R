@@ -67,7 +67,7 @@ bayes.mod.params <- c("alpha", "mu")
 
 bayes.mod.fit <- jags(data = sim.data.jags, #inits = bayes.mod.inits,
 	      parameters.to.save = bayes.mod.params, n.chains = 3,
-	      n.iter = 12000, n.burnin = 1000, model.file = 'invgauss_matthews.jags')
+	      n.iter = 12000, n.burnin = 1000, model.file = 'invgauss.jags')
 
 print(bayes.mod.fit)
 plot(bayes.mod.fit)

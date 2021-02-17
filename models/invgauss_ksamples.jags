@@ -1,3 +1,5 @@
+# Use parameterisation from Matthews (2002) BSSA paper
+
 data {
  for (j in 1:k){
  for (i in 1:N){
@@ -15,17 +17,24 @@ model{
 #  l1[j,i] = 0.5 * (log(lambda_k[j]) - log(2* 3.14 * Y[j,i]^3))
 #  l2[j,i] = -1*lambda_k[j] * (Y[j,i] - mu[j,i])^2 / (2 * mu[j,i]^2 * Y[j,i])
 #  l[j,i] = l1[j,i] + l2[j,i]
-  l[j,i] = 0.5 * (log(lambda_k[j]) - log(2*3.14) - 3*log(Y[j,i])) -
-       0.5 * lambda_k[j] * pow((Y[j,i] - mu[j,i])/mu[j,i], 2)/Y[j,i]
-  # Link function
-  log(mu[j,i]) = eta_k[j]
+#  l[j,i] = 0.5 * (log(lambda_k[j]) - log(2*3.14) - 3*log(Y[j,i])) -
+#       0.5 * lambda_k[j] * pow((Y[j,i] - mu[j,i])/mu[j,i], 2)/Y[j,i]
+  l[j,i] = 0.5 * (log(mu[j,i]) - 2*log(2*3.14*alpha[j]) - 3*log(Y[j,i])) -
+  	 0.5*pow((Y[j,i] - mu[j,i]), 2)/(mu[j,i]*alpha[j]^2*Y[j,i])
+# Link function
+  log(mu[j,i]) = eta[j]
 
     }
-  eta_k[j] ~ dnorm(0.0, 0.001) #dnorm(6, 0.0001) #dgamma( 0.0001, 0.0001) #dnorm(0.0, 0.001)
-  lambda_k[j] ~ dgamma(0.0001, 0.0001)
+  eta[j] ~ dnorm(0.0, 0.001) #dnorm(6, 0.0001) #dgamma( 0.0001, 0.0001) #dnorm(0.0, 0.001)
+#  mu[j] ~ dgamma(0.0001, 0.0001)
+  alpha[j] ~ dgamma(0.0001, 0.0001)
+#   lambda_k[j] ~ dgamma(0.0001, 0.0001)
 }
 
-lambda = mean(lambda_k)
-eta = mean(eta_k)
-s2 = -1/lambda
+#lambda = mean(lambda_k)
+#eta = mean(eta_k)
+#s2 = -1/lambda
+eta_m = mean(eta)
+#mu_m = mean(mu)
+alpha_m = mean(alpha)
 }

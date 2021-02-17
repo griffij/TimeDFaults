@@ -20,7 +20,7 @@ data = read.csv(datafile, header=FALSE)#, delimiter=',')
 k=1
 
 # Name of figure file
-pdf('invgauss_fit_matthews.pdf')
+pdf('invgauss_fit.pdf')
 
 # Convert data to inter-event times
 m = data.matrix(data)
@@ -56,16 +56,16 @@ print(mean(Y))
 sim.data.jags <- list("Y", "N", "k")
 
 # Define the parameters whose posterior distributions we want to calculate
-bayes.mod.params <- c("eta", "mu",  "alpha", "alpha_m")#, "eta_k") 
+bayes.mod.params <- c( "lambda", "eta")#, "eta_k") 
 
 #Define starting values
 #bayes.mod.inits <- function(){
-#		list("etc"=1/0.01)
+#		list("mu"=1/0.01)
 #			     }
 
 bayes.mod.fit <- jags(data = sim.data.jags, #inits = bayes.mod.inits,
 	      parameters.to.save = bayes.mod.params, n.chains = 3,
-	      n.iter = 9000, n.burnin = 1000, model.file = 'invgauss_matthews.jags')
+	      n.iter = 9000, n.burnin = 1000, model.file = 'invgauss_ksamples_standard_param.jags')
 
 print(bayes.mod.fit)
 plot(bayes.mod.fit)
