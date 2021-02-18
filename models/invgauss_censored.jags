@@ -1,0 +1,43 @@
+# Use parameterisation from Matthews (2002) BSSA paper
+# Number of censored observations
+data {
+ for (i in 1:N){
+ zeros[i] = 0
+ }
+ C = 10000
+}
+model{
+  for (i in 1:N){
+   # Prior for lambda parameter
+  zeros[i] ~ dpois(zeros.mean[i])
+  zeros.mean[i] = -l[i] + C
+  # Censoring
+#  isCensored[i] ~ dinterval( Y[i] , censorLimitVec[i] )
+  y[i] = ifelse(isCensored[i], censorLimitVec[i], Y[i]) #, censorLimitVec[i])
+  # For calculating CDF later
+  u1[i] = (1/alpha)*(pow(y[i], 1/2)*pow(mu, -1/2) -
+  	pow(y[i], -1/2)*pow(mu, 1/2))
+  u2[i] = (1/alpha)*(pow(y[i], 1/2)*pow(mu, -1/2) +
+  	pow(y[i], -1/2)*pow(mu, 1/2))
+  cdf[i] = pnorm(u1[i],0,1) + exp(2/(pow(alpha, 2)))*pnorm(-1*u2[i],0,1)
+  # Log-likelihood 
+  l[i] = ifelse(isCensored[i],
+       log(1-cdf[i]),
+       0.5 * (log(mu) - log(2*3.14) - 2*log(alpha) - 3*log(y[i])) -
+       0.5*pow((y[i] - mu), 2)/(mu*pow(alpha,2)*y[i])
+       )
+    }
+#for (j in 1:J){ # J is the number of censored observations;
+#  # Left censoring (R=0):
+#  lim[j,] = c(cut[j], inf);
+#log(mu) = eta	
+#eta ~ dnorm(0.0, 0.01) #dunif(0,100) #dnorm(0.0, 0.01)  
+#alpha ~ dt(0,0.04,3)T(0.01,)
+alpha ~ dunif(0, 5)
+#mu ~ dnorm(0, 10^-4)T(0,)
+mu ~ dnorm(10000, 10^-8)T(0,)
+#mu ~ dunif(0, 50000)
+#alpha ~ dgamma(0.0001, 0.0001)
+#eta_m = mean(eta)
+#log(mu_m) = mean(eta)
+}
