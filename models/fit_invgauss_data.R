@@ -16,11 +16,11 @@ datafile = '../data/testdata/chronologies1.csv'
 #datafile = '../../data/Akatore4eventBdy_output_10000_chronologies.csv'
 #datafile = 'chronologies100.csv'
 data = read.csv(datafile, header=FALSE)#, delimiter=',')
-
+data = cbind(13600, 15100, 16700, 23000)
 k=1
 
 # Name of figure file
-pdf('invgauss_fit_matthews.pdf')
+pdf('invgauss_fit.pdf')
 
 # Convert data to inter-event times
 m = data.matrix(data)
