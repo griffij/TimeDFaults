@@ -15,22 +15,31 @@ setwd('.')
 ###########
 # Real data
 
-#datafile = '../data/testdata/chronologies1.csv'
-#data = read.csv(datafile, header=FALSE)#, delimiter=',')
-
+datafile = '../data/chronologies/Dunstan_10_chronologies.csv'
+data = read.csv(datafile, header=FALSE)#, delimiter=',')
+print(data)
+datalist = data
 # Dunstan - Use NA as placeholder for open intervals
-data1 = cbind(NA, 13600, 15100, 16700, 23000, NA)
-data2 = cbind(NA, 13200, 15000, 17500, 24000, NA)
-datalist = list(data1, data2)
-print(datalist)
+#data1 = cbind(NA, 13600, 15100, 16700, 23000, NA)
+#data2 = cbind(NA, 13200, 15000, 17500, 24000, NA)
+#datalist = list(data1, data2)
+print(nrow(datalist))
 # Name of figure file 
 pdf('invgauss_fit_censored_combined.pdf')
 
 # Initialise list for storing each MCMC object
 mcmclist = vector("list", 3*length(datalist))
-for (i in 1:length(datalist)){
-    data = datalist[[i]]
-    censorLimitVec = cbind(data[2], 1, 1, 1, 50000-data[5])
+for (i in 1:nrow(datalist)){
+    data = list(cbind(NA, datalist[i,], NA))#[1,]
+    data = data[[1]]
+    print('data')
+    print(data)
+    print(typeof(data))
+    print(data[4])
+    print(length(datalist)-1)
+    sl = (length(data) - 1)[1]
+    print(sl)
+    censorLimitVec = cbind(abs(data[2]), 1, 1, 1, 50000-abs(data[sl]))
     # Convert data to inter-event times
     m = data.matrix(data)
     inter_event_m = t(diff(t(m))) # Transpose, take difference and transpose back
@@ -76,8 +85,8 @@ for (i in 1:length(datalist)){
 	      n.iter = 12000, n.burnin = 1000, model.file = 'invgauss_censored.jags')
 	      
     print(bayes.mod.fit)
-    plot(bayes.mod.fit)
-    traceplot(bayes.mod.fit)
+#    plot(bayes.mod.fit)
+#    traceplot(bayes.mod.fit)
 
     # Convert to an MCMC object
     bayes.mod.fit.mcmc <- as.mcmc(bayes.mod.fit)
@@ -92,17 +101,17 @@ for (i in 1:length(datalist)){
 #    mcmclist = cbind(mcmclist, bayes.mod.fit.mcmc)
     summary(bayes.mod.fit.mcmc)
 #    print(bayes.mod.fit.mcmc)
-    # Some more plots
-    xyplot(bayes.mod.fit.mcmc, layout=c(2,2), aspect="fill")
-
-    #Auto-correlation plot
-    autocorr.plot(bayes.mod.fit.mcmc)
+#    # Some more plots - only plot summary plots now
+#    xyplot(bayes.mod.fit.mcmc, layout=c(2,2), aspect="fill")
+#
+#    #Auto-correlation plot
+#    autocorr.plot(bayes.mod.fit.mcmc)
     }
 #print(mcmclist)
 # Convert all MCMC models into one MCMC object
 
-#bayes.mcmc.combined = as.mcmc.list(mcmclist)
-bayes.mcmc.combined = combine.mcmc(mcmclist)
+#bayes.mcmc.combined = as.mcmc.list(mcmclist) # Use this to plot all individual chains
+bayes.mcmc.combined = combine.mcmc(mcmclist) # Use this to plot one combined density
 # Print summary from combined mcmc objects
 #bayes.mcmc.combined = unlist(bayes.mcmc.combined)
 #print(typeof(bayes.mcmc.combined))
@@ -115,6 +124,6 @@ xyplot(bayes.mcmc.combined, layout=c(2,2), aspect="fill")
 # Density plot
 densityplot(bayes.mcmc.combined, layout=c(2,2), aspect="fill")
 #Auto-correlation plot
-autocorr.plot(bayes.mcmc.combined)
+#autocorr.plot(bayes.mcmc.combined)
 
 dev.off()
