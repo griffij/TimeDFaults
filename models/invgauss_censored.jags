@@ -34,8 +34,9 @@ model{
 #eta ~ dnorm(0.0, 0.01) #dunif(0,100) #dnorm(0.0, 0.01)  
 #alpha ~ dt(0,0.04,3)T(0.01,)
 alpha ~ dunif(0, 5)
-#mu ~ dnorm(0, 10^-4)T(0,)
-mu ~ dnorm(10000, 10^-8)T(0,)
+#mu ~ dnorm(0, 10e-4)T(0,)
+# Dunstan priors on mean
+mu ~ dnorm(15000, 4e-8)T(0,30000.0) # Maximum value based on known number of events in trench
 #mu ~ dunif(0, 50000)
 #alpha ~ dgamma(0.0001, 0.0001)
 #eta_m = mean(eta)
