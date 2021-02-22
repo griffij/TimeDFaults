@@ -110,8 +110,8 @@ for (i in 1:nrow(datalist)){
 #print(mcmclist)
 # Convert all MCMC models into one MCMC object
 
-#bayes.mcmc.combined = as.mcmc.list(mcmclist) # Use this to plot all individual chains
-bayes.mcmc.combined = combine.mcmc(mcmclist) # Use this to plot one combined density
+bayes.mcmc.combined = as.mcmc.list(mcmclist) # Use this to plot all individual chains
+#bayes.mcmc.combined = combine.mcmc(mcmclist) # Use this to plot one combined density
 # Print summary from combined mcmc objects
 #bayes.mcmc.combined = unlist(bayes.mcmc.combined)
 #print(typeof(bayes.mcmc.combined))
