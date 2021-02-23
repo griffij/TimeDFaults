@@ -1,10 +1,14 @@
-# Fit inverse Gaussian (BPTAA) distirbution to data for earthquake inter-event times
+# FOAit inverse Gaussian (BPTAA) distirbution to data for earthquake inter-event times
 # when sampling multiple chronologies. Fit each Monte Carlo sample of the earthquake
 # chronology individually, and then combine all chains into single MCMC object
 # to calculate final statistics
 
+#library(ggsci)
 library(R2jags)
 library(runjags)
+library(bayesplot)
+library(ggplot2)
+library(coda)
 library(lattice)
 # Fix random seed
 #set.seed(23)
@@ -111,6 +115,7 @@ for (i in 1:nrow(datalist)){
 # Convert all MCMC models into one MCMC object
 
 bayes.mcmc.combined = as.mcmc.list(mcmclist) # Use this to plot all individual chains
+bayes.mcmc.combinedlist = as.mcmc.list(mcmclist)
 #bayes.mcmc.combined = combine.mcmc(mcmclist) # Use this to plot one combined density
 # Print summary from combined mcmc objects
 #bayes.mcmc.combined = unlist(bayes.mcmc.combined)
@@ -125,5 +130,33 @@ xyplot(bayes.mcmc.combined, layout=c(2,2), aspect="fill")
 densityplot(bayes.mcmc.combined, layout=c(2,2), aspect="fill")
 #Auto-correlation plot
 #autocorr.plot(bayes.mcmc.combined)
+# Do separate density plot of all combined
+bayes.mcmc.combined = combine.mcmc(mcmclist)
+densityplot(bayes.mcmc.combined, layout=c(2,2), aspect="fill")
 
+# Do some 2D plots
+posterior <- as.array(bayes.mcmc.combined)
+#print(posterior)
+dim(posterior)
+#color_scheme_set('gray')
+mcmc_scatter(posterior, pars = c("mu", "alpha"),
+			size = 1.5, alpha = 0.5)
+h = mcmc_hex(posterior, pars = c("mu", "alpha"))
+#h + plot_bg(fill = "gray95") + panel_bg(fill = "gray70")
+#h + stat_binhex(aes(colour = ..density.., fill = ..density..))
+h = h + geom_hex(aes_(color = ~ scales::rescale(..density..)))
+h + scale_color_gradientn("Density", colors = unlist(color_scheme_get()),
+  breaks = c(.1, .9), labels = c("low", "high"))
+df_post = do.call(rbind.data.frame, bayes.mcmc.combinedlist)
+print(df_post)
+ggplot(df_post, aes(x=mu, y=alpha)) +
+	     stat_density_2d(aes(fill = ..level..), geom = "polygon")
+ggplot(df_post, aes(x=mu, y=alpha)) +
+		stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE) +
+		scale_fill_distiller(direction=1) +
+		scale_x_continuous(expand = c(0, 0)) +
+		scale_y_continuous(expand = c(0, 0)) +
+		theme(
+    		legend.position='none'
+  		)
 dev.off()
