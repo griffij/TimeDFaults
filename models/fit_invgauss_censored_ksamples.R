@@ -154,9 +154,10 @@ ggplot(df_post, aes(x=mu, y=alpha)) +
 ggplot(df_post, aes(x=mu, y=alpha)) +
 		stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE) +
 		scale_fill_distiller(direction=1) +
+		labs(colour = "Density") +
 		scale_x_continuous(expand = c(0, 0)) +
-		scale_y_continuous(expand = c(0, 0)) +
-		theme(
-    		legend.position='none'
-  		)
+		scale_y_continuous(expand = c(0, 0))
+#		theme(
+#    		legend.position='none'
+#  		)
 dev.off()

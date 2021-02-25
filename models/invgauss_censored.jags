@@ -12,8 +12,7 @@ model{
   zeros[i] ~ dpois(zeros.mean[i])
   zeros.mean[i] = -l[i] + C
   # Censoring
-#  isCensored[i] ~ dinterval( Y[i] , censorLimitVec[i] )
-  y[i] = ifelse(isCensored[i], censorLimitVec[i], Y[i]) #, censorLimitVec[i])
+  y[i] = ifelse(isCensored[i], censorLimitVec[i], Y[i])
   # For calculating CDF later
   u1[i] = (1/alpha)*(pow(y[i], 1/2)*pow(mu, -1/2) -
   	pow(y[i], -1/2)*pow(mu, 1/2))
@@ -27,18 +26,12 @@ model{
        0.5*pow((y[i] - mu), 2)/(mu*pow(alpha,2)*y[i])
        )
     }
-#for (j in 1:J){ # J is the number of censored observations;
-#  # Left censoring (R=0):
-#  lim[j,] = c(cut[j], inf);
-#log(mu) = eta	
-#eta ~ dnorm(0.0, 0.01) #dunif(0,100) #dnorm(0.0, 0.01)  
+
 #alpha ~ dt(0,0.04,3)T(0.01,)
-alpha ~ dunif(0, 5)
+alpha ~ dunif(0, 10)
 #mu ~ dnorm(0, 10e-4)T(0,)
 # Dunstan priors on mean
-mu ~ dnorm(15000, 4e-8)T(0,30000.0) # Maximum value based on known number of events in trench
-#mu ~ dunif(0, 50000)
+#mu ~ dnorm(15000, 4e-8)T(0,30000.0) # Maximum value based on known number of events in trench
+mu ~ dunif(0.1, 200000)
 #alpha ~ dgamma(0.0001, 0.0001)
-#eta_m = mean(eta)
-#log(mu_m) = mean(eta)
 }
