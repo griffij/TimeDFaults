@@ -22,7 +22,7 @@ model{
   # Log-likelihood 
   l[i] = ifelse(isCensored[i],
        log(1-cdf[i]),
-       0.5 * (log(mu) - log(2*3.14) - 2*log(alpha) - 3*log(y[i])) -
+       0.5 * (log(mu) - log(2*3.1416) - 2*log(alpha) - 3*log(y[i])) -
        0.5*pow((y[i] - mu), 2)/(mu*pow(alpha,2)*y[i])
        )
     }

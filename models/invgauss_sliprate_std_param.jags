@@ -1,0 +1,63 @@
+# Use standard parameterisation with mu, lambda
+# Number of censored observations
+data {
+ for (i in 1:N){
+ zeros[i] = 0
+ }
+ for (j in 1:M){
+ zeros_j[j] = 0
+ }
+ C = 10000
+}
+model{
+  for (i in 1:N){
+   # Prior for lambda parameter
+  zeros[i] ~ dpois(zeros.mean[i])
+  zeros.mean[i] = -l[i] + C
+  # Censoring
+  y[i] = ifelse(isCensored[i], censorLimitVec[i], Y[i])
+  # For calculating CDF
+  u1[i] = pow((lambda/y[i]), 1/2)*(y[i]/mu - 1)
+  u2[i] = -1*pow((lambda/y[i]), 1/2)*(y[i]/mu + 1)
+  cdf[i] = pnorm(u1[i], 0, 1) + exp((2*lambda)/mu)*pnorm(u2[i], 0, 1)
+  # Log-likelihood 
+  l[i] = ifelse(isCensored[i],
+       log(1-cdf[i]),
+       0.5*(log(lambda) - log(2*3.1416) - 3*log(y[i])) -
+       0.5*lambda*pow((y[i] - mu), 2)/(pow(mu, 2)*y[i])
+       )
+    }
+    
+  # Now we do the slip-rate data
+  for (j in 1:M){
+  # Zeros trick - is this needed?
+  zeros_j[j] ~ dpois(zeros_j.mean[j])
+  zeros_j.mean[j] = -l[j] + C
+  # Now we use the additive property of the inverse Gaussian distribution
+  # for i in (1,2,...n), Sum(X_i) = IG(n*mu, n^2*lambda)
+#  a = round(1.2, digits=0)
+  n_events[j] = dround((V[j]/throw_per_event), 0)
+  ut1[j] = pow((pow(n_events[j],2)*lambda/T[j]), 1/2)*(T[j]/(n_events[j]*mu) - 1)
+  ut2[j] = -1*pow((pow(n_events[j],2)*lambda/T[j]), 1/2)*(T[j]/(n_events[j]*mu) + 1)
+  cdft[j] = pnorm(ut1[j], 0, 1) + exp((2*pow(n_events[j], 2)*lambda)/(n_events[j]*mu))*pnorm(ut2[j], 0, 1)
+  # log-likelihood
+  lt[j] = ifelse(isSlipCensored[j],
+  	log(1-cdft[j]),
+	0.5*(log(pow(n_events[j], 2)*lambda) - log(2*3.1416) - 3*log(T[j])) -
+	0.5*pow(n_events[j], 2)*lambda*pow((T[j]-n_events[j]*mu), 2)/(pow((n_events[j]*mu), 2)*T[j])
+	)
+  }
+# Define mu in terms of slip-rate data
+#mean_rate ~ (throw/throw_per_event)/slip_time
+#mu ~ dnorm(slip_time/(throw/throw_per_event), 0.01)
+# Lets track alpha as well
+alpha = pow((mu/lambda), 1/2)
+lambda ~ dunif(0, 200000)
+# Dunstan priors on mean
+mu ~ dnorm(15000, 4e-8)T(0,30000.0) # Maximum value based on known number of events in trench
+
+# Some informative priors from slip-rate data
+throw_per_event ~ dnorm(2.5, 2) # Estimate of throw per event from trench data
+#slip_time ~ dnorm(150000, 0.0002) # Age of surface from cosmo
+#alpha ~ dgamma(0.0001, 0.0001)
+}

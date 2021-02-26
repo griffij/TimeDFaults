@@ -15,7 +15,7 @@ model{
 #  l1[j,i] = 0.5 * (log(lambda_k[j]) - log(2* 3.14 * Y[j,i]^3))
 #  l2[j,i] = -1*lambda_k[j] * (Y[j,i] - mu[j,i])^2 / (2 * mu[j,i]^2 * Y[j,i])
 #  l[j,i] = l1[j,i] + l2[j,i]
-  l[j,i] = 0.5 * (log(lambda_k[j]) - log(2*3.14) - 3*log(Y[j,i])) -
+  l[j,i] = 0.5 * (log(lambda_k[j]) - log(2*3.1416) - 3*log(Y[j,i])) -
        0.5 * lambda_k[j] * pow((Y[j,i] - mu[j,i])/mu[j,i], 2)/Y[j,i]
   # Link function
   log(mu[j,i]) = eta_k[j]
