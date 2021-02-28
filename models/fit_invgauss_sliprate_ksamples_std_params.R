@@ -27,10 +27,11 @@ datalist = data
 #data1 = cbind(NA, 13600, 15100, 16700, 23000, NA)
 #data2 = cbind(NA, 13200, 15000, 17500, 24000, NA)
 #datalist = list(data1, data2)
-throws = cbind(10, 20)
-slip_times = cbind(90000, 150000)
+throws = cbind(15, 18, 20, 30)
+slip_times = cbind(50000, 90000, 130000, 150000)#, 55000, 1000000)
 isSlipCensored = (slip_times < 0)
 isSlipCensored = as.numeric(isSlipCensored)
+print(isSlipCensored)
 print(nrow(datalist))
 # Name of figure file 
 pdf('invgauss_fit_sliprate_std_param.pdf')
@@ -79,7 +80,8 @@ for (i in 1:nrow(datalist)){
     		  "isSlipCensored")
 
     # Define the parameters whose posterior distributions we want to calculate
-    bayes.mod.params <- c("lambda", "mu", "alpha")
+    bayes.mod.params <- c("lambda", "mu", "alpha", "n_events", "T", "V", "Y",
+    		     "lambda_t", "mu_t")
 
     lambdaInit = 1.0
     muInit = 1000 # Rough estimate of mean(Y)
