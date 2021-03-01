@@ -80,8 +80,7 @@ for (i in 1:nrow(datalist)){
     		  "isSlipCensored")
 
     # Define the parameters whose posterior distributions we want to calculate
-    bayes.mod.params <- c("lambda", "mu", "alpha", "n_events", "T", "V", "Y",
-    		     "lambda_t", "mu_t")
+    bayes.mod.params <- c("lambda", "mu", "alpha", "n_events")
 
     lambdaInit = 1.0
     muInit = 1000 # Rough estimate of mean(Y)
