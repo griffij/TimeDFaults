@@ -1,4 +1,4 @@
-# FOAit inverse Gaussian (BPTAA) distirbution to data for earthquake inter-event times
+# Fit inverse Gaussian (BPT) distirbution to data for earthquake inter-event times
 # when sampling multiple chronologies. Fit each Monte Carlo sample of the earthquake
 # chronology individually, and then combine all chains into single MCMC object
 # to calculate final statistics
@@ -27,8 +27,12 @@ datalist = data
 #data1 = cbind(NA, 13600, 15100, 16700, 23000, NA)
 #data2 = cbind(NA, 13200, 15000, 17500, 24000, NA)
 #datalist = list(data1, data2)
-throws = cbind(15, 18, 20, 30)
-slip_times = cbind(50000, 90000, 130000, 150000)#, 55000, 1000000)
+throws = cbind(15, 18, 20, 30) # Vertical offsets in meters
+V_sigma = cbind(1, 2, 2.5, 3) # Uncertainty on throw (metres)
+V_tau = 1/(V_sigma**2)[1,]
+slip_times = cbind(50000, 90000, 130000, 150000)#, 55000, 1000000) 
+T_sigma = cbind(5000, 9000, 13000, 15000)
+T_tau = 1/(T_sigma**2)[1,]
 isSlipCensored = (slip_times < 0)
 isSlipCensored = as.numeric(isSlipCensored)
 print(isSlipCensored)
@@ -74,13 +78,17 @@ for (i in 1:nrow(datalist)){
     print(V)
     censorLimitVec = as.numeric(censorLimitVec)
 #    print(censorLimitVec)
-
+    # Lets deal with V and T as uncertain observations
+    V_obs = V
+    T_obs = T
     # Define data
-    sim.data.jags <- list("Y", "N", "V", "T", "M",  "censorLimitVec", "isCensored",
+    sim.data.jags <- list("Y", "N", "V_obs", "V_tau", "T_obs", "T_tau",
+    		  "M",  "censorLimitVec", "isCensored",
     		  "isSlipCensored")
 
     # Define the parameters whose posterior distributions we want to calculate
-    bayes.mod.params <- c("lambda", "mu", "alpha", "n_events")
+    bayes.mod.params <- c("lambda", "mu", "alpha", "n_events",
+    		     "V", "T", "V_obs", "T_obs", "Y")
 
     lambdaInit = 1.0
     muInit = 1000 # Rough estimate of mean(Y)
@@ -95,7 +103,7 @@ for (i in 1:nrow(datalist)){
     # The model
     bayes.mod.fit <- jags(data = sim.data.jags, inits = bayes.mod.inits,
     	      parameters.to.save = bayes.mod.params, n.chains = 3,
-	      n.iter = 12000, n.burnin = 1000, model.file = 'invgauss_sliprate_std_param.jags')
+	      n.iter = 10000, n.burnin = 1000, model.file = 'invgauss_sliprate_std_param.jags')
 	      
     print(bayes.mod.fit)
 #    plot(bayes.mod.fit)

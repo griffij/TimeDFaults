@@ -30,7 +30,7 @@ model{
     
   # Now we do the slip-rate data
   for (j in 1:M){
-  # Zeros trick - is this needed?
+  # Zeros trick
   zeros_j[j] ~ dpois(zeros_j.mean[j])
   zeros_j.mean[j] = -lt[j] + C
   # Now we use the additive property of the inverse Gaussian distribution
@@ -45,11 +45,16 @@ model{
 	0.5*(log(pow(n_events[j], 2)*lambda) - log(2*3.1416) - 3*log(T[j])) -
 	0.5*pow(n_events[j], 2)*lambda*pow((T[j]-n_events[j]*mu), 2)/(pow((n_events[j]*mu), 2)*T[j])
 	)
+  # Implement error models on T (Age of surface) and V (Vertical offset)
+  V_obs[j] ~ dnorm(V[j], V_tau[j]) # Observed offset
+  T_obs[j] ~ dnorm(T[j], T_tau[j]) # Observed age of offset surface
+  V[j] ~ dunif(0, 50)  #'True' offset value
+  T[j] ~ dunif(0, 200000)  #'True' age value
   }
 
 # Lets track alpha as well
 alpha = pow((mu/lambda), 1/2)
-# Priors
+# Priors - uninformative
 lambda ~ dunif(0, 100000)
 mu ~ dunif(0, 200000)
 throw_per_event ~ dnorm(2.5, 4)T(0,) # Estimate of throw per event from trench data
