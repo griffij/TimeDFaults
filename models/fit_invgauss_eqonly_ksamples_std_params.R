@@ -39,7 +39,7 @@ isSlipCensored = as.numeric(isSlipCensored)
 print(isSlipCensored)
 print(nrow(datalist))
 # Name of figure file 
-pdf('invgauss_fit_sliprate_std_param.pdf')
+pdf('invgauss_fit_eqonly_std_param.pdf')
 
 # Initialise list for storing each MCMC object
 mcmclist = vector("list", 3*length(datalist))
@@ -84,14 +84,14 @@ for (i in 1:nrow(datalist)){
     T_obs = T
     # Define data
     sim.data.jags <- list("Y", "N"
-    		  ,"V_obs", "V_tau", "T_obs", "T_tau"
-    		  ,"M", "isSlipCensored",
+#    		  ,"V_obs", "V_tau", "T_obs", "T_tau"
+#    		  ,"M", "isSlipCensored",
 		  ,"censorLimitVec", "isCensored"
 		  )
 
     # Define the parameters whose posterior distributions we want to calculate
     bayes.mod.params <- c("lambda", "mu", "alpha", "n_events"
-    		     ,"V", "T", "V_obs", "T_obs", "Y"
+#    		     ,"V", "T", "V_obs", "T_obs", "Y"
 		     )
     lambdaInit = 1.0
     muInit = 1000 # Rough estimate of mean(Y)
@@ -106,7 +106,7 @@ for (i in 1:nrow(datalist)){
     # The model
     bayes.mod.fit <- jags(data = sim.data.jags, inits = bayes.mod.inits,
     	      parameters.to.save = bayes.mod.params, n.chains = 3,
-	      n.iter = 10000, n.burnin = 1000, model.file = 'invgauss_sliprate_std_param.jags')
+	      n.iter = 10000, n.burnin = 1000, model.file = 'invgauss_eqonly_std_params.jags')
 	      
     print(bayes.mod.fit)
 #    plot(bayes.mod.fit)
@@ -174,7 +174,7 @@ ggplot(df_post, aes(x=mu, y=alpha)) +
 	     xlab(expression(mu)) +
 	     ylab(expression(alpha))
 dev.off()
-png(file='invgauss_fit_sliprate_std_param.png', units="in", width=5, height=5, res=300)
+png(file='invgauss_fit_eqonly_std_param.png', units="in", width=5, height=5, res=300)
 # Estimate density value containing 95% of posterior ditribution
 df_param = data.frame(df_post$mu, df_post$alpha)
 kd <- ks::kde(df_param, compute.cont=TRUE)

@@ -55,7 +55,8 @@ model{
 # Lets track alpha as well
 alpha = pow((mu/lambda), 1/2)
 # Priors - uninformative
-lambda ~ dunif(0, 100000)
-mu ~ dunif(0, 200000)
-throw_per_event ~ dnorm(2.5, 4)T(0,) # Estimate of throw per event from trench data
+lambda ~ dunif(0, 40000)
+#lambda ~ dnorm(15000, 1e-8)T(0,)
+mu ~ dunif(0, 150000)
+throw_per_event ~ dnorm(2.5, 8)T(0,) # Estimate of throw per event from trench data
 }
