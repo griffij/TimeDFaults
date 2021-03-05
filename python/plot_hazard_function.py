@@ -15,11 +15,27 @@ alphas = np.arange(0.01, 10, 0.01)
 hfs = 1/(2*mu*alphas**2)
 
 plt.clf()
-plt.semilogy(alphas, hfs, c='0.7')
+plt.semilogy(alphas, hfs, c='0.5')
+# Add line showing crossing point
+yvals = [1e-4, 1e-4, 1e-7]
+xvals = [0, 1/np.sqrt(2), 1/np.sqrt(2)]
+extraticks = [1/np.sqrt(2)]
+extraticklabels = [r'$\frac{1}{\sqrt{2}}$']
+#print(plt.xticks())
+#print(plt.xticks()[1])
+#print(plt.xticks()[1] + extraticklabels)
+ax = plt.gca()
+#ax.set_xticks(list(plt.xticks()[0]) + extraticks)
+#ax.set_xticklabels(plt.xticks()[1])# + extraticklabels)
+plt.xticks(list(plt.xticks()[0]) + extraticks, list(plt.xticks()[0]) + extraticklabels)
+plt.semilogy(xvals, yvals, linestyle='dashed', c='0.7')
+plt.ylim(1e-7, 1)
+plt.xlim(0, 10)
 plt.xlabel(r'$\alpha$')
 plt.ylabel('Asymptotic hazard rate')
 mean_label = r'$\mu$ = %i' % mu
 plt.annotate(mean_label, (0.8, 0.9), xycoords = 'axes fraction', fontsize = 12)
+plt.tight_layout()
 plt.savefig('BPT_asymptotic_hazard_function.png')
 
 # Now plot CDF
