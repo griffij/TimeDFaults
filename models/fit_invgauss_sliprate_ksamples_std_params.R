@@ -23,23 +23,27 @@ setwd('.')
 datafile = '../data/chronologies/Dunstan_10_chronologies.csv'
 data = read.csv(datafile, header=FALSE)#, delimiter=',')
 print(data)
-datalist = data
+# reverse order
+#datalist = data[,order(ncol(data):1)]
+datalist = data*-1 # Make ages positive for years before present
+print(datalist)
+#datalist = data
 # Dunstan - Use NA as placeholder for open intervals
 #data1 = cbind(NA, 13600, 15100, 16700, 23000, NA)
 #data2 = cbind(NA, 13200, 15000, 17500, 24000, NA)
 #datalist = list(data1, data2)
-throws = cbind(15, 18, 20, 30) # Vertical offsets in meters
-V_sigma = cbind(1, 2, 2.5, 3) # Uncertainty on throw (metres)
+throws = cbind(28, 13, 7)#, 3)# Vertical offsets in meters  
+V_sigma = cbind(2, 2, 2)#, 1) # Uncertainty on throw (metres)
 V_tau = 1/(V_sigma**2)[1,]
-slip_times = cbind(50000, 90000, 130000, 150000)#, 55000, 1000000) 
-T_sigma = cbind(2500, 5000, 6000, 7000)
+slip_times = cbind(340000, 200000, 100000)#, 31000)
+T_sigma = cbind(20000, 10000, 10000)#, 2500)
 T_tau = 1/(T_sigma**2)[1,]
 isSlipCensored = (slip_times < 0)
 isSlipCensored = as.numeric(isSlipCensored)
 print(isSlipCensored)
 print(nrow(datalist))
 # Name of figure file 
-pdf('invgauss_fit_sliprate_std_param.pdf')
+pdf('plots/invgauss_fit_sliprate_std_param.pdf')
 
 # Initialise list for storing each MCMC object
 mcmclist = vector("list", 3*length(datalist))
@@ -53,19 +57,21 @@ for (i in 1:nrow(datalist)){
     print(length(datalist)-1)
     sl = (length(data) - 1)[1]
     print(sl)
-    censorLimitVec = cbind(abs(data[2]), 1, 1, 1, 50000-abs(data[sl]))
+##    censorLimitVec = cbind(abs(data[2]), 1, 1, 1, 50000-abs(data[sl]))
+    # Most recent event in year before present defines minimum length of
+    # present open interval
+    MRE = abs(data[sl])
+    print('MRE')
+    print(MRE)
+    censorLimitVec = cbind(50000-abs(data[2]), 1, 1, 1, MRE)
     # Convert data to inter-event times
     m = data.matrix(data)
     inter_event_m = t(diff(t(m))) # Transpose, take difference and transpose back
     isCensored = (inter_event_m < 0)
-#    print(isCensored)
     isCensored[1] = TRUE
     isCensored[length(isCensored)] = TRUE
-#    print(isCensored)
-#    print(censorLimitVec)
     Y = inter_event_m
     Y = Y[1,]
-#    print(Y)
     V = throws[1,]
     T = slip_times[1,]
     N <- length(Y)
@@ -78,21 +84,24 @@ for (i in 1:nrow(datalist)){
     print(T)
     print(V)
     censorLimitVec = as.numeric(censorLimitVec)
-#    print(censorLimitVec)
+    print('censorLimitVec')
+    print(censorLimitVec)
+    print(isCensored)
+    print(isSlipCensored)
     # Lets deal with V and T as uncertain observations
     V_obs = V
     T_obs = T
     # Define data
-    sim.data.jags <- list("Y", "N"
+    sim.data.jags <- list("Y", "MRE", "N"
     		  ,"V_obs", "V_tau", "T_obs", "T_tau"
-    		  ,"M", "isSlipCensored",
+    		  ,"M", "isSlipCensored"
 		  ,"censorLimitVec", "isCensored"
 		  )
 
     # Define the parameters whose posterior distributions we want to calculate
     bayes.mod.params <- c("lambda", "mu", "alpha", "n_events"
-    		     ,"V", "T", "V_obs", "T_obs", "Y"
-		     )
+    		     ,"V", "T", "Y[1]", "y[1]", "Vinc", "Tinc", "future_event", "MRE"
+		     ) 
     lambdaInit = 1.0
     muInit = 1000 # Rough estimate of mean(Y)
 
@@ -174,7 +183,7 @@ ggplot(df_post, aes(x=mu, y=alpha)) +
 	     xlab(expression(mu)) +
 	     ylab(expression(alpha))
 dev.off()
-png(file='invgauss_fit_sliprate_std_param.png', units="in", width=5, height=5, res=300)
+png(file='plots/invgauss_fit_sliprate_std_param.png', units="in", width=5, height=5, res=300)
 # Estimate density value containing 95% of posterior ditribution
 df_param = data.frame(df_post$mu, df_post$alpha)
 kd <- ks::kde(df_param, compute.cont=TRUE)
