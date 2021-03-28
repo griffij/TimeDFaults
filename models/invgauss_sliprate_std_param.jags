@@ -35,38 +35,37 @@ model{
   zeros_j.mean[j] = -lt[j] + C
   # Now we use the additive property of the inverse Gaussian distribution
   # for i in (1,2,...n), Sum(X_i) = IG(n*mu, n^2*lambda)
-  n_events[j] = dround((Vinc[j]/throw_per_event), 0)
-  ut1[j] = pow((pow(n_events[j],2)*lambda/Tinc[j]), 1/2)*(Tinc[j]/(n_events[j]*mu) - 1)
-  ut2[j] = -1*pow((pow(n_events[j],2)*lambda/Tinc[j]), 1/2)*(Tinc[j]/(n_events[j]*mu) + 1)
+  n_events[j] = dround((V[j]/throw_per_event), 0)
+  ut1[j] = pow((pow(n_events[j],2)*lambda/T[j]), 1/2)*(T[j]/(n_events[j]*mu) - 1)
+  ut2[j] = -1*pow((pow(n_events[j],2)*lambda/T[j]), 1/2)*(T[j]/(n_events[j]*mu) + 1)
   cdft[j] = pnorm(ut1[j], 0, 1) + exp((2*pow(n_events[j], 2)*lambda)/(n_events[j]*mu))*pnorm(ut2[j], 0, 1)
   # log-likelihood - censored form is kept although we aren't using this at present
   lt[j] = ifelse(isSlipCensored[j],
   	log(1-cdft[j]),
-	0.5*(log(pow(n_events[j], 2)*lambda) - log(2*3.1416) - 3*log(Tinc[j])) -
-	0.5*pow(n_events[j], 2)*lambda*pow((Tinc[j]-n_events[j]*mu), 2)/(pow((n_events[j]*mu), 2)*Tinc[j])
+	0.5*(log(pow(n_events[j], 2)*lambda) - log(2*3.1416) - 3*log(T[j])) -
+	0.5*pow(n_events[j], 2)*lambda*pow((T[j]-n_events[j]*mu), 2)/(pow((n_events[j]*mu), 2)*T[j])
 	)
   # Implement error models on T (Age of surface) and V (Vertical offset)
-#  V_obs[j] ~ dnorm(V[j], V_tau[j])T(0,) # Observed offset
-#  T_obs[j] ~ dnorm(T[j], T_tau[j])T(0,) # Observed age of offset surface
   V[j] ~ dunif(0, 50)  #'True' offset value
   T[j] ~ dunif(0, 500000)  #'True' age value
-
+#  V_inc[j] ~ dnorm(V[j], V_tau[j]) # Observed offset
+#  T_inc[j] ~ dnorm(T[j], T_tau[j]) # Observed age of offset surface    
   }
 
 # Implement error models on T (Age of surface) and V (Vertical offset) 
 # and ensure monotonically increasing offset and ages
-V_obs[1] ~ dnorm(V[1], V_tau[1])T(0,)
-T_obs[1] ~ dnorm(T[1], T_tau[1])T(0,) 
-for (j in 2:M){
-    V_obs[j] ~ dnorm(V[j], V_tau[j])T(0,V_obs[j-1]-1e-10)		
-    T_obs[j] ~ dnorm(T[j], T_tau[j])T(0,T_obs[j-1]-1e-10)
-    }
 # Incremental values, what we want to model  
-Vinc[M] = V_obs[M]
-Tinc[M] = T_obs[M]
-for (j in 1:(M-1)){
-    Vinc[j] = V_obs[j] - V_obs[(j+1)]
-    Tinc[j] = T_obs[j] - T_obs[(j+1)]
+V_obs[1] ~ dnorm(V_sum[1], V_tau[1])T(0,)
+T_obs[1] ~ dnorm(T_sum[1], T_tau[1])T(0,)
+for (j in 2:M){
+    V_obs[j] ~ dnorm(V_sum[j], V_tau[j])T(0,V_sum[j-1]-1e-8)
+    T_obs[j] ~ dnorm(T_sum[j], T_tau[j])T(0,T_sum[j-1]-1e-8)
+    }
+V_sum[M] = V[M]
+T_sum[M] = T[M]
+for (j in c(2,1)){
+    V_sum[j] ~ dsum(V[j], V_sum[j+1])
+    T_sum[j] ~ dsum(T[j], T_sum[j+1])
     }
 
 # Lets track alpha as well
@@ -75,8 +74,8 @@ alpha = pow((mu/lambda), 1/2)
 lambda ~ dunif(0, 100000)
 #lambda ~ dnorm(15000, 1e-8)T(0,)
 mu ~ dunif(0, 150000)
-throw_per_event ~ dnorm(2.5, 8)T(0,) # Estimate of throw per event from trench data
-#throw_per_event ~ dlnorm(2, 1) # Try lognormal
+#throw_per_event ~ dnorm(1., 8)T(0,) # Estimate of throw per event from trench data
+throw_per_event ~ dlnorm(0, 1/0.01) #(1, 1/0.707) Try lognormal
 # Future event
-future_event = MRE - (1-cdf[1])
+future_event = MRE - (1-cdf[M])
 }
