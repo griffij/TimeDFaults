@@ -33,10 +33,14 @@ print(datalist)
 #data2 = cbind(NA, 13200, 15000, 17500, 24000, NA)
 #datalist = list(data1, data2)
 throws = cbind(28, 13, 7)#, 3)# Vertical offsets in meters  
+#throws = cbind(7, 13, 28)
+#V_sigma = cbind(2, 2, 2)
 V_sigma = cbind(2, 2, 2)#, 1) # Uncertainty on throw (metres)
 V_tau = 1/(V_sigma**2)[1,]
 slip_times = cbind(340000, 200000, 100000)#, 31000)
 T_sigma = cbind(20000, 10000, 10000)#, 2500)
+#slip_times = cbind(100000, 200000, 340000)
+#T_sigma = cbind(10000, 10000, 20000)
 T_tau = 1/(T_sigma**2)[1,]
 isSlipCensored = (slip_times < 0)
 isSlipCensored = as.numeric(isSlipCensored)
@@ -66,12 +70,15 @@ for (i in 1:nrow(datalist)){
     censorLimitVec = cbind(50000-abs(data[2]), 1, 1, 1, MRE)
     # Convert data to inter-event times
     m = data.matrix(data)
-    inter_event_m = t(diff(t(m))) # Transpose, take difference and transpose back
+    inter_event_m = t(abs(diff(t(m)))) # Transpose, take difference and transpose back
     isCensored = (inter_event_m < 0)
     isCensored[1] = TRUE
     isCensored[length(isCensored)] = TRUE
     Y = inter_event_m
+    print("Y")
+    print(Y)
     Y = Y[1,]
+    print(Y)
     V = throws[1,]
     T = slip_times[1,]
     N <- length(Y)
@@ -100,7 +107,7 @@ for (i in 1:nrow(datalist)){
 
     # Define the parameters whose posterior distributions we want to calculate
     bayes.mod.params <- c("lambda", "mu", "alpha", "n_events"
-    		     ,"V", "T", "Y[1]", "y[1]", "Vinc", "Tinc", "future_event", "MRE"
+    		     ,"V", "T", "Y[1]", "y[1]", "V_sum", "T_sum", "V_obs", "T_obs","future_event", "MRE"
 		     ) 
     lambdaInit = 1.0
     muInit = 1000 # Rough estimate of mean(Y)
