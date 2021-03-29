@@ -45,27 +45,32 @@ model{
 	0.5*(log(pow(n_events[j], 2)*lambda) - log(2*3.1416) - 3*log(T[j])) -
 	0.5*pow(n_events[j], 2)*lambda*pow((T[j]-n_events[j]*mu), 2)/(pow((n_events[j]*mu), 2)*T[j])
 	)
-  # Implement error models on T (Age of surface) and V (Vertical offset)
+  # Uninformative priors for V and T
   V[j] ~ dunif(0, 50)  #'True' offset value
   T[j] ~ dunif(0, 500000)  #'True' age value
-#  V_inc[j] ~ dnorm(V[j], V_tau[j]) # Observed offset
-#  T_inc[j] ~ dnorm(T[j], T_tau[j]) # Observed age of offset surface    
   }
 
 # Implement error models on T (Age of surface) and V (Vertical offset) 
 # and ensure monotonically increasing offset and ages
-# Incremental values, what we want to model  
+# Then get the incremental values (V[i], T[i]), what we want to model
+# Here V_sum[i] is the 'true' value of the observed cumulative
+# offset V_obs[i]. Cumulative offset samples are constrained to
+# be monotonically increasing by truncation at upper level
+# Note 1 is largest and oldest offset, M is smallest.
 V_obs[1] ~ dnorm(V_sum[1], V_tau[1])T(0,)
 T_obs[1] ~ dnorm(T_sum[1], T_tau[1])T(0,)
 for (j in 2:M){
     V_obs[j] ~ dnorm(V_sum[j], V_tau[j])T(0,V_sum[j-1]-1e-8)
     T_obs[j] ~ dnorm(T_sum[j], T_tau[j])T(0,T_sum[j-1]-1e-8)
     }
+#V_sum is the sum of incremental offsets    
 V_sum[M] = V[M]
 T_sum[M] = T[M]
-for (j in c(2,1)){
-    V_sum[j] ~ dsum(V[j], V_sum[j+1])
-    T_sum[j] ~ dsum(T[j], T_sum[j+1])
+#for (j in c(2,1)){
+for (j in 1:(M-1)){
+    # We want to index in reverse order, i.e. M-j
+    V_sum[M-j] ~ dsum(V[M-j], V_sum[M-j+1])
+    T_sum[M-j] ~ dsum(T[M-j], T_sum[M-j+1])
     }
 
 # Lets track alpha as well
@@ -76,6 +81,17 @@ lambda ~ dunif(0, 100000)
 mu ~ dunif(0, 150000)
 #throw_per_event ~ dnorm(1., 8)T(0,) # Estimate of throw per event from trench data
 throw_per_event ~ dlnorm(0, 1/0.01) #(1, 1/0.707) Try lognormal
-# Future event
-future_event = MRE - (1-cdf[M])
+# Calculate conditional probabilities of future event within a certain time frame
+for (t in hf_times){
+#    t_future = 1000 # Probability over next 1000 years
+     u1_f[t] = pow((lambda/(t + Y[N])), 1/2) * ((t+Y[N])/mu - 1)
+     u2_f[t] = -1*pow((lambda/(t + Y[N])), 1/2)*((t + Y[N])/mu + 1)
+     cdf_f[t] = pnorm(u1_f[t], 0, 1) + exp((2*lambda)/mu)*pnorm(u2_f[t], 0, 1) 
+     future_event_prob[t] = (cdf_f[t] - cdf[N]) / (1 - cdf[N])
+     # Hazard function - first calculate pdf
+     li_f[t] = 0.5*(log(lambda) - log(2*3.1416) - 3*log(t)) -
+     	  0.5*lambda*pow((t - mu), 2)/(pow(mu, 2)*t)
+     pdf_f[t] = exp(li_f[t])
+     hf[t] = pdf_f[t] / (1 - cdf_f[t])
+     }
 }
