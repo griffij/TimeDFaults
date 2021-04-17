@@ -15,7 +15,7 @@ x0 = 0 # Value immediatly after failure
 xf = 1 # Failure threshold value
 delta = xf-x0
 mu = 0 # Mean value of normally distributed white noise, set to zero
-var = 1/2. # Perturbation rate parameter for Brownian oscillator, variance of
+var = 1.05 # Perturbation rate parameter for Brownian oscillator, variance of
       	   # normal distribution
 sigma = sqrt(var) # Standard deviation
 lambda = 1 # Mean loading rate (i.e. simulates constant tectonic loading)

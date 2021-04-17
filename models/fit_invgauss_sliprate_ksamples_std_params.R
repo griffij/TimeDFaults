@@ -47,7 +47,7 @@ isSlipCensored = as.numeric(isSlipCensored)
 print(isSlipCensored)
 print(nrow(datalist))
 # Times for evaluating hazard function
-hf_times = seq(from = 1, to = 20000, by = 1000)
+hf_times = seq(from = 1, to = 20000, by = 4000)
 
 # Name of figure file 
 pdf('plots/invgauss_fit_sliprate_std_param.pdf')
@@ -110,7 +110,7 @@ for (i in 1:nrow(datalist)){
 		  )
 
     # Define the parameters whose posterior distributions we want to calculate
-    bayes.mod.params <- c("lambda", "mu", "alpha", "n_events", "hf"
+    bayes.mod.params <- c("lambda", "mu", "alpha", "n_events", "hf", "hf_times"
     		     ,"V", "T", "Y", "y[1]", "V_sum", "T_sum", "V_obs", "T_obs","future_event_prob", "MRE"
 		     ) 
     lambdaInit = 1.0
@@ -126,7 +126,7 @@ for (i in 1:nrow(datalist)){
     # The model
     bayes.mod.fit <- jags(data = sim.data.jags, inits = bayes.mod.inits,
     	      parameters.to.save = bayes.mod.params, n.chains = 3,
-	      n.iter = 10000, n.burnin = 1000, model.file = 'invgauss_sliprate_std_param.jags')
+	      n.iter = 1500, n.burnin = 1000, model.file = 'invgauss_sliprate_std_param.jags')
 	      
     print(bayes.mod.fit)
 #    plot(bayes.mod.fit)
@@ -193,7 +193,15 @@ ggplot(df_post, aes(x=mu, y=alpha)) +
 	     stat_density_2d(aes(fill = ..level..), geom = "polygon") +
 	     xlab(expression(mu)) +
 	     ylab(expression(alpha))
+#print(df_post$hf)
+#pl = plot(1, df_post$hf[1])
+#for (t in hf_times){
+#    ggplot(df_post, aes(x=t, y=hf[t])) +
+#    geom_line(aes(x=x, y=y), data=df_post$hf[t])
+#    }
 dev.off()
+# Dump data to file
+write.csv(df_post, 'outputs/df_posterior.csv', row.names=FALSE)
 png(file='plots/invgauss_fit_sliprate_std_param.png', units="in", width=5, height=5, res=300)
 # Estimate density value containing 95% of posterior ditribution
 df_param = data.frame(df_post$mu, df_post$alpha)

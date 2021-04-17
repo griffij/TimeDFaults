@@ -44,7 +44,7 @@ ggplot(df, aes(xvals, yvals)) +
 
 # Now calculate hazard function directly from posterior
 # Probably more efficient to do this way
-hf_times = seq(1, 20000, 1000)
+hf_times = seq(1, 30000, 500)
 u1_f = matrix(, nrow = length(df_post[,c(str1)]), ncol=length(hf_times))
 u2_f = matrix(, nrow = length(df_post[,c(str1)]), ncol=length(hf_times))    
 cdf_f = matrix(, nrow = length(df_post[,c(str1)]), ncol=length(hf_times))    
@@ -52,14 +52,14 @@ li_f = matrix(, nrow = length(df_post[,c(str1)]), ncol=length(hf_times))
 pdf_f = matrix(, nrow = length(df_post[,c(str1)]), ncol=length(hf_times))    
 hf = matrix(, nrow = length(df_post[,c(str1)]), ncol=length(hf_times))    
 
-for (t in length(hf_times)){
+for (t in 1:length(hf_times)){
     print(t[1])
-    u1_f[,t] = (df_post$lambda/(t + df_post$Y.5.)^(1/2)) * ((t+df_post$Y.5.)/df_post$mu - 1)  
-    u2_f[,t] = -1*(df_post$lambda/(t + df_post$Y.5.)^(1/2))*((t + df_post$Y.5.)/df_post$mu + 1)  
+    u1_f[,t] = ((df_post$lambda/(hf_times[t] + df_post$Y.5.))^(1/2)) * ((hf_times[t]+df_post$Y.5.)/df_post$mu - 1)  
+    u2_f[,t] = -1*((df_post$lambda/(hf_times[t] + df_post$Y.5.))^(1/2))*((hf_times[t] + df_post$Y.5.)/df_post$mu + 1)  
     cdf_f[,t] = pnorm(u1_f[,t], 0, 1) + exp((2*df_post$lambda)/df_post$mu)*pnorm(u2_f[,t], 0, 1)  
     # Hazard function - first calculate pdf
-    li_f[,t] = 0.5*(log(df_post$lambda) - log(2*3.1416) - 3*log(t)) -
-    	    0.5*df_post$lambda*((t - df_post$mu)^2)/((df_post$mu^2)*t)
+    li_f[,t] = 0.5*(log(df_post$lambda) - log(2*3.1416) - 3*log(hf_times[t])) -
+    	    0.5*df_post$lambda*((hf_times[t] - df_post$mu)^2)/((df_post$mu^2)*hf_times[t])
     pdf_f[,t] = exp(li_f[,t])
     hf[,t] = pdf_f[,t] / (1 - cdf_f[,t])
     if (t==1){
@@ -72,6 +72,7 @@ for (t in length(hf_times)){
     }
 df = data.frame(xvals, yvals)
 ggplot(df, aes(xvals, yvals)) +
-	   geom_point()
+	   stat_density_2d(aes(fill = ..level..), geom = "polygon")
+
 
 dev.off()
