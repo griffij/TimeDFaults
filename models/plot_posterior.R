@@ -107,7 +107,9 @@ for (i in 1:5){
 # Now redo but calculate hazard function for next 500 years, ie
 # taking into account uncertainty on the time of the most recent event,
 # and hence length of the current open interval
-hf_times = seq(0, 5000, 100) # These will be added to length of current open interval
+conditional_time = 500
+conditional_step = 10
+hf_times = seq(0, conditional_time, conditional_step) # These will be added to length of current open interval
 cdf_f = matrix(, nrow = length(df_post[,c(str1)]), ncol=length(hf_times))    
 li_f = matrix(, nrow = length(df_post[,c(str1)]), ncol=length(hf_times))    
 pdf_f = matrix(, nrow = length(df_post[,c(str1)]), ncol=length(hf_times))    
@@ -153,6 +155,16 @@ for (i in 1:5){
     lines(xval_percentiles[i,], yval_percentiles[i,], lty=linestyles[i])
        }
     }
+
+# Now calculate conditional probability
+# Based on Rhoades et al 1994
+# Approximate integration by summation
+# Initially just use median
+hf_int = sum(yval_percentiles[3,])*conditional_step
+print(hf_int)
+conditional_prob = 1 - exp(-1*hf_int)
+print('Conditional probability')
+print(conditional_prob)
 
 #ggplot(df2, aes(xval_percentiles, yval_percentiles)) +
 #	   geom_point()   
