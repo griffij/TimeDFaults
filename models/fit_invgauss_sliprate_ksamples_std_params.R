@@ -8,6 +8,7 @@ library(R2jags)
 library(runjags)
 library(bayesplot)
 library(ggplot2)
+library(rlist)
 library(RColorBrewer)
 library(coda)
 library(lattice)
@@ -22,23 +23,24 @@ setwd('.')
 # Real data
 
 datafile = '../data/chronologies/Dunstan4event_100_chronologies.csv'
-datafiles = c('../data/chronologies/Dunstan4event_100_chronologies.csv',
-	  '../data/chronologies/Dunstan5event_100_chronologies.csv',
-	  '../data/chronologies/Dunstan6event_100_chronologies.csv')	  
+datafiles = c('../data/chronologies/Dunstan4event_10_chronologies.csv',
+	  '../data/chronologies/Dunstan5event_10_chronologies.csv',
+	  '../data/chronologies/Dunstan6event_10_chronologies.csv')	  
 print(datafiles)
-for (i in nrow(datafiles)){
+for (i in 1:length(datafiles)){
+    print(i)
     data = read.csv(datafiles[i], header=FALSE)#, delimiter=',')
     print(data)
     # reverse order
     #datalist = data[,order(ncol(data):1)]
     dl = data*-1 # Make ages positive for years before present
     if (i==1){
-       datalist = dl
+       datalists = list(dl)
        }else{
-       datalist = c(datalist, dl)
+       datalists = list.append(datalists, dl)
        }
-    print(datalist)
     }
+print(datalists)
 #datalist = data
 # Dunstan - Use NA as placeholder for open intervals
 #data1 = cbind(NA, 13600, 15100, 16700, 23000, NA)
@@ -57,7 +59,7 @@ T_tau = 1/(T_sigma**2)[1,]
 isSlipCensored = (slip_times < 0)
 isSlipCensored = as.numeric(isSlipCensored)
 print(isSlipCensored)
-print(nrow(datalist))
+print(ncol(datalists))
 # Times for evaluating hazard function
 #hf_times = seq(from = 1, to = 20000, by = 4000)
 
@@ -66,6 +68,7 @@ pdf('plots/invgauss_fit_sliprate_std_param.pdf')
 
 # Initialise list for storing each MCMC object
 mcmclist = vector("list", 3*length(datalist))
+for (datalist in datalists){
 for (i in 1:nrow(datalist)){
     data = list(cbind(NA, datalist[i,], NA))#[1,]
     data = data[[1]]
@@ -82,7 +85,12 @@ for (i in 1:nrow(datalist)){
     MRE = abs(data[sl])
     print('MRE')
     print(MRE)
-    censorLimitVec = cbind(50000-abs(data[2]), 1, 1, 1, MRE)
+    censorLimitVec = rep(1,length(Y)+1)
+    censorLimitVec[1] = 50000-abs(data[2])
+    censorLimitVec[length(censorLimitVec)] = MRE
+    print("censorLimitVec")      
+    print(censorLimitVec)
+#    censorLimitVec = cbind(50000-abs(data[2]), 1, 1, 1, MRE) # Hard coded old version
     # Convert data to inter-event times
     m = data.matrix(data)
     inter_event_m = t(abs(diff(t(m)))) # Transpose, take difference and transpose back
@@ -100,6 +108,9 @@ for (i in 1:nrow(datalist)){
     M = length(V)
     isCensored = as.numeric(isCensored)
     Y[1] = censorLimitVec[1]
+    print(length(Y))
+    print("censorLimitVec[length(Y)]")
+    print(censorLimitVec[length(Y)])
     Y[length(Y)] = censorLimitVec[length(Y)]
     print(Y)
     print('T')
@@ -163,6 +174,8 @@ for (i in 1:nrow(datalist)){
 #    #Auto-correlation plot
 #    autocorr.plot(bayes.mod.fit.mcmc)
     }
+}
+
 #print(mcmclist)
 # Convert all MCMC models into one MCMC object
 
