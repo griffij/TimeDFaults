@@ -8,6 +8,7 @@ library(R2jags)
 library(runjags)
 library(bayesplot)
 library(ggplot2)
+library(RColorBrewer)
 library(coda)
 library(lattice)
 library(ks)
@@ -209,14 +210,14 @@ kd <- ks::kde(df_param, compute.cont=TRUE)
 contour_95 =with(kd, contourLines(x=eval.points[[1]], y=eval.points[[2]], 
 	   z=estimate, levels=cont["5%"])[[1]])
 contour_95 = data.frame(contour_95)
-contour_65 =with(kd, contourLines(x=eval.points[[1]], y=eval.points[[2]],
-	   z=estimate, levels=cont["35%"])[[1]])
-contour_65 = data.frame(contour_65)   
+contour_68 =with(kd, contourLines(x=eval.points[[1]], y=eval.points[[2]],
+	   z=estimate, levels=cont["32%"])[[1]])
+contour_68 = data.frame(contour_68)   
 ggplot(df_post, aes(x=mu, y=alpha)) +
 		stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE) +
 		geom_path(aes(x=x, y=y), data=contour_95) +
-		geom_path(aes(x=x, y=y), data=contour_65) +
-		scale_fill_distiller(direction=1) +
+		geom_path(aes(x=x, y=y), data=contour_68) +
+		scale_fill_distiller(palette="Greys", direction=1) +
 		labs(colour = "Density") +
 		xlab(expression(mu)) +
 		ylab(expression(alpha)) +
