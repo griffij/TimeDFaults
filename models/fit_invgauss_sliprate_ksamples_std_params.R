@@ -21,7 +21,7 @@ setwd('.')
 ###########
 # Real data
 
-datafile = '../data/chronologies/Dunstan4event_100_chronologies.txt'
+datafile = '../data/chronologies/Dunstan4event_100_chronologies.csv'
 data = read.csv(datafile, header=FALSE)#, delimiter=',')
 print(data)
 # reverse order
