@@ -3,6 +3,9 @@
 # chronology individually, and then combine all chains into single MCMC object
 # to calculate final statistics
 
+# Clear any previously stored variables
+rm(list = ls())
+
 #library(ggsci)
 library(R2jags)
 library(runjags)
@@ -67,7 +70,7 @@ print(ncol(datalists))
 pdf('plots/invgauss_fit_sliprate_std_param.pdf')
 
 # Initialise list for storing each MCMC object
-mcmclist = vector("list", 3*length(datalist))
+mcmclist = vector("list", 3*length(datalists[1])) # Check this causes no problems
 for (datalist in datalists){
 for (i in 1:nrow(datalist)){
     data = list(cbind(NA, datalist[i,], NA))#[1,]
@@ -85,7 +88,8 @@ for (i in 1:nrow(datalist)){
     MRE = abs(data[sl])
     print('MRE')
     print(MRE)
-    censorLimitVec = rep(1,length(Y)+1)
+    print(length(data))
+    censorLimitVec = rep(1,length(data)-1)
     censorLimitVec[1] = 50000-abs(data[2])
     censorLimitVec[length(censorLimitVec)] = MRE
     print("censorLimitVec")      
