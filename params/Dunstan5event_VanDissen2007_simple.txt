@@ -1,0 +1,7 @@
+filename = '../data/inputs/Dunstan5event_VanDissen2007_simple.txt'
+chron_type = 'Age2Sigma'
+sigma_level = 2
+event_order = 'Backwards'
+tectonic_region = 'Near_plate_boundary'
+faulting_style = 'Reverse'
+slip_rate_mean_lower_upper = [0.2,0.05,0.5]
