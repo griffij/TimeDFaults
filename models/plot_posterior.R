@@ -167,7 +167,7 @@ for (i in 1:5){
     conditional_prob = 1 - exp(-1*hf_int)
     print('Conditional probability, percentile')
     print(conditional_prob, percentiles[i])
-
+    }
 
 #ggplot(df2, aes(xval_percentiles, yval_percentiles)) +
 #	   geom_point()   
