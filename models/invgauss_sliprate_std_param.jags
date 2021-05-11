@@ -82,16 +82,16 @@ mu ~ dunif(0, 150000)
 #throw_per_event ~ dnorm(1., 8)T(0,) # Estimate of throw per event from trench data
 throw_per_event ~ dlnorm(0, 1/0.01) #(1, 1/0.707) Try lognormal
 # Calculate conditional probabilities of future event within a certain time frame
-for (t in hf_times){
+#for (t in hf_times){
 #    t_future = 1000 # Probability over next 1000 years
-     u1_f[t] = pow((lambda/(t + Y[N])), 1/2) * ((t+Y[N])/mu - 1)
-     u2_f[t] = -1*pow((lambda/(t + Y[N])), 1/2)*((t + Y[N])/mu + 1)
-     cdf_f[t] = pnorm(u1_f[t], 0, 1) + exp((2*lambda)/mu)*pnorm(u2_f[t], 0, 1) 
-     future_event_prob[t] = (cdf_f[t] - cdf[N]) / (1 - cdf[N])
-     # Hazard function - first calculate pdf
-     li_f[t] = 0.5*(log(lambda) - log(2*3.1416) - 3*log(t)) -
-     	  0.5*lambda*pow((t - mu), 2)/(pow(mu, 2)*t)
-     pdf_f[t] = exp(li_f[t])
-     hf[t] = pdf_f[t] / (1 - cdf_f[t])
-     }
+#     u1_f[t] = pow((lambda/(t + Y[N])), 1/2) * ((t+Y[N])/mu - 1)
+#     u2_f[t] = -1*pow((lambda/(t + Y[N])), 1/2)*((t + Y[N])/mu + 1)
+#     cdf_f[t] = pnorm(u1_f[t], 0, 1) + exp((2*lambda)/mu)*pnorm(u2_f[t], 0, 1) 
+#     future_event_prob[t] = (cdf_f[t] - cdf[N]) / (1 - cdf[N])
+#     # Hazard function - first calculate pdf
+#     li_f[t] = 0.5*(log(lambda) - log(2*3.1416) - 3*log(t)) -
+#     	  0.5*lambda*pow((t - mu), 2)/(pow(mu, 2)*t)
+#     pdf_f[t] = exp(li_f[t])
+#     hf[t] = pdf_f[t] / (1 - cdf_f[t])
+#     }
 }

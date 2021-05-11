@@ -47,7 +47,7 @@ isSlipCensored = as.numeric(isSlipCensored)
 print(isSlipCensored)
 print(nrow(datalist))
 # Times for evaluating hazard function
-hf_times = seq(from = 1, to = 20000, by = 4000)
+#hf_times = seq(from = 1, to = 20000, by = 4000)
 
 # Name of figure file 
 pdf('plots/invgauss_fit_sliprate_std_param.pdf')
@@ -105,13 +105,13 @@ for (i in 1:nrow(datalist)){
     sim.data.jags <- list("Y", "N"
     		  ,"V_obs", "V_tau", "T_obs", "T_tau"
     		  ,"M", "isSlipCensored"
-		  ,"censorLimitVec", "isCensored",
-		  "hf_times"
+		  ,"censorLimitVec", "isCensored"
+#		  "hf_times"
 		  )
 
     # Define the parameters whose posterior distributions we want to calculate
-    bayes.mod.params <- c("lambda", "mu", "alpha", "n_events", "hf", "hf_times"
-    		     ,"V", "T", "Y", "y[1]", "V_sum", "T_sum", "V_obs", "T_obs","future_event_prob", "MRE"
+    bayes.mod.params <- c("lambda", "mu", "alpha", "n_events"
+    		     ,"V", "T", "Y", "y[1]", "V_sum", "T_sum", "V_obs", "T_obs"
 		     ) 
     lambdaInit = 1.0
     muInit = 1000 # Rough estimate of mean(Y)

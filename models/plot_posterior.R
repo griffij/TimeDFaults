@@ -109,6 +109,7 @@ for (i in 1:5){
 # and hence length of the current open interval
 conditional_time = 500
 conditional_step = 10
+percentiles = c(0.025, 0.26, 0.5, 0.84, 0.975)
 hf_times = seq(0, conditional_time, conditional_step) # These will be added to length of current open interval
 cdf_f = matrix(, nrow = length(df_post[,c(str1)]), ncol=length(hf_times))    
 li_f = matrix(, nrow = length(df_post[,c(str1)]), ncol=length(hf_times))    
@@ -128,7 +129,7 @@ for (t in 1:length(hf_times)){
        yvals = hf[,t]
        # Get percentiles
        xval_percentiles = rep(hf_times[t], 5)
-       yval_percentiles = quantile(hf[,t], probs = c(0.025, 0.26, 0.5, 0.84, 0.975))
+       yval_percentiles = quantile(hf[,t], probs = percentiles)
        }else{
        xvals = c(xvals, rep(hf_times[t], length(hf[,t])))
        yvals = c(yvals, hf[,t])
@@ -160,11 +161,13 @@ for (i in 1:5){
 # Based on Rhoades et al 1994
 # Approximate integration by summation
 # Initially just use median
-hf_int = sum(yval_percentiles[3,])*conditional_step
-print(hf_int)
-conditional_prob = 1 - exp(-1*hf_int)
-print('Conditional probability')
-print(conditional_prob)
+for (i in 1:5){
+    hf_int = sum(yval_percentiles[i,])*conditional_step
+    print(hf_int)
+    conditional_prob = 1 - exp(-1*hf_int)
+    print('Conditional probability, percentile')
+    print(conditional_prob, percentiles[i])
+
 
 #ggplot(df2, aes(xval_percentiles, yval_percentiles)) +
 #	   geom_point()   
