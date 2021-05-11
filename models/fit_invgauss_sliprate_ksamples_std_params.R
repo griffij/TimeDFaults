@@ -22,12 +22,23 @@ setwd('.')
 # Real data
 
 datafile = '../data/chronologies/Dunstan4event_100_chronologies.csv'
-data = read.csv(datafile, header=FALSE)#, delimiter=',')
-print(data)
-# reverse order
-#datalist = data[,order(ncol(data):1)]
-datalist = data*-1 # Make ages positive for years before present
-print(datalist)
+datafiles = c('../data/chronologies/Dunstan4event_100_chronologies.csv',
+	  '../data/chronologies/Dunstan5event_100_chronologies.csv',
+	  '../data/chronologies/Dunstan6event_100_chronologies.csv')	  
+print(datafiles)
+for (i in nrow(datafiles)){
+    data = read.csv(datafiles[i], header=FALSE)#, delimiter=',')
+    print(data)
+    # reverse order
+    #datalist = data[,order(ncol(data):1)]
+    dl = data*-1 # Make ages positive for years before present
+    if (i==1){
+       datalist = dl
+       }else{
+       datalist = c(datalist, dl)
+       }
+    print(datalist)
+    }
 #datalist = data
 # Dunstan - Use NA as placeholder for open intervals
 #data1 = cbind(NA, 13600, 15100, 16700, 23000, NA)
