@@ -63,22 +63,7 @@ isSlipCensored = (slip_times < 0)
 isSlipCensored = as.numeric(isSlipCensored)
 print(isSlipCensored)
 print(ncol(datalists))
-# Times for evaluating hazard function
-#hf_times = seq(from = 1, to = 20000, by = 4000)
 
-# Name of figure file 
-#pdf('plots/invgauss_fit_sliprate_std_param.pdf')
-
-# Initialise list for storing each MCMC object
-#mcmclist = vector("list", 3*length(datalists[1])*length(datalists)) # Check this causes no problems,
-#index=1
-# assumes length same for all datafiles
-#for (datalist in datalists){
-# Initialise list for storing each MCMC object
-#mcmclist = vector("list", 3*length(datalist)
-# Initialise list for storing parameters
-#mu_list = vector("list", length(datalists))
-#alpha_list = vector("list", length(datalists))
 j=1
 for (datalist in datalists){
     print(datalist)
@@ -90,6 +75,7 @@ for (datalist in datalists){
     index = 1
     figure_filename = paste0('plots/invgauss_fit_sliprate_std_param_', j, '.pdf')
     pdf(figure_filename)
+
 for (i in 1:nrow(datalist)){
     data = list(cbind(NA, datalist[i,], NA))#[1,]
     data = data[[1]]
@@ -161,10 +147,6 @@ for (i in 1:nrow(datalist)){
     lambdaInit = 1.0
     muInit = 1000 # Rough estimate of mean(Y)
 
-#    print(isCensored)
-#    print(censorLimitVec)
-#    print(censorLimitVec[isCensored])
-
     # Define starting values
     bayes.mod.inits <- function(){list("mu"=muInit, "lambda"=lambdaInit)}
 
@@ -174,43 +156,23 @@ for (i in 1:nrow(datalist)){
 	      n.iter = 1500, n.burnin = 1000, model.file = 'invgauss_sliprate_std_param.jags')
 	      
     print(bayes.mod.fit)
-#    plot(bayes.mod.fit)
-#    traceplot(bayes.mod.fit)
 
     # Convert to an MCMC object
     bayes.mod.fit.mcmc <- as.mcmc(bayes.mod.fit)
-    # Density plot   
-#    densityplot(bayes.mod.fit.mcmc, layout=c(2,2), aspect="fill")
     # Add to list of all MCMC objects
-    print(typeof(bayes.mod.fit.mcmc)) # list
     # Get all three chains
     mcmclist[index] = bayes.mod.fit.mcmc[1]
     mcmclist[index+1] = bayes.mod.fit.mcmc[2]
     mcmclist[index+2] = bayes.mod.fit.mcmc[3]
     index = index+3
-#    mcmclist = cbind(mcmclist, bayes.mod.fit.mcmc)
     summary(bayes.mod.fit.mcmc)
-#    print(bayes.mod.fit.mcmc)
-#    # Some more plots - only plot summary plots now
-#    xyplot(bayes.mod.fit.mcmc, layout=c(2,2), aspect="fill")
-#
-#    #Auto-correlation plot
-#    autocorr.plot(bayes.mod.fit.mcmc)
     }
     
-
-#print(mcmclist)
 # Convert all MCMC models into one MCMC object
 bayes.mcmc.combined = as.mcmc.list(mcmclist) # Use this to plot all individual chains
 bayes.mcmc.combinedlist = as.mcmc.list(mcmclist)
-#bayes.mcmc.combined = combine.mcmc(mcmclist) # Use this to plot one combined density
-# Print summary from combined mcmc objects
-#bayes.mcmc.combined = unlist(bayes.mcmc.combined)
-#print(typeof(bayes.mcmc.combined))
-#print(bayes.mcmc.combined[,][,1])
-#print(bayes.mcmc.combined[1])
 summary(bayes.mcmc.combined) 
-#print(bayes.mcmc.combined)
+
 # Now plot combined results
 print(xyplot(bayes.mcmc.combined, layout=c(2,2), aspect="fill"))
 # Density plot
@@ -223,21 +185,15 @@ print(densityplot(bayes.mcmc.combined, layout=c(2,2), aspect="fill"))
 
 # Do some 2D plots
 posterior <- as.array(bayes.mcmc.combined)
-#print(posterior)
 dim(posterior)
-#color_scheme_set('gray')
 print(mcmc_scatter(posterior, pars = c("mu", "alpha"),
 			size = 1.5, alpha = 0.5))
 h = mcmc_hex(posterior, pars = c("mu", "alpha"))
-#h + plot_bg(fill = "gray95") + panel_bg(fill = "gray70")
-#h + stat_binhex(aes(colour = ..density.., fill = ..density..))
 h = h + geom_hex(aes_(color = ~ scales::rescale(..density..)))
 h + scale_color_gradientn("Density", colors = unlist(color_scheme_get()),
   breaks = c(.1, .9), labels = c("low", "high"))
 df_post = do.call(rbind.data.frame, bayes.mcmc.combinedlist)
 
-
-#print(df_post)
 print(ggplot(df_post, aes(x=mu, y=alpha)) +
 	     stat_density_2d(aes(fill = ..level..), geom = "polygon") +
 	     xlab(expression(mu)) +
@@ -248,7 +204,6 @@ filename = paste0('outputs/df_posterior_', j, '.csv')
 print(filename)
 write.csv(df_post, filename, row.names=FALSE)
 print(typeof(df_post$mu))
-#print(df_post$mu)
 if (j==1){
    mu_list = df_post$mu
    alpha_list = df_post$alpha
@@ -263,9 +218,6 @@ j = j+1
 
 png(file='plots/invgauss_fit_sliprate_std_param.png', units="in", width=5, height=5, res=300)
 # Estimate density value containing 95% of posterior ditribution
-#print(mu_list)
-#mu_list = unlist(mu_list)
-#alpha_list = unlist(alpha_list)
 df_param = data.frame(mu_list, alpha_list)
 #df_param = data.frame(df_post$mu, df_post$alpha)
 kd <- ks::kde(df_param, compute.cont=TRUE)
@@ -288,5 +240,5 @@ ggplot(df_param, aes(x=mu_list, y=alpha_list)) +
 #		theme(
 #    		legend.position='none'
 #  		)
-#pp + ggplot(geom_path(aes(x=x, y=y), data=contour_95))
+
 dev.off()
