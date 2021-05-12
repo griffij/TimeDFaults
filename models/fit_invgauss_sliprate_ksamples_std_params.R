@@ -1,4 +1,4 @@
-# Fit inverse Gaussian (BPT) distirbution to data for earthquake inter-event times
+# Fit inverse GausOAsian (BPT) distirbution to data for earthquake inter-event times
 # when sampling multiple chronologies. Fit each Monte Carlo sample of the earthquake
 # chronology individually, and then combine all chains into single MCMC object
 # to calculate final statistics
@@ -67,11 +67,29 @@ print(ncol(datalists))
 #hf_times = seq(from = 1, to = 20000, by = 4000)
 
 # Name of figure file 
-pdf('plots/invgauss_fit_sliprate_std_param.pdf')
+#pdf('plots/invgauss_fit_sliprate_std_param.pdf')
 
 # Initialise list for storing each MCMC object
-mcmclist = vector("list", 3*length(datalists[1])) # Check this causes no problems
+#mcmclist = vector("list", 3*length(datalists[1])*length(datalists)) # Check this causes no problems,
+#index=1
+# assumes length same for all datafiles
+#for (datalist in datalists){
+# Initialise list for storing each MCMC object
+#mcmclist = vector("list", 3*length(datalist)
+# Initialise list for storing parameters
+#mu_list = vector("list", length(datalists))
+#alpha_list = vector("list", length(datalists))
+j=1
 for (datalist in datalists){
+    print(datalist)
+    print(typeof((datalist)))
+    print(nrow(datalist))
+    print(nrow(datalist[1]))
+    # Initialise list for storing each MCMC object
+    mcmclist = vector("list", 3*length(datalist))
+    index = 1
+    figure_filename = paste0('plots/invgauss_fit_sliprate_std_param_', j, '.pdf')
+    pdf(figure_filename)
 for (i in 1:nrow(datalist)){
     data = list(cbind(NA, datalist[i,], NA))#[1,]
     data = data[[1]]
@@ -166,9 +184,10 @@ for (i in 1:nrow(datalist)){
     # Add to list of all MCMC objects
     print(typeof(bayes.mod.fit.mcmc)) # list
     # Get all three chains
-    mcmclist[3*i-2] = bayes.mod.fit.mcmc[1]
-    mcmclist[3*i-1] = bayes.mod.fit.mcmc[2]
-    mcmclist[3*i] = bayes.mod.fit.mcmc[3] 
+    mcmclist[index] = bayes.mod.fit.mcmc[1]
+    mcmclist[index+1] = bayes.mod.fit.mcmc[2]
+    mcmclist[index+2] = bayes.mod.fit.mcmc[3]
+    index = index+3
 #    mcmclist = cbind(mcmclist, bayes.mod.fit.mcmc)
     summary(bayes.mod.fit.mcmc)
 #    print(bayes.mod.fit.mcmc)
@@ -178,11 +197,10 @@ for (i in 1:nrow(datalist)){
 #    #Auto-correlation plot
 #    autocorr.plot(bayes.mod.fit.mcmc)
     }
-}
+    
 
 #print(mcmclist)
 # Convert all MCMC models into one MCMC object
-
 bayes.mcmc.combined = as.mcmc.list(mcmclist) # Use this to plot all individual chains
 bayes.mcmc.combinedlist = as.mcmc.list(mcmclist)
 #bayes.mcmc.combined = combine.mcmc(mcmclist) # Use this to plot one combined density
@@ -194,22 +212,22 @@ bayes.mcmc.combinedlist = as.mcmc.list(mcmclist)
 summary(bayes.mcmc.combined) 
 #print(bayes.mcmc.combined)
 # Now plot combined results
-xyplot(bayes.mcmc.combined, layout=c(2,2), aspect="fill")
+print(xyplot(bayes.mcmc.combined, layout=c(2,2), aspect="fill"))
 # Density plot
-densityplot(bayes.mcmc.combined, layout=c(2,2), aspect="fill")
+print(densityplot(bayes.mcmc.combined, layout=c(2,2), aspect="fill"))
 #Auto-correlation plot
 #autocorr.plot(bayes.mcmc.combined)
 # Do separate density plot of all combined
 bayes.mcmc.combined = combine.mcmc(mcmclist)
-densityplot(bayes.mcmc.combined, layout=c(2,2), aspect="fill")
+print(densityplot(bayes.mcmc.combined, layout=c(2,2), aspect="fill"))
 
 # Do some 2D plots
 posterior <- as.array(bayes.mcmc.combined)
 #print(posterior)
 dim(posterior)
 #color_scheme_set('gray')
-mcmc_scatter(posterior, pars = c("mu", "alpha"),
-			size = 1.5, alpha = 0.5)
+print(mcmc_scatter(posterior, pars = c("mu", "alpha"),
+			size = 1.5, alpha = 0.5))
 h = mcmc_hex(posterior, pars = c("mu", "alpha"))
 #h + plot_bg(fill = "gray95") + panel_bg(fill = "gray70")
 #h + stat_binhex(aes(colour = ..density.., fill = ..density..))
@@ -217,23 +235,39 @@ h = h + geom_hex(aes_(color = ~ scales::rescale(..density..)))
 h + scale_color_gradientn("Density", colors = unlist(color_scheme_get()),
   breaks = c(.1, .9), labels = c("low", "high"))
 df_post = do.call(rbind.data.frame, bayes.mcmc.combinedlist)
+
+
 #print(df_post)
-ggplot(df_post, aes(x=mu, y=alpha)) +
+print(ggplot(df_post, aes(x=mu, y=alpha)) +
 	     stat_density_2d(aes(fill = ..level..), geom = "polygon") +
 	     xlab(expression(mu)) +
-	     ylab(expression(alpha))
-#print(df_post$hf)
-#pl = plot(1, df_post$hf[1])
-#for (t in hf_times){
-#    ggplot(df_post, aes(x=t, y=hf[t])) +
-#    geom_line(aes(x=x, y=y), data=df_post$hf[t])
-#    }
-dev.off()
+	     ylab(expression(alpha)))
+
 # Dump data to file
-write.csv(df_post, 'outputs/df_posterior.csv', row.names=FALSE)
+filename = paste0('outputs/df_posterior_', j, '.csv')
+print(filename)
+write.csv(df_post, filename, row.names=FALSE)
+print(typeof(df_post$mu))
+#print(df_post$mu)
+if (j==1){
+   mu_list = df_post$mu
+   alpha_list = df_post$alpha
+}else{
+   mu_list = c(mu_list, df_post$mu)
+   alpha_list[j] = c(alpha_list, df_post$alpha)
+   }
+print("dev.off()")
+dev.off() 
+j = j+1
+}
+
 png(file='plots/invgauss_fit_sliprate_std_param.png', units="in", width=5, height=5, res=300)
 # Estimate density value containing 95% of posterior ditribution
-df_param = data.frame(df_post$mu, df_post$alpha)
+#print(mu_list)
+#mu_list = unlist(mu_list)
+#alpha_list = unlist(alpha_list)
+df_param = data.frame(mu_list, alpha_list)
+#df_param = data.frame(df_post$mu, df_post$alpha)
 kd <- ks::kde(df_param, compute.cont=TRUE)
 contour_95 =with(kd, contourLines(x=eval.points[[1]], y=eval.points[[2]], 
 	   z=estimate, levels=cont["5%"])[[1]])
@@ -241,7 +275,7 @@ contour_95 = data.frame(contour_95)
 contour_68 =with(kd, contourLines(x=eval.points[[1]], y=eval.points[[2]],
 	   z=estimate, levels=cont["32%"])[[1]])
 contour_68 = data.frame(contour_68)   
-ggplot(df_post, aes(x=mu, y=alpha)) +
+ggplot(df_param, aes(x=mu_list, y=alpha_list)) +
 		stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE) +
 		geom_path(aes(x=x, y=y), data=contour_95) +
 		geom_path(aes(x=x, y=y), data=contour_68) +
