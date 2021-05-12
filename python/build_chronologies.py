@@ -3,7 +3,9 @@
 
 from QuakeRates.dataman.parse_params import parse_param_file, get_event_sets
 
-paramfiles = ['../params/Dunstan_GNS_unpub_simple.txt']
+paramfiles = ['../params/Dunstan4event_VanDissen2007_simple.txt',
+              '../params/Dunstan5event_VanDissen2007_simple.txt',
+              '../params/Dunstan6event_VanDissen2007_simple.txt']
 # Number of sample chronologies to generate
 n_samples = 10
 

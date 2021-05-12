@@ -10,10 +10,12 @@ library(ks)
 df_post = read.csv('outputs/df_posterior.csv')
 figname = 'plots/posterior_figs.pdf'
 pdf(figname)
-head(df_post)
+#head(df_post)
+print(df_post)
 print(max(df_post$Y.5.))
 print(min(df_post$Y.5.))
 print(mean(df_post$Y.5.))
+print(mean(df_post$Y.6.)) 
 MRE_number = 5
 #hf_times = unique(df_post$hf_times)
 str1 = "lambda"
