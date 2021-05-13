@@ -220,7 +220,7 @@ png(file='plots/invgauss_fit_sliprate_std_param.png', units="in", width=5, heigh
 # Estimate density value containing 95% of posterior ditribution
 df_param = data.frame(mu_list, alpha_list)
 #df_param = data.frame(df_post$mu, df_post$alpha)
-kd <- ks::kde(df_param, compute.cont=TRUE)
+kd <- ks::kde(df_param, gridsize=rep(1401,2) , compute.cont=TRUE)
 contour_95 =with(kd, contourLines(x=eval.points[[1]], y=eval.points[[2]], 
 	   z=estimate, levels=cont["5%"])[[1]])
 contour_95 = data.frame(contour_95)
@@ -229,8 +229,8 @@ contour_68 =with(kd, contourLines(x=eval.points[[1]], y=eval.points[[2]],
 contour_68 = data.frame(contour_68)   
 ggplot(df_param, aes(x=mu_list, y=alpha_list)) +
 		stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE) +
-		geom_path(aes(x=x, y=y), data=contour_95) +
-		geom_path(aes(x=x, y=y), data=contour_68) +
+		geom_path(aes(x=x, y=y), data=contour_95, lwd=0.25) +
+		geom_path(aes(x=x, y=y), data=contour_68, lwd=0.5) +
 		scale_fill_distiller(palette="Greys", direction=1) +
 		labs(colour = "Density") +
 		xlab(expression(mu)) +
