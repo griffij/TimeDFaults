@@ -32,7 +32,7 @@ for (filename in posterior_files){
 #print(lambda)
 print(y)
 figname = 'plots/posterior_hazard_rate1.png'
-png(figname, units="in", width=7, height=7, res=300)
+png(figname, units="in", width=6, height=6, res=300)
 
 # Now calculate hazard function directly from posterior
 # Probably more efficient to do this way
@@ -94,11 +94,11 @@ for (i in 1:5){
 # Add mean curve
 lines(xval_percentiles[1,], mean_hf, lty=1, lwd=2)
 # Add legend
-legend(20000, 6.1e-4, legend=c('Mean', 'Median', '68% bounds', '95% bounds'), lty=c(1,4,2,3), lwd=c(2,1,1,1))
+legend(17000, 6.1e-4, legend=c('Mean', 'Median', '68% bounds', '95% bounds'), lty=c(1,4,2,3), lwd=c(2,1,1,1))
 
 dev.off()
 figname = 'plots/posterior_hazard_rate2.png'
-png(figname, units="in", width=7, height=7, res=300)
+png(figname, units="in", width=6, height=6, res=300)
 
 # Now redo but calculate hazard function for next 500 years, ie
 # taking into account uncertainty on the time of the most recent event,
@@ -159,7 +159,7 @@ for (i in 1:5){
     }
 lines(xval_percentiles[1,], mean_hf, lty=1, lwd=2)
 # Add legend
-legend(350, 1.2e-4, legend=c('Mean', 'Median', '68% bounds', '95% bounds'), lty=c(1,4,2,3), lwd=c(2,1,1,1))   
+legend(300, 1.2e-4, legend=c('Mean', 'Median', '68% bounds', '95% bounds'), lty=c(1,4,2,3), lwd=c(2,1,1,1))   
 
 # Now calculate conditional probability
 # Based on Rhoades et al 1994
