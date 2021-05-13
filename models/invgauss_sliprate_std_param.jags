@@ -81,6 +81,8 @@ lambda ~ dunif(0, 100000)
 mu ~ dunif(0, 150000)
 #throw_per_event ~ dnorm(1., 8)T(0,) # Estimate of throw per event from trench data
 throw_per_event ~ dlnorm(0, 1/0.01) #(1, 1/0.707) Try lognormal
+# Track MRE
+mre = MRE
 # Calculate conditional probabilities of future event within a certain time frame
 #for (t in hf_times){
 #    t_future = 1000 # Probability over next 1000 years

@@ -1,4 +1,4 @@
-# Fit inverse GausOAsian (BPT) distirbution to data for earthquake inter-event times
+q# Fit inverse GausOAsian (BPT) distirbution to data for earthquake inter-event times
 # when sampling multiple chronologies. Fit each Monte Carlo sample of the earthquake
 # chronology individually, and then combine all chains into single MCMC object
 # to calculate final statistics
@@ -114,6 +114,7 @@ for (datalist in datalists){
 	    T = slip_times[1,]
 	    N <- length(Y)
 	    M = length(V)
+	    print(M)
 	    isCensored = as.numeric(isCensored)
 	    Y[1] = censorLimitVec[1]
 	    print(length(Y))
@@ -136,13 +137,12 @@ for (datalist in datalists){
 	    sim.data.jags <- list("Y", "N"
 	    		  ,"V_obs", "V_tau", "T_obs", "T_tau"
 	    		  ,"M", "isSlipCensored"
-			  ,"censorLimitVec", "isCensored"
-	#		  "hf_times"
+			  ,"censorLimitVec", "isCensored", "MRE"
 			  )
 	
 	    # Define the parameters whose posterior distributions we want to calculate
 	    bayes.mod.params <- c("lambda", "mu", "alpha", "n_events"
-	    		     ,"V", "T", "Y", "y[1]", "V_sum", "T_sum", "V_obs", "T_obs"
+	    		     ,"V", "T", "Y", "y[1]", "V_sum", "T_sum", "V_obs", "T_obs", "mre"
 			     ) 
 	    lambdaInit = 1.0
 	    muInit = 1000 # Rough estimate of mean(Y)
