@@ -52,10 +52,10 @@ print(datalists)
 throws = cbind(28, 13, 7)#, 3)# Vertical offsets in meters  
 #throws = cbind(7, 13, 28)
 #V_sigma = cbind(2, 2, 2)
-V_sigma = cbind(2, 2, 2)#, 1) # Uncertainty on throw (metres)
+V_sigma = cbind(2, 1, 0.75)#, 1) # Uncertainty on throw (metres)
 V_tau = 1/(V_sigma**2)[1,]
-slip_times = cbind(340000, 200000, 100000)#, 31000)
-T_sigma = cbind(20000, 10000, 10000)#, 2500)
+slip_times = cbind(330000, 180000, 95000)#, 31000)
+T_sigma = cbind(10000, 10000, 5000)#, 2500)
 #slip_times = cbind(100000, 200000, 340000)
 #T_sigma = cbind(10000, 10000, 20000)
 T_tau = 1/(T_sigma**2)[1,]
@@ -153,7 +153,7 @@ for (datalist in datalists){
 	    # The model
 	    bayes.mod.fit <- jags(data = sim.data.jags, inits = bayes.mod.inits,
 	    	      parameters.to.save = bayes.mod.params, n.chains = 3,
-		      n.iter = 1500, n.burnin = 1000, model.file = 'invgauss_sliprate_std_param.jags')
+		      n.iter = 2000, n.burnin = 1000, model.file = 'invgauss_sliprate_std_param.jags')
 		      
 	    print(bayes.mod.fit)
 	
