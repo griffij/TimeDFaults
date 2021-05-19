@@ -25,10 +25,14 @@ setwd('.')
 ###########
 # Real data
 
-datafile = '../data/chronologies/Dunstan4event_100_chronologies.csv'
-datafiles = c('../data/chronologies/Dunstan4event_10_chronologies.csv',
-	  '../data/chronologies/Dunstan5event_10_chronologies.csv',
-	  '../data/chronologies/Dunstan6event_10_chronologies.csv')	  
+#datafile = '../data/chronologies/Dunstan4event_100_chronologies.csv'
+#datafiles = c('../data/chronologies/Dunstan4event_10_chronologies.csv',
+#	  '../data/chronologies/Dunstan5event_10_chronologies.csv',
+#	  '../data/chronologies/Dunstan6event_10_chronologies.csv')
+datafiles = c('../data/chronologies/Dunstan4eventOxcal_10_chronologies.csv',
+	  '../data/chronologies/Dunstan5eventOxcal_10_chronologies.csv',
+	  '../data/chronologies/Dunstan5eventOxcalv2_10_chronologies.csv',
+	  '../data/chronologies/Dunstan6eventOxcal_10_chronologies.csv')
 print(datafiles)
 for (i in 1:length(datafiles)){
     print(i)
@@ -94,7 +98,7 @@ for (datalist in datalists){
 	    print(MRE)
 	    print(length(data))
 	    censorLimitVec = rep(1,length(data)-1)
-	    censorLimitVec[1] = 50000-abs(data[2])
+	    censorLimitVec[1] = 30000-abs(data[2])
 	    censorLimitVec[length(censorLimitVec)] = MRE
 	    print("censorLimitVec")      
 	    print(censorLimitVec)

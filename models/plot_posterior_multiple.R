@@ -10,8 +10,9 @@ library(ks)
 # Read in posterior dataset
 posterior_files = c('outputs/df_posterior_1.csv',
 	      'outputs/df_posterior_2.csv',
-	      'outputs/df_posterior_3.csv')
-MRE_position = c(5,6,7)	      
+	      'outputs/df_posterior_3.csv',
+	      'outputs/df_posterior_4.csv')
+MRE_position = c(5,6,6,7)	      
 i=1
 for (filename in posterior_files){
     df_post = read.csv(filename)
