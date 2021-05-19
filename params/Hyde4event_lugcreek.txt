@@ -1,0 +1,7 @@
+filename = '../data/inputs/Hyde4event_lugcreek.csv'
+chron_type = 'OxCal'
+events = {'D': ['Boundary', 'posterior'], 'C': ['Boundary', 'posterior'], 'B': ['Boundary', 'posterior'], 'A': ['Boundary', 'posterior']}
+event_order = ['D', 'C', 'B', 'A']      
+tectonic_region = 'Near_plate_boundary'
+faulting_style = 'Reverse'
+slip_rate_mean_lower_upper = [0.01, 0.1, 0.3]
