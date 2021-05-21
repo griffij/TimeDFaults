@@ -8,7 +8,7 @@ library(lattice)
 library(ks)
 
 # Read in posterior dataset
-posterior_files = c('outputs/df_posterior_1.csv')
+posterior_files = c('outputs/df_posterior_1_hyde.csv')
 MRE_position = c(5)#,6,6,7)	      
 i=1
 for (filename in posterior_files){
@@ -18,17 +18,42 @@ for (filename in posterior_files){
        mu = df_post$mu
        lambda = df_post$lambda
        y = df_post$mre
+       alpha = df_post$alpha      
     }else{
        mu = c(mu, df_post$mu)
        lambda = c(lambda, df_post$lambda)
        y = c(y, df_post$mre)
+       alpha = c(alpha, df_post$alpha)     
        }
     i = i+1
     }
 
 #print(mu)
 #print(lambda)
-print(y)
+#print(y)
+
+figname = 'plots/posterior_mu_hyde.png'  
+png(figname, units="in", width=6, height=6, res=300)     
+print("Mean mu")
+print(mean(mu))
+mu_percentiles = quantile(mu, probs = c(0.025, 0.26, 0.5, 0.84, 0.975))
+print("0.025, 0.26, 0.5, 0.84, 0.975")
+print(mu_percentiles)
+d = density(mu)
+plot(d)
+dev.off()
+
+figname = 'plots/posterior_alpha_hyde.png'
+png(figname, units="in", width=6, height=6, res=300)
+print("mean alpha")
+print(mean(alpha))
+alpha_percentiles = quantile(alpha, probs = c(0.025, 0.26, 0.5, 0.84, 0.975))
+print("0.025, 0.26, 0.5, 0.84, 0.975")
+print(alpha_percentiles)
+da = density(alpha)
+plot(da)
+dev.off()
+
 figname = 'plots/posterior_hazard_rate1_hyde.png'
 png(figname, units="in", width=6, height=6, res=300)
 

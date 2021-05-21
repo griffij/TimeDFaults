@@ -199,7 +199,7 @@ for (datalist in datalists){
 		     ylab(expression(alpha)))
 	
 	# Dump data to file
-	filename = paste0('outputs/df_posterior_', j, '.csv')
+	filename = paste0('outputs/df_posterior_', j, '_hyde.csv')
 	print(filename)
 	write.csv(df_post, filename, row.names=FALSE)
 	print(typeof(df_post$mu))
