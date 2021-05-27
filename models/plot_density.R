@@ -13,7 +13,7 @@ posterior_files = c('outputs/df_posterior_1_dunstan.csv',
               'outputs/df_posterior_4_dunstan.csv')
 #MRE_position = c(5,6,6,7)             
 
-plot_posterior_2d <-function(mu, alpha, fig_lab){
+plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15000, lab_y=9.5){
     # Estimate density value containing 95% of posterior ditribution
     df_param = data.frame(mu, alpha)
     kd <- ks::kde(df_param, gridsize=rep(1401,2) , compute.cont=TRUE)
@@ -32,13 +32,13 @@ plot_posterior_2d <-function(mu, alpha, fig_lab){
                xlab(expression(mu)) +
                ylab(expression(alpha)) +
                scale_x_continuous(expand = c(0, 0), limits = c(0, 150000),
-	       				 breaks=c(0, 50000, 100000)) +
+	       				 breaks=c(0, 50000, 100000), labels=c("0", "50000", "100000")) +
                scale_y_continuous(expand = c(0, 0), limits = c(0, 10), breaks = c(0,2,4,6,8,10),
 	       				 labels=c("0","2","4","6","8","10")) +
 	       theme(
 	           legend.position='none'
   	       )+
-	       geom_label(label=fig_lab, x=10000, y=9.0)
+	       geom_text(label=fig_lab, x=lab_x, y=lab_y)
     return(p1)
     }
 
@@ -54,7 +54,7 @@ for (filename in posterior_files){
        lambda = df_post$lambda
        y = df_post$mre
        alpha = df_post$alpha
-       pl = plot_posterior_2d(mu=mu, alpha=alpha, l)
+       pl = plot_posterior_2d(mu=mu, alpha=alpha, fig_lab=l)
        plot_list[[i]] = pl
     }else {
        mu = c(mu, df_post$mu)
@@ -69,7 +69,8 @@ for (filename in posterior_files){
 
 # Now do combined plot
 l = paste0(labels[[i]], ')') 
-p_combined = plot_posterior_2d(mu, alpha, fig_lab=l)
+p_combined = plot_posterior_2d(mu, alpha, fig_lab=l, lab_x=7000, lab_y=9.8)# +
+#	   geom_text(label=l, x=7000, y=9.8)
 plot_list[[i]] = p_combined
 figname = 'plots/posterior_density_dunstan.png'
 png(file=figname, units="in", width=7, height=5, res=300)
