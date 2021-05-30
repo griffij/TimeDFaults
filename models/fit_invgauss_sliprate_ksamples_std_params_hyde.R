@@ -33,7 +33,8 @@ setwd('.')
 #	  '../data/chronologies/Dunstan5eventOxcal_10_chronologies.csv',
 #	  '../data/chronologies/Dunstan5eventOxcalv2_10_chronologies.csv',
 #	  '../data/chronologies/Dunstan6eventOxcal_10_chronologies.csv')
-datafiles = c('../data/chronologies/Hyde4event_100_chronologies.csv')
+datafiles = c('../data/chronologies/Hyde4event_100_chronologies.csv',
+	  '../data/chronologies/Hyde4event_100_chronologies.csv')
 print(datafiles)
 for (i in 1:length(datafiles)){
     print(i)

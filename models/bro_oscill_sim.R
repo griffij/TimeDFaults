@@ -2,7 +2,7 @@
 source('BPT.R') # Call module containing brownian oscillator function
 
 # Define simulation parameters
-t = 100 # Total simulation time
+t = 4 # Total simulation time
 dt = 0.01 # Timestep
 x0 = 0 # Value immediatly after failure
 xf = 1 # Failure threshold value
@@ -19,30 +19,30 @@ rseed = 5#3 # Fix random seed for repeatability. Seed of 5 gives good explanator
 
 fig_filename = 'brownian_oscillators.pdf'
 pdf(fig_filename)
-par(mfrow=c(4, 1), mar=c(1.1,4.2,4.1,1.1))
+#par(mfrow=c(4, 1), mar=c(1.1,4.2,4.1,1.1))
 #for (i in seq_along(sigma)){
 for (i in seq_along(lambda)){
      oscillator = brownian_oscillator(lambda[i], t, sigma, mu, dt,
     			      	     x0, xf, plot=FALSE,
     	      			     healing=FALSE, rseed=rseed)
     interevent_times = numeric(length(oscillator$event_times))
-    plot((oscillator$realisation$n-offset), oscillator$realisation$Y, type = 'l',
+    print(plot((oscillator$realisation$n-offset), oscillator$realisation$Y, type = 'l',
 #    	 main = bquote('Brownian Oscillator,' ~ lambda == .(lambda[i])),
     	 xlab =  '', ylab = 'State', xlim=c(0,8), xaxs='i',
-	 ylim=c(-1.15,1.15), cex.lab = 1.2, cex.main=1.2)
+	 ylim=c(-1.15,1.15), cex.lab = 1.2, cex.main=1.2))
 	 #asp=0.5)
     if (i==1){
-	 title(main = c(bquote('Brownian Oscillator,' ~ sigma == .(sigma[i])),
-	 	    bquote(lambda == .(lambda[i]))))
+	 print(title(main = c(bquote('Brownian Oscillator,' ~ sigma == .(sigma[i])),
+	 	    bquote(lambda == .(lambda[i])))))
 #         title(main = bquote(paste('Brownian Oscillator,' ~ sigma == .(sigma[i]),
 #	 	    ~ lambda == .(lambda[i]))))
              }
     if (i==length(lambda)){
-       title(xlab='Time', cex.lab=1.5)
+       print(title(xlab='Time', cex.lab=1.5))
        }
     for (j in seq_along(oscillator$event_times)){
-    	 lines(c(oscillator$event_times[j]-offset, oscillator$event_times[j]-offset), c(-10,10),
-	       lty=3)
+    	 print(lines(c(oscillator$event_times[j]-offset, oscillator$event_times[j]-offset), c(-10,10),
+	       lty=3))
 	 if (j==1){
 	    interevent_times[j] = oscillator$event_times[j]
 	    }
@@ -58,6 +58,6 @@ for (i in seq_along(lambda)){
     cov_ie_time = std_ie_time/mean_ie_time
     print(cov_ie_time)
     # Add lambda and COV to plots
-    mtext(bquote(lambda == .(lambda[i]) ~ ',' ~ COV == .(round(cov_ie_time, 2))), cex=0.8)
+    print(mtext(bquote(lambda == .(lambda[i]) ~ ',' ~ COV == .(round(cov_ie_time, 2))), cex=0.8))
     }
 dev.off()

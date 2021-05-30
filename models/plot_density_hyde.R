@@ -7,10 +7,8 @@ library(grid)
 library(gridExtra)
 
 # Read in posterior dataset
-posterior_files = c('outputs/df_posterior_1_dunstan.csv',
-              'outputs/df_posterior_2_dunstan.csv',
-              'outputs/df_posterior_3_dunstan.csv',
-              'outputs/df_posterior_4_dunstan.csv')
+posterior_files = c('outputs/df_posterior_1_hyde.csv',
+              'outputs/df_posterior_2_hyde.csv')
 #MRE_position = c(5,6,6,7)             
 
 plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15000, lab_y=9.5){
@@ -76,15 +74,15 @@ l = paste0(labels[[i]], ')')
 p_combined = plot_posterior_2d(mu, alpha, fig_lab=l, lab_x=7000, lab_y=9.8)# +
 #	   geom_text(label=l, x=7000, y=9.8)
 plot_list[[i]] = p_combined
-figname = 'plots/posterior_density_dunstan.png'
+figname = 'plots/posterior_density_hyde.png'
 png(file=figname, units="in", width=7, height=5, res=300)
 #pl = list(pl, pt)
 print(plot_list)
 grid.arrange(#pl, pt, nrow=2)
     grobs = plot_list,
-    widths=c(0.1,1,1,2,0.1),
-    layout_matrix = rbind(c(NA, 1, 2, 5, NA),
-    		    	  c(NA, 3, 4, 5, NA))
+    widths=c(0.1,1,2,0.1),
+    layout_matrix = rbind(c(NA, 1, 3, NA),
+    		    	  c(NA, 2, 3, NA))
     )
 
 dev.off()

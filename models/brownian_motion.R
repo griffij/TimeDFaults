@@ -1,4 +1,4 @@
-# Simulate a Brownian motion oscillator
+A# Simulate a Brownian motion oscillator
 # Based on Matthews et al. 2002. A Brownian Model for Recurrent Earthquakes. BSSA
 # Note that to reproduce their results in Figure 2 of the paper we must assume that
 # these authors are giving values of the variance (sigma^2, i.e. the perturbation

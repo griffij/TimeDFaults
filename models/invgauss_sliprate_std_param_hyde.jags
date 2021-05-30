@@ -81,14 +81,9 @@ lambda ~ dunif(0, 100000)
 mu ~ dunif(0, 150000)
 #mu ~ dnorm(10000, 1e-8)T(0,)
 #throw_per_event ~ dnorm(1., 2)T(0.5,5) # Estimate of throw per event from trench data
-throw_per_event ~ dlnorm(0.7, 8.0) #(0.7, 4.0)#T(0.5,2.5) #(-0.7, 3.8) #(0.0, 4.0) #(-0.73, 1/0.32) #(1, 1/0.707) Try lognormal
-#mu = V_obs[1]/throw_per_event
-# Try sampling prior open interval
-#censorLimitVec[1] ~ dnorm((50000-abs(Y[2])), 1e-10)T(1000,)
+throw_per_event ~ dlnorm(0.7, 8.4) #(0.7, 4.0)#T(0.5,2.5) #(-0.7, 3.8) #(0.0, 4.0) #(-0.73, 1/0.32) #(1, 1/0.707) Try lognormal
 
-#mu_mu = T_obs[1]/(V_obs[1]/throw_per_event)
-#tau_mu = 1e-9
-#mu ~ dnorm(mu_mu, tau_mu)T(0,)
+# Try sampling prior open interval
 # Track MRE
 mre = MRE
 }
