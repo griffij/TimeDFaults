@@ -6,13 +6,14 @@ from QuakeRates.dataman.parse_params import parse_param_file, get_event_sets
 #paramfiles = ['../params/Dunstan4event_VanDissen2007_simple.txt',
 #              '../params/Dunstan5event_VanDissen2007_simple.txt',
 #              '../params/Dunstan6event_VanDissen2007_simple.txt']
-#paramfiles = ['../params/Dunstan6eventOxcal_devonshire.csv',
-#              '../params/Dunstan5eventOxcal_devonshire.csv',
-#              '../params/Dunstan5eventOxcalv2_devonshire.csv',
-#              '../params/Dunstan4eventOxcal_devonshire.csv']
-paramfiles = ['../params/Hyde4event_lugcreek.txt']
+paramfiles = ['../params/Dunstan6eventOxcal_devonshire.csv',
+              '../params/Dunstan5eventOxcal_devonshire.csv',
+              '../params/Dunstan5eventOxcalv2_devonshire.csv',
+              '../params/Dunstan4eventOxcal_devonshire.csv']
+#paramfiles = ['../params/Hyde3event_lugcreek.txt',
+#              '../params/Hyde4event_lugcreek.txt']
 # Number of sample chronologies to generate
-n_samples = 10
+n_samples = 1000
 
 names, event_sets, event_certainties, num_events, \
     tect_regions, fault_styles = get_event_sets(paramfiles, ['all'], ['all'], 1)
