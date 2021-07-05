@@ -2,8 +2,8 @@
 source('BPT.R') # Call module containing brownian oscillator function
 
 # Define simulation parameters
-t = 4 # Total simulation time
-dt = 0.01 # Timestep
+t = 8 # Total simulation time
+dt = 0.001 # Timestep
 x0 = 0 # Value immediatly after failure
 xf = 1 # Failure threshold value
 mu = 0 # Mean value of normally distributed white noise, set to zero
@@ -22,8 +22,10 @@ pdf(fig_filename)
 #par(mfrow=c(4, 1), mar=c(1.1,4.2,4.1,1.1))
 #for (i in seq_along(sigma)){
 for (i in seq_along(lambda)){
+#     fig_filename = paste0('brownian_oscillators_', lambda[i], '.pdf')
+#     print(pdf(fig_filename))
      oscillator = brownian_oscillator(lambda[i], t, sigma, mu, dt,
-    			      	     x0, xf, plot=FALSE,
+    			      	     x0, xf, plot=TRUE,
     	      			     healing=FALSE, rseed=rseed)
     interevent_times = numeric(length(oscillator$event_times))
     print(plot((oscillator$realisation$n-offset), oscillator$realisation$Y, type = 'l',
@@ -50,7 +52,8 @@ for (i in seq_along(lambda)){
 	    interevent_times[j] = oscillator$event_times[j] - oscillator$event_times[j-1]
 	    }  
 	 }
-#    print(interevent_times)
+    print('interevent_times')	 
+    print(interevent_times)
     mean_ie_time = mean(interevent_times)
     print(mean_ie_time)
     std_ie_time = sd(interevent_times)
@@ -58,6 +61,8 @@ for (i in seq_along(lambda)){
     cov_ie_time = std_ie_time/mean_ie_time
     print(cov_ie_time)
     # Add lambda and COV to plots
-    print(mtext(bquote(lambda == .(lambda[i]) ~ ',' ~ COV == .(round(cov_ie_time, 2))), cex=0.8))
+#    print(mtext(bquote(lambda == .(lambda[i]) ~ ',' ~ COV == .(round(cov_ie_time, 2))), cex=0.8))
+    print(mtext(bquote(lambda == .(lambda[i])), cex=0.8))
+#    dev.off()
     }
 dev.off()

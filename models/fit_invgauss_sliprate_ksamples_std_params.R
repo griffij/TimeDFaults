@@ -29,10 +29,10 @@ setwd('.')
 #datafiles = c('../data/chronologies/Dunstan4event_10_chronologies.csv',
 #	  '../data/chronologies/Dunstan5event_10_chronologies.csv',
 #	  '../data/chronologies/Dunstan6event_10_chronologies.csv')
-datafiles = c('../data/chronologies/Dunstan4eventOxcal_10_chronologies.csv',
-	  '../data/chronologies/Dunstan5eventOxcal_10_chronologies.csv',
-	  '../data/chronologies/Dunstan5eventOxcalv2_10_chronologies.csv',
-	  '../data/chronologies/Dunstan6eventOxcal_10_chronologies.csv')
+datafiles = c('../data/chronologies/Dunstan4eventOxcal_100_chronologies.csv',
+	  '../data/chronologies/Dunstan5eventOxcal_100_chronologies.csv',
+	  '../data/chronologies/Dunstan5eventOxcalv2_100_chronologies.csv',
+	  '../data/chronologies/Dunstan6eventOxcal_100_chronologies.csv')
 print(datafiles)
 for (i in 1:length(datafiles)){
     print(i)
@@ -53,13 +53,13 @@ print(datalists)
 #data1 = cbind(NA, 13600, 15100, 16700, 23000, NA)
 #data2 = cbind(NA, 13200, 15000, 17500, 24000, NA)
 #datalist = list(data1, data2)
-throws = cbind(28, 13, 7)#, 3)# Vertical offsets in meters  
+throws = cbind(27.5, 17.5, 12.5)#, 3)# Vertical offsets in meters  
 #throws = cbind(7, 13, 28)
 #V_sigma = cbind(2, 2, 2)
-V_sigma = cbind(2, 1, 0.75)#, 1) # Uncertainty on throw (metres)
+V_sigma = cbind(4, 3, 2)#, 1) # Uncertainty on throw (metres)
 V_tau = 1/(V_sigma**2)[1,]
-slip_times = cbind(330000, 180000, 95000)#, 31000)
-T_sigma = cbind(10000, 10000, 5000)#, 2500)
+slip_times = cbind(321100, 182400, 92000)#, 31000)
+T_sigma = cbind(8600, 13600, 5600)#, 2500)
 #slip_times = cbind(100000, 200000, 340000)
 #T_sigma = cbind(10000, 10000, 20000)
 T_tau = 1/(T_sigma**2)[1,]
@@ -70,10 +70,6 @@ print(ncol(datalists))
 
 j=1
 for (datalist in datalists){
-    print(datalist)
-    print(typeof((datalist)))
-    print(nrow(datalist))
-    print(nrow(datalist[1]))
     # Initialise list for storing each MCMC object
     mcmclist = vector("list", 3*length(datalist))
     index = 1
@@ -83,26 +79,15 @@ for (datalist in datalists){
 	for (i in 1:nrow(datalist)){
 	    data = list(cbind(NA, datalist[i,], NA))#[1,]
 	    data = data[[1]]
-	    print('data')
-	    print(data)
-	    print(typeof(data))
-	    print(data[4])
-	    print(length(datalist)-1)
 	    sl = (length(data) - 1)[1]
-	    print(sl)
-	##    censorLimitVec = cbind(abs(data[2]), 1, 1, 1, 50000-abs(data[sl]))
 	    # Most recent event in year before present defines minimum length of
 	    # present open interval
 	    MRE = abs(data[sl])
-	    print('MRE')
-	    print(MRE)
-	    print(length(data))
+#	    print('MRE')
+#	    print(MRE)
 	    censorLimitVec = rep(1,length(data)-1)
 	    censorLimitVec[1] = 30000-abs(data[2])
 	    censorLimitVec[length(censorLimitVec)] = MRE
-	    print("censorLimitVec")      
-	    print(censorLimitVec)
-	#    censorLimitVec = cbind(50000-abs(data[2]), 1, 1, 1, MRE) # Hard coded old version
 	    # Convert data to inter-event times
 	    m = data.matrix(data)
 	    inter_event_m = t(abs(diff(t(m)))) # Transpose, take difference and transpose back
@@ -110,30 +95,15 @@ for (datalist in datalists){
 	    isCensored[1] = TRUE
 	    isCensored[length(isCensored)] = TRUE
 	    Y = inter_event_m
-	    print("Y")
-	    print(Y)
 	    Y = Y[1,]
-	    print(Y)
 	    V = throws[1,]
 	    T = slip_times[1,]
 	    N <- length(Y)
 	    M = length(V)
-	    print(M)
 	    isCensored = as.numeric(isCensored)
 	    Y[1] = censorLimitVec[1]
-	    print(length(Y))
-	    print("censorLimitVec[length(Y)]")
-	    print(censorLimitVec[length(Y)])
 	    Y[length(Y)] = censorLimitVec[length(Y)]
-	    print(Y)
-	    print('T')
-	    print(T)
-	    print(V)
 	    censorLimitVec = as.numeric(censorLimitVec)
-	    print('censorLimitVec')
-	    print(censorLimitVec)
-	    print(isCensored)
-	    print(isSlipCensored)
 	    # Lets deal with V and T as uncertain observations
 	    V_obs = V
 	    T_obs = T
@@ -157,7 +127,8 @@ for (datalist in datalists){
 	    # The model
 	    bayes.mod.fit <- jags(data = sim.data.jags, inits = bayes.mod.inits,
 	    	      parameters.to.save = bayes.mod.params, n.chains = 3,
-		      n.iter = 2000, n.burnin = 1000, model.file = 'invgauss_sliprate_std_param.jags')
+		      n.iter = 6000, n.burnin = 1000, n.thin=20,
+		      model.file = 'invgauss_sliprate_std_param.jags')
 		      
 	    print(bayes.mod.fit)
 	

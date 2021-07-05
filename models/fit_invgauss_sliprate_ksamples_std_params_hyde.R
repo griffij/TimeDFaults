@@ -33,8 +33,8 @@ setwd('.')
 #	  '../data/chronologies/Dunstan5eventOxcal_10_chronologies.csv',
 #	  '../data/chronologies/Dunstan5eventOxcalv2_10_chronologies.csv',
 #	  '../data/chronologies/Dunstan6eventOxcal_10_chronologies.csv')
-datafiles = c('../data/chronologies/Hyde4event_100_chronologies.csv',
-	  '../data/chronologies/Hyde4event_100_chronologies.csv')
+datafiles = c('../data/chronologies/Hyde4event_1000_chronologies.csv')#,
+#	  '../data/chronologies/Hyde4event_100_chronologies.csv')
 print(datafiles)
 for (i in 1:length(datafiles)){
     print(i)
@@ -51,11 +51,11 @@ for (i in 1:length(datafiles)){
     }
 print(datalists)
 
-throws = cbind(25, 17)#, 3)# Vertical offsets in meters  
-V_sigma = cbind(2, 1)#, 1) # Uncertainty on throw (metres)
+throws = cbind(27.5, 17, 5)# Vertical offsets in meters  
+V_sigma = cbind(3, 3, 0.5) # Uncertainty on throw (metres)
 V_tau = 1/(V_sigma**2)[1,]
-slip_times = cbind(115000, 100000)#, 31000)
-T_sigma = cbind(3000, 5000)#, 2500)
+slip_times = cbind(112800, 97800, 34200)
+T_sigma = cbind(4400, 8100, 800)
 #slip_times = cbind(100000, 200000, 340000)
 #T_sigma = cbind(10000, 10000, 20000)
 T_tau = 1/(T_sigma**2)[1,]
@@ -66,10 +66,6 @@ print(ncol(datalists))
 
 j=1
 for (datalist in datalists){
-    print(datalist)
-    print(typeof((datalist)))
-    print(nrow(datalist))
-    print(nrow(datalist[1]))
     # Initialise list for storing each MCMC object
     mcmclist = vector("list", 3*length(datalist))
     index = 1
@@ -79,26 +75,15 @@ for (datalist in datalists){
 	for (i in 1:nrow(datalist)){
 	    data = list(cbind(NA, datalist[i,], NA))#[1,]
 	    data = data[[1]]
-	    print('data')
-	    print(data)
-	    print(typeof(data))
-	    print(data[4])
-	    print(length(datalist)-1)
 	    sl = (length(data) - 1)[1]
-	    print(sl)
-	##    censorLimitVec = cbind(abs(data[2]), 1, 1, 1, 50000-abs(data[sl]))
 	    # Most recent event in year before present defines minimum length of
 	    # present open interval
 	    MRE = abs(data[sl])
 	    print('MRE')
 	    print(MRE)
-	    print(length(data))
 	    censorLimitVec = rep(1,length(data)-1)
 	    censorLimitVec[1] = 1000
 	    censorLimitVec[length(censorLimitVec)] = MRE
-	    print("censorLimitVec")      
-	    print(censorLimitVec)
-	#    censorLimitVec = cbind(50000-abs(data[2]), 1, 1, 1, MRE) # Hard coded old version
 	    # Convert data to inter-event times
 	    m = data.matrix(data)
 	    inter_event_m = t(abs(diff(t(m)))) # Transpose, take difference and transpose back
@@ -106,30 +91,15 @@ for (datalist in datalists){
 	    isCensored[1] = TRUE
 	    isCensored[length(isCensored)] = TRUE
 	    Y = inter_event_m
-	    print("Y")
-	    print(Y)
 	    Y = Y[1,]
-	    print(Y)
 	    V = throws[1,]
 	    T = slip_times[1,]
 	    N <- length(Y)
 	    M = length(V)
-	    print(M)
 	    isCensored = as.numeric(isCensored)
 	    Y[1] = censorLimitVec[1]
-	    print(length(Y))
-	    print("censorLimitVec[length(Y)]")
-	    print(censorLimitVec[length(Y)])
 	    Y[length(Y)] = censorLimitVec[length(Y)]
-	    print(Y)
-	    print('T')
-	    print(T)
-	    print(V)
 	    censorLimitVec = as.numeric(censorLimitVec)
-	    print('censorLimitVec')
-	    print(censorLimitVec)
-	    print(isCensored)
-	    print(isSlipCensored)
 	    # Lets deal with V and T as uncertain observations
 	    V_obs = V
 	    T_obs = T
@@ -153,7 +123,8 @@ for (datalist in datalists){
 	    # The model
 	    bayes.mod.fit <- jags(data = sim.data.jags, inits = bayes.mod.inits,
 	    	      parameters.to.save = bayes.mod.params, n.chains = 3,
-		      n.iter = 2000, n.burnin = 1000, model.file = 'invgauss_sliprate_std_param_hyde.jags')
+		      n.iter = 6000, n.burnin = 1000, n.thin = 20,
+		      model.file = 'invgauss_sliprate_std_param_hyde.jags')
 		      
 	    print(bayes.mod.fit)
 	
@@ -169,8 +140,14 @@ for (datalist in datalists){
 	    }
 	    
 	# Convert all MCMC models into one MCMC object
-	bayes.mcmc.combined = as.mcmc.list(mcmclist) # Use this to plot all individual chains
+#	bayes.mcmc.combined = as.mcmc.list(mcmclist) # Use this to plot all individual chains
 	bayes.mcmc.combinedlist = as.mcmc.list(mcmclist)
+	# Dump data to file
+	df_post = do.call(rbind.data.frame, bayes.mcmc.combinedlist)
+        filename = paste0('outputs/df_posterior_', j, '_hyde.csv')
+        print(filename)
+        write.csv(df_post, filename, row.names=FALSE)
+	bayes.mcmc.combined = as.mcmc.list(mcmclist) # Use this to plot all individual chains 
 	summary(bayes.mcmc.combined) 
 	
 	# Now plot combined results
@@ -192,18 +169,14 @@ for (datalist in datalists){
 	h = h + geom_hex(aes_(color = ~ scales::rescale(..density..)))
 	h + scale_color_gradientn("Density", colors = unlist(color_scheme_get()),
 	  breaks = c(.1, .9), labels = c("low", "high"))
-	df_post = do.call(rbind.data.frame, bayes.mcmc.combinedlist)
+#	df_post = do.call(rbind.data.frame, bayes.mcmc.combinedlist
 	
 	print(ggplot(df_post, aes(x=mu, y=alpha)) +
 		     stat_density_2d(aes(fill = ..level..), geom = "polygon") +
 		     xlab(expression(mu)) +
 		     ylab(expression(alpha)))
 	
-	# Dump data to file
-	filename = paste0('outputs/df_posterior_', j, '_hyde.csv')
-	print(filename)
-	write.csv(df_post, filename, row.names=FALSE)
-	print(typeof(df_post$mu))
+	#print(typeof(df_post$mu))
 	if (j==1){
 	   mu_list = df_post$mu
 	   alpha_list = df_post$alpha
