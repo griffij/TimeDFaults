@@ -20,7 +20,7 @@ setwd('.')
 ###########
 # Real data
 
-datafile = '../data/chronologies/Dunstan_10_chronologies.csv'
+datafile = '../data/chronologies/Dunstan_100_chronologies.csv'
 data = read.csv(datafile, header=FALSE)#, delimiter=',')
 print(data)
 datalist = data
@@ -53,7 +53,10 @@ for (i in 1:nrow(datalist)){
     print(length(datalist)-1)
     sl = (length(data) - 1)[1]
     print(sl)
-    censorLimitVec = cbind(abs(data[2]), 1, 1, 1, 50000-abs(data[sl]))
+    censorLimitVec = rep(1,length(data)-1)
+    censorLimitVec[1] = 30000-abs(data[2])
+    censorLimitVec[length(censorLimitVec)] = MRE
+#    censorLimitVec = cbind(abs(data[2]), 1, 1, 1, 30000-abs(data[sl]))
     # Convert data to inter-event times
     m = data.matrix(data)
     inter_event_m = t(diff(t(m))) # Transpose, take difference and transpose back
@@ -167,7 +170,10 @@ h = mcmc_hex(posterior, pars = c("mu", "alpha"))
 h = h + geom_hex(aes_(color = ~ scales::rescale(..density..)))
 h + scale_color_gradientn("Density", colors = unlist(color_scheme_get()),
   breaks = c(.1, .9), labels = c("low", "high"))
-df_post = do.call(rbind.data.frame, bayes.mcmc.combinedlist)
+df_post= do.call(rbind.data.frame, bayes.mcmc.combinedlist)
+# Dump outputs to file
+filename = 'outputs/df_posterior_eqonly_dunstan.csv'
+write.csv(df_post, filename, row.names=FALSE) 
 #print(df_post)
 ggplot(df_post, aes(x=mu, y=alpha)) +
 	     stat_density_2d(aes(fill = ..level..), geom = "polygon") +
