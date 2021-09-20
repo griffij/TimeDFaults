@@ -30,8 +30,8 @@ plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15000, lab_y=9.5){
                geom_path(aes(x=x, y=y), data=contour_68, lwd=0.5) +
                scale_fill_distiller(palette="Greys", direction=1) +
                labs(colour = "Density") +
-               xlab(expression(mu)) +
-               ylab(expression(alpha)) +
+               xlab(expression("Mean ("*mu*")")) +
+               ylab(expression("Aperiodicity ("*alpha*")")) +
                scale_x_continuous(expand = c(0, 0), limits = c(0, 150000),
 	       				 breaks=c(0, 50000, 100000), labels=c("0", "50000", "100000")) +
                scale_y_continuous(expand = c(0, 0), limits = c(0, 10), breaks = c(0,2,4,6,8,10),

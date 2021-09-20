@@ -7,7 +7,7 @@ library(grid)
 library(gridExtra)
 
 # Read in posterior dataset
-posterior_files = c('outputs/df_posterior_eqonly_dunstan.csv')
+posterior_files = c('outputs/df_posterior_1_hyde.csv')
 #              'outputs/df_posterior_2_hyde.csv')
 #MRE_position = c(5,6,6,7)             
 
@@ -35,16 +35,16 @@ plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15000, lab_y=9.5){
                labs(colour = "Density") +
                xlab(expression("Mean ("*mu*")")) +
                ylab(expression("Aperiodicity ("*alpha*")")) +
-               scale_x_continuous(expand = c(0, 0), limits = c(0, 150000),
+               scale_x_continuous(expand = c(0, 0), limits = c(0, 50000),
 	       				 breaks=c(0, 50000, 100000), labels=c("0", "50000", "100000")) +
-               scale_y_continuous(expand = c(0, 0), limits = c(0, 10), breaks = c(0,2,4,6,8,10),
+               scale_y_continuous(expand = c(0, 0), limits = c(0, 4), breaks = c(0,2,4,6,8,10),
 	       				 labels=c("0","2","4","6","8","10")) +
 	       theme(
 	           legend.position='none'
   	       )+
 	       geom_point(x = mean_mu, y=mean_alpha, shape=4, colour='red')
 #	       geom_text(label=fig_lab, x=lab_x, y=lab_y)
-    figname = 'plots/posterior_density_eqonly_dunstan_single_test.png'
+    figname = 'plots/posterior_density_hyde_single_test.png'
 #    print(png(file=figname, units="in", width=7, height=5, res=300))
 #    print(dev.off())
     return(p1)
@@ -80,7 +80,7 @@ for (filename in posterior_files){
 #p_combined = plot_posterior_2d(mu, alpha, fig_lab=l, lab_x=7000, lab_y=9.8)# +
 #	   geom_text(label=l, x=7000, y=9.8)
 #plot_list[[i]] = p_combined
-figname = 'plots/posterior_density_eqonly_dunstan_single.png'
+figname = 'plots/posterior_density_hyde_single.png'
 png(file=figname, units="in", width=4.5, height=5, res=300)
 #pl = list(pl, pt)
 print(plot_list)
