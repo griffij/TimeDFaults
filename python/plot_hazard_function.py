@@ -41,7 +41,7 @@ plt.savefig('BPT_asymptotic_hazard_function.png')
 # Now plot CDF
 plt.clf()
 times = np.arange(1, 30000, 100)
-alpha_vals = [0.5, 1.0, 1.5, 2.0, 3.]
+alpha_vals = [1.5]# [0.5, 1.0, 1.5]#, 2.0, 3.]
 linestyles = ['solid', 'dotted', 'dashed', 'dashdot', (0, (5, 10))]
 for i,alpha in enumerate(alpha_vals):
     cdf = bpt_cdf(mu, alpha, times)
@@ -67,7 +67,25 @@ plt.annotate(mean_label, (0.4, 0.9), xycoords = 'axes fraction', fontsize = 12)
 plt.legend(fontsize=12, handlelength=3)
 plt.savefig('BPT_hazard_function.png')
 
+# Now plot BPT pdf
+plt.clf()
+for i,alpha in enumerate(alpha_vals):
+    pdf = bpt_pdf(mu, alpha, times)
+    plt.plot(times, pdf, linestyle=linestyles[i], c = 'lightskyblue', linewidth=3, label=(r'$\alpha$ = ' + str(alpha)))
+# Add exponential function for comparision
+exp_dist = expon(scale=mu)
+pdf_expon = exp_dist.pdf(times)
+#plt.plot(times, pdf_expon, c = '0.7', linestyle=linestyles[0], label='Exponential')
+#plt.xlabel('Inter-event time')
+#plt.ylabel('Density')
+#plt.annotate(mean_label, (0.4, 0.9), xycoords = 'axes fraction', fontsize = 12)   
+#plt.legend(fontsize=12, handlelength=3)
+ax = plt.gca()
+ax.axes.xaxis.set_visible(False)
+ax.axes.yaxis.set_visible(False)
 
+plt.tight_layout()
+plt.savefig('BPT_PDF.png')
 
 # Now we do for gamma distribution
 # Now we do for gamma distribution
