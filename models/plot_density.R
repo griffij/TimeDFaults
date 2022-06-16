@@ -23,19 +23,23 @@ plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15000, lab_y=9.5){
     contour_95 =with(kd, contourLines(x=eval.points[[1]], y=eval.points[[2]], 
                z=estimate, levels=cont["5%"])[[1]])
     contour_95 = data.frame(contour_95)
+    contour_95_2 =with(kd, contourLines(x=eval.points[[1]], y=eval.points[[2]],
+    	       z=estimate, levels=cont["5%"])[[2]])
+    contour_95_2 = data.frame(contour_95_2)  
     contour_68 =with(kd, contourLines(x=eval.points[[1]], y=eval.points[[2]],
     	       z=estimate, levels=cont["32%"])[[1]])
     contour_68 = data.frame(contour_68)   
     p1 = ggplot(df_param, aes(x=mu, y=alpha)) +
                stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE) +
                geom_path(aes(x=x, y=y), data=contour_95, lwd=0.25) +
+	       geom_path(aes(x=x, y=y), data=contour_95_2, lwd=0.25) + 
                geom_path(aes(x=x, y=y), data=contour_68, lwd=0.5) +
                scale_fill_distiller(palette="Greys", direction=1) +
                labs(colour = "Density") +
                xlab(expression("Mean ("*mu*")")) +
                ylab(expression("Aperiodicity ("*alpha*")")) +
                scale_x_continuous(expand = c(0, 0), limits = c(0, 150000),
-	       				 breaks=c(0, 50000, 100000), labels=c("0", "50000", "100000")) +
+	       				 breaks=c(0, 50000, 100000), labels=c("0", "", "100000")) +
                scale_y_continuous(expand = c(0, 0), limits = c(0, 10), breaks = c(0,2,4,6,8,10),
 	       				 labels=c("0","2","4","6","8","10")) +
 	       theme(
