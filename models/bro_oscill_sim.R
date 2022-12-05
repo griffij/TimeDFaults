@@ -3,20 +3,20 @@ source('BPT.R') # Call module containing brownian oscillator function
 
 # Define simulation parameters
 t = 100#8 # Total simulation time
-tplot = 40 # Don't plot whole sequence
+tplot = 35 # Don't plot whole sequence
 dt = 0.001 # Timestep
 x0 = 0 # Value immediatly after failure
 xf = 1 # Failure threshold value
 mu = 0 # Mean value of normally distributed white noise, set to zero
 #sigma = c(0.1, 1/4, 1/2, 3/4, 0.9, 1, 1.1, 1.25) # Standard deviation  
-sigma = 0.7 #0.75 #0.8
+sigma = 0.75 #0.7 #0.8
 var = sigma^2 # Perturbation rate parameter for Brownian oscillator, variance of
       	   # normal distribution
 #lambda = 1 # Mean loading rate (i.e. simulates constant tectonic loading)
 #lambda = c(4, 2, 1, 1/2, 0.3, 0.25, 0.2, 0.1)
 lambda = c(4, 2,  1, 0.5, 0.4, 0.33, 0.25)
 offset = 0 #8 # Offset plot to show good explanatory behaviour
-rseed = 2#3#3 # Fix random seed for repeatability. Seed of 5 gives good explanatory behaviour
+rseed = 8#7ok#2ok#3#3 # Fix random seed for repeatability. Seed of 5 gives good explanatory behaviour
 
 #fig_filename = 'brownian_oscillators.pdf'
 fig_filename = paste0('brownian_oscillators_sigma_', sigma, '.pdf') 
@@ -76,6 +76,6 @@ for (i in seq_along(lambda)){
 #    dev.off()
     # Write event times to file
     event_times_filename = paste0('brownian_oscillators_sigma_', sigma, '_', lambda[i], '.csv')
-    write.csv(oscillator$event_times, event_times_filename)
+    write.csv(-1*(oscillator$event_times-offset)+tplot, event_times_filename)
     }
 dev.off()
