@@ -9,7 +9,7 @@ x0 = 0 # Value immediatly after failure
 xf = 1 # Failure threshold value
 mu = 0 # Mean value of normally distributed white noise, set to zero
 #sigma = c(0.1, 1/4, 1/2, 3/4, 0.9, 1, 1.1, 1.25) # Standard deviation  
-sigma = 0.75 #0.7 #0.8
+sigma = 0.8 #0.7 #0.8
 var = sigma^2 # Perturbation rate parameter for Brownian oscillator, variance of
       	   # normal distribution
 #lambda = 1 # Mean loading rate (i.e. simulates constant tectonic loading)
@@ -36,7 +36,7 @@ for (i in seq_along(lambda)){
 #    dev.new(width=8, height=4, unit="in")
     print(plot(((-1*(oscillator$realisation$n-offset)+tplot)), oscillator$realisation$Y, type = 'l',
 #    	 main = bquote('Brownian Oscillator,' ~ lambda == .(lambda[i])),
-    	 xlab =  'Age', ylab = 'State', xlim=c(0,tplot), xaxs='i',
+    	 xlab =  'Age', ylab = 'State', xlim=c(0,tplot-10), xaxs='i',
 	 ylim=c(-1.05,1.15), cex.lab = 1.2, cex.main=1.2))
 #	 fig.dim=c(8,1)))
 	 #asp=0.5)
