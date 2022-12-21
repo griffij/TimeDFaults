@@ -1,0 +1,110 @@
+# Use standard parameterisation with mu, lambda
+# Number of censored observations
+data {
+ for (i in 1:N){
+ zeros[i] = 0
+ }
+ for (j in 1:M){
+ zeros_j[j] = 0
+ }
+ C = 10000
+}
+
+model{
+  for (i in 1:N){
+   # Prior for lambda parameter
+  zeros[i] ~ dpois(zeros.mean[i])
+  zeros.mean[i] = -l[i] + C
+  # Censoring - now handled in main script
+  #  y[i] = ifelse(isCensored[i], censorLimitVec[i], Y[i])
+  # For calculating CDF
+  u1[i] = pow((lambda/y[i]), 1/2)*(y[i]/mu - 1)
+  u2[i] = -1*pow((lambda/y[i]), 1/2)*(y[i]/mu + 1)
+  cdf[i] = pnorm(u1[i], 0, 1) + exp((2*lambda)/mu)*pnorm(u2[i], 0, 1)
+  # Log-likelihood 
+  l[i] = ifelse(isCensored[i],
+       log(1-cdf[i]),
+       0.5*(log(lambda) - log(2*3.1416) - 3*log(y[i])) -
+       0.5*lambda*pow((y[i] - mu), 2)/(pow(mu, 2)*y[i])
+       )
+    }
+    
+  # Now we do the incremental slip-rate data
+  for (j in 1:M){
+  # Zeros trick
+  zeros_j[j] ~ dpois(zeros_j.mean[j])
+  zeros_j.mean[j] = -lt[j] + C
+  # Now we use the additive property of the inverse Gaussian distribution
+  # for i in (1,2,...n), Sum(X_i) = IG(n*mu, n^2*lambda)
+  n_events[j] = dround((V[j]/throw_per_event), 0)
+  ut1[j] = pow((pow(n_events[j],2)*lambda/T[j]), 1/2)*(T[j]/(n_events[j]*mu) - 1)
+  ut2[j] = -1*pow((pow(n_events[j],2)*lambda/T[j]), 1/2)*(T[j]/(n_events[j]*mu) + 1)
+  cdft[j] = pnorm(ut1[j], 0, 1) + exp((2*pow(n_events[j], 2)*lambda)/(n_events[j]*mu))*pnorm(ut2[j], 0, 1)
+  # log-likelihood - censored form is kept although we aren't using this at present
+  lt[j] = ifelse(isSlipCensored[j],
+  	log(1-cdft[j]),
+	0.5*(log(pow(n_events[j], 2)*lambda) - log(2*3.1416) - 3*log(T[j])) -
+	0.5*pow(n_events[j], 2)*lambda*pow((T[j]-n_events[j]*mu), 2)/(pow((n_events[j]*mu), 2)*T[j])
+	)
+  # Uninformative priors for V and T
+  V[j] ~ dunif(0, 50)  #'True' offset value
+  T[j] ~ dunif(0, 500000)  #'True' age value
+  }
+
+# Implement error models on T (Age of surface) and V (Vertical offset) 
+# and ensure monotonically increasing offset and ages
+# Then get the incremental values (V[i], T[i]), what we want to model
+# Here V_sum[i] is the 'true' value of the observed cumulative
+# offset V_obs[i]. Cumulative offset samples are constrained to
+# be monotonically increasing by truncation at upper level
+# Note 1 is largest and oldest offset, M is smallest.
+V_obs[1] ~ dnorm(V_sum[1], V_tau[1])T(0,)
+T_obs[1] ~ dnorm(T_sum[1], T_tau[1])T(0,)
+for (j in 2:M){
+    V_obs[j] ~ dnorm(V_sum[j], V_tau[j])T(0,V_sum[j-1]-1e-8)
+    T_obs[j] ~ dnorm(T_sum[j], T_tau[j])T(0,T_sum[j-1]-1e-8)
+    }
+#V_sum is the sum of incremental offsets    
+V_sum[M] = V[M]
+T_sum[M] = T[M]
+for (j in 1:(M-1)){
+    # We want to index in reverse order, i.e. M-j
+    V_sum[M-j] ~ dsum(V[M-j], V_sum[M-j+1])
+    T_sum[M-j] ~ dsum(T[M-j], T_sum[M-j+1])
+    }
+
+# Get random indices
+vec = c(1)
+for (k in 1:N_MC){
+#    zeros_k[k] ~ dpois(zeros_k.mean[k])
+#    zeros_k.mean[k] = -lk[k] + C 
+    for (i in 1:N){
+#    cat[i] ~ dcat(vec)
+#    Y_obs[k,i] ~ dsum(y[i], cat[i])
+    Y_obs[k,i] ~ dnorm(y[i], 1e-2)T(0,)
+    }
+}
+# Priors for true inter-eent times
+for (i in 1:N){
+    y[i] ~ dunif(0, 50000)
+}
+
+# Lets track alpha as well
+alpha = pow((mu/lambda), 1/2)
+# Priors - uninformative
+lambda ~ dunif(0, 100000)
+#lambda ~ dnorm(15000, 1e-8)T(0,)
+mu ~ dunif(0, 150000)
+#mu ~ dnorm(10000, 1e-8)T(0,)
+#throw_per_event ~ dnorm(1., 2)T(0.5,5) # Estimate of throw per event from trench data
+throw_per_event ~ dlnorm(0.7, 8.4) #(0.7, 4.0)#T(0.5,2.5) #(-0.7, 3.8) #(0.0, 4.0) #(-0.73, 1/0.32) #(1, 1/0.707) Try lognormal
+
+# Here we take a random sample from the earthquake chronologies
+#ind ~ dunif(1, N_MC)
+#ind_r = round(ind)
+#y = Y[ind_r,] # Random sample of single realisation of eq record
+
+# Try sampling prior open interval
+# Track MRE
+mre = MRE
+}

@@ -60,7 +60,7 @@ for (datalist in datalists){
     print(datalist)
 #    exit()
     # Initialise list for storing each MCMC object
-    mcmclist = vector("list", 3*length(datalist))
+    mcmclist = vector("list", 3)#*length(datalist))
     index = 1
     figure_filename = paste0('plots/invgauss_fit_sliprate_std_param_hyde', j, '.pdf')
     pdf(figure_filename)
@@ -91,9 +91,11 @@ for (datalist in datalists){
     m = data.matrix(datalist)
     inter_event_m = t(abs(diff(t(m)))) # Transpose, take difference and transpose back
 #    print(inter_event_m)
-    isCensored = (inter_event_m < 0)
-    isCensored[1] = TRUE
-    isCensored[length(isCensored)] = TRUE
+    #isCensored = (inter_event_m < 0)
+    isCensored = matrix(FALSE, length(datalist[,1]), length(datalist[1,])+1)
+    isCensored[,1] = TRUE
+    isCensored[,length(datalist)+1] = TRUE
+    print(isCensored)
     Y = matrix(1, length(datalist[,1]), length(datalist[1,])+1)
     Y[,1] = censorLimitVec[,1]
     for (p in 2:length(datalist[1,])){
@@ -114,21 +116,22 @@ for (datalist in datalists){
     isCensored = as.numeric(isCensored)
 #    Y[1] = censorLimitVec[1]
 #    Y[length(Y)] = censorLimitVec[length(Y)]
-    censorLimitVec = as.numeric(censorLimitVec)
+#    censorLimitVec = as.numeric(censorLimitVec)
     print(Y)
-    print(censorLimitVec)
+#    print(censorLimitVec)
     # Lets deal with V and T as uncertain observations
     V_obs = V
     T_obs = T
+    Y_obs = Y
     # Define data
-    sim.data.jags <- list("Y", "N", "N_MC"
+    sim.data.jags <- list("Y_obs", "N", "N_MC"
     		  ,"V_obs", "V_tau", "T_obs", "T_tau"
 	  	  ,"M", "isSlipCensored"
 		  , "isCensored", "MRE"
 		  )
     # Define the parameters whose posterior distributions we want to calculate
     bayes.mod.params <- c("lambda", "mu", "alpha", "n_events",
-        "V", "T", "Y", "y[1,1]", "V_sum", "T_sum", "V_obs", "T_obs", "mre"
+        "V", "T", "V_sum", "y", "T_sum", "V_obs", "T_obs"#, "mre"
 	)
     lambdaInit = 1.0
     muInit = 10000 # Rough estimate of mean(Y)
@@ -153,7 +156,7 @@ for (datalist in datalists){
     index = index+3
     summary(bayes.mod.fit.mcmc)
     }
-	    
+    print(mcmclist)
     # Convert all MCMC models into one MCMC object
     #	bayes.mcmc.combined = as.mcmc.list(mcmclist) # Use this to plot all individual chains
     bayes.mcmc.combinedlist = as.mcmc.list(mcmclist)
@@ -202,7 +205,7 @@ for (datalist in datalists){
 	print("dev.off()")
 	dev.off() 
 	j = j+1
-}
+
 
 png(file='plots/invgauss_fit_sliprate_std_param_hyde.png', units="in", width=5, height=5, res=300)
 # Estimate density value containing 95% of posterior ditribution
