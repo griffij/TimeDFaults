@@ -36,6 +36,7 @@ model{
   zeros_j.mean[j] = -lt[j] + C
   # Now we use the additive property of the inverse Gaussian distribution
   # for i in (1,2,...n), Sum(X_i) = IG(n*mu, n^2*lambda)
+  n_events_cont[j] = V[j]/throw_per_event
   n_events[j] = dround((V[j]/throw_per_event), 0)
   ut1[j] = pow((pow(n_events[j],2)*lambda/T[j]), 1/2)*(T[j]/(n_events[j]*mu) - 1)
   ut2[j] = -1*pow((pow(n_events[j],2)*lambda/T[j]), 1/2)*(T[j]/(n_events[j]*mu) + 1)
@@ -74,30 +75,37 @@ for (j in 1:(M-1)){
     }
 
 # Get random indices
-vec = c(1)
+#vec = c(1)
+#for (k in 1:N_MC){
+#    for (i in 1:N){
+#        Y_obs[k,i] ~ dnorm(y[i], 1e-3)T(0,)
+#    }
+#}
+
 for (k in 1:N_MC){
-#    zeros_k[k] ~ dpois(zeros_k.mean[k])
-#    zeros_k.mean[k] = -lk[k] + C 
     for (i in 1:N){
-#    cat[i] ~ dcat(vec)
-#    Y_obs[k,i] ~ dsum(y[i], cat[i])
-    Y_obs[k,i] ~ dnorm(y[i], 1e-2)T(0,)
+        Y_obs[k,i] ~ dnorm (Y_obs_t[i], Y_obs_tau[i])
+	}
     }
-}
-# Priors for true inter-eent times
+# Priors for true inter-event times
 for (i in 1:N){
     y[i] ~ dunif(0, 50000)
+    y_tau[i] ~ dunif(1e-8, 1)
+    Y_obs_t[i] ~ dnorm(y[i], y_tau[i])
+    Y_obs_tau[i] ~ dunif(1e-8, 1) 
 }
 
 # Lets track alpha as well
 alpha = pow((mu/lambda), 1/2)
 # Priors - uninformative
+#alpha ~ dunif(0,10)
+#lambda = pow(alpha,2)/mu
 lambda ~ dunif(0, 100000)
 #lambda ~ dnorm(15000, 1e-8)T(0,)
 mu ~ dunif(0, 150000)
 #mu ~ dnorm(10000, 1e-8)T(0,)
-#throw_per_event ~ dnorm(1., 2)T(0.5,5) # Estimate of throw per event from trench data
-throw_per_event ~ dlnorm(0.7, 8.4) #(0.7, 4.0)#T(0.5,2.5) #(-0.7, 3.8) #(0.0, 4.0) #(-0.73, 1/0.32) #(1, 1/0.707) Try lognormal
+throw_per_event ~ dnorm(2., 4)T(1.75,2.25) # Estimate of throw per event from trench data
+#throw_per_event ~ dlnorm(0.7, 3.0) # dlnorm(0.7, 8.4) #(0.7, 4.0)#T(0.5,2.5) #(-0.7, 3.8) #(0.0, 4.0) #(-0.73, 1/0.32) #(1, 1/0.707) Try lognormal
 
 # Here we take a random sample from the earthquake chronologies
 #ind ~ dunif(1, N_MC)

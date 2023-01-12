@@ -29,9 +29,9 @@ datafiles = c('../data/chronologies/Hyde4event_1000_chronologies.csv')
 
 print(datafiles)
 for (i in 1:length(datafiles)){
-    print(i)
+#    print(i)
     data = read.csv(datafiles[i], header=FALSE)#, delimiter=',')
-    print(data)
+#    print(data)
     # reverse order
     #datalist = data[,order(ncol(data):1)]
     dl = data*-1 # Make ages positive for years before present
@@ -51,47 +51,29 @@ T_sigma = cbind(4400, 8100, 800)
 T_tau = 1/(T_sigma**2)[1,]
 isSlipCensored = (slip_times < 0)
 isSlipCensored = as.numeric(isSlipCensored)
-print(isSlipCensored)
-print(ncol(datalists))
 
 j=1
 for (datalist in datalists){
-    print("datalist")
-    print(datalist)
-#    exit()
+    #print("datalist")
+    #print(datalist)
     # Initialise list for storing each MCMC object
     mcmclist = vector("list", 3)#*length(datalist))
     index = 1
     figure_filename = paste0('plots/invgauss_fit_sliprate_std_param_hyde', j, '.pdf')
     pdf(figure_filename)
-
-    #	for (i in 1:nrow(datalist)){
-    #data = list(cbind(NA, datalist[i,], NA))#[1,]
-    #data = data[[1]]
     # Get number of events
     sl = length(datalist[0,])#[1]
-    print('sl')
-    print(sl)
+
     # Most recent event in year before present defines minimum length of
     # present open interval
-    print(class(datalist))
     MRE = abs(datalist[,sl])
-    print('MRE')
-    print(MRE)
-#    censorLimitVec = rep(1,length(datalist[0,])-1)
-#    censorLimitVec = rep(censorLimitVec, length(datalist[,1]))
     censorLimitVec = matrix(1, length(datalist[,1]), length(datalist[1,])-1)
-
-#    print('censorLimitVec')
-#    print(censorLimitVec)
     censorLimitVec[,1] = 1000
     censorLimitVec[,length(censorLimitVec[1,])] = MRE
-#    print(censorLimitVec)  
+
     # Convert data to inter-event times
     m = data.matrix(datalist)
     inter_event_m = t(abs(diff(t(m)))) # Transpose, take difference and transpose back
-#    print(inter_event_m)
-    #isCensored = (inter_event_m < 0)
     isCensored = matrix(FALSE, length(datalist[,1]), length(datalist[1,])+1)
     isCensored[,1] = TRUE
     isCensored[,length(datalist)+1] = TRUE
@@ -99,13 +81,9 @@ for (datalist in datalists){
     Y = matrix(1, length(datalist[,1]), length(datalist[1,])+1)
     Y[,1] = censorLimitVec[,1]
     for (p in 2:length(datalist[1,])){
-#    	print('here')
-#    	print(p)
     	Y[,p] = inter_event_m[,p-1]
 	}
-#    print(Y)
     Y[,length(datalist[1,])+1] = censorLimitVec[,length(censorLimitVec[1,])]
-#    Y = Y[1,]
     print(Y)
     V = throws[1,]
     T = slip_times[1,]
@@ -114,11 +92,7 @@ for (datalist in datalists){
     N_MC = length(Y[,1]) # Number of Monte Carlo samples of eq chronology
     M = length(V)
     isCensored = as.numeric(isCensored)
-#    Y[1] = censorLimitVec[1]
-#    Y[length(Y)] = censorLimitVec[length(Y)]
-#    censorLimitVec = as.numeric(censorLimitVec)
     print(Y)
-#    print(censorLimitVec)
     # Lets deal with V and T as uncertain observations
     V_obs = V
     T_obs = T
@@ -130,7 +104,7 @@ for (datalist in datalists){
 		  , "isCensored", "MRE"
 		  )
     # Define the parameters whose posterior distributions we want to calculate
-    bayes.mod.params <- c("lambda", "mu", "alpha", "n_events",
+    bayes.mod.params <- c("lambda", "mu", "alpha", "n_events", "n_events_cont",
         "V", "T", "V_sum", "y", "T_sum", "V_obs", "T_obs"#, "mre"
 	)
     lambdaInit = 1.0
@@ -142,7 +116,7 @@ for (datalist in datalists){
     # The model
     bayes.mod.fit <- jags(data = sim.data.jags, inits = bayes.mod.inits,
     		  parameters.to.save = bayes.mod.params, n.chains = 3,
-		  n.iter = 6000, n.burnin = 1000, n.thin = 20,
+		  n.iter = 15000, n.burnin = 1000, n.thin = 20,
 		  model.file = 'invgauss_sliprate_std_param_eqsample_hyde.jags')
     print(bayes.mod.fit)
 
