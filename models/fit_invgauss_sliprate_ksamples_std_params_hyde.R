@@ -51,8 +51,8 @@ for (i in 1:length(datafiles)){
     }
 print(datalists)
 
-throws = cbind(27.5, 17, 5)# Vertical offsets in meters  
-V_sigma = cbind(3, 3, 0.5) # Uncertainty on throw (metres)
+throws = cbind(25.0, 14, 4)# Vertical offsets in meters  
+V_sigma = cbind(1.5, 1.0, 0.25) # Uncertainty on throw (metres)
 V_tau = 1/(V_sigma**2)[1,]
 slip_times = cbind(112800, 97800, 34200)
 T_sigma = cbind(4400, 8100, 800)
