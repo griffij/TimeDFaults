@@ -82,18 +82,18 @@ for (j in 1:(M-1)){
 #    }
 #}
 
-for (k in 1:N_MC){
-    for (i in 1:N){
-        Y_obs[k,i] ~ dnorm (Y_obs_t[i], Y_obs_tau[i])
-	}
-    }
+#for (k in 1:N_MC){
+#    for (i in 1:N){
+#        Y_obs[k,i] ~ dnorm (Y_obs_t[i], Y_obs_tau[i])
+#	}
+#    }
 # Priors for true inter-event times
-for (i in 1:N){
-    y[i] ~ dunif(0, 50000)
-    y_tau[i] ~ dunif(1e-8, 1)
-    Y_obs_t[i] ~ dnorm(y[i], y_tau[i])
-    Y_obs_tau[i] ~ dunif(1e-8, 1) 
-}
+#for (i in 1:N){
+#    y[i] ~ dunif(0, 50000)
+#    y_tau[i] ~ dunif(1e-8, 1)
+#    Y_obs_t[i] ~ dnorm(y[i], y_tau[i])
+#    Y_obs_tau[i] ~ dunif(1e-8, 1) 
+#}
 
 # Lets track alpha as well
 alpha = pow((mu/lambda), 1/2)
@@ -108,9 +108,9 @@ throw_per_event ~ dnorm(2., 4)T(1.75,2.25) # Estimate of throw per event from tr
 #throw_per_event ~ dlnorm(0.7, 3.0) # dlnorm(0.7, 8.4) #(0.7, 4.0)#T(0.5,2.5) #(-0.7, 3.8) #(0.0, 4.0) #(-0.73, 1/0.32) #(1, 1/0.707) Try lognormal
 
 # Here we take a random sample from the earthquake chronologies
-#ind ~ dunif(1, N_MC)
-#ind_r = round(ind)
-#y = Y[ind_r,] # Random sample of single realisation of eq record
+ind ~ dunif(1, N_MC)
+ind_r = round(ind)
+y = Y_obs[ind_r,] # Random sample of single realisation of eq record
 
 # Try sampling prior open interval
 # Track MRE

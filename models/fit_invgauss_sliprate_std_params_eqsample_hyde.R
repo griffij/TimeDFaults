@@ -105,7 +105,7 @@ for (datalist in datalists){
 		  )
     # Define the parameters whose posterior distributions we want to calculate
     bayes.mod.params <- c("lambda", "mu", "alpha", "n_events", "n_events_cont",
-        "V", "T", "V_sum", "y", "T_sum", "V_obs", "T_obs"#, "mre"
+        "V", "T", "V_sum", "y", "T_sum", "V_obs", "T_obs", "ind_r"#, "mre"
 	)
     lambdaInit = 1.0
     muInit = 10000 # Rough estimate of mean(Y)
@@ -116,7 +116,7 @@ for (datalist in datalists){
     # The model
     bayes.mod.fit <- jags(data = sim.data.jags, inits = bayes.mod.inits,
     		  parameters.to.save = bayes.mod.params, n.chains = 3,
-		  n.iter = 15000, n.burnin = 1000, n.thin = 20,
+		  n.iter = 15000, n.burnin = 5000, n.thin = 10,
 		  model.file = 'invgauss_sliprate_std_param_eqsample_hyde.jags')
     print(bayes.mod.fit)
 
