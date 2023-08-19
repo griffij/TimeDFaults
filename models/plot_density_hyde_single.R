@@ -5,6 +5,7 @@ library(ks)
 library(lattice)
 library(grid)
 library(gridExtra)
+library(hdrcde)
 
 # Read in posterior dataset
 posterior_files = c('outputs/df_posterior_1_hyde.csv')
@@ -16,21 +17,32 @@ plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15000, lab_y=9.5){
     # Get mean values
     mean_mu = median(mu)
     mean_alpha = median(alpha)
+    # Get mode
+    mode_vals = hdr.2d(mu, alpha, prob=c(1),
+           den=NULL, kde.package = c("ks"),
+	   h = NULL)
+    print(mode_vals)
+    mode = mode_vals$mode
+    print('Mode')
+    print(mode)
+    print(mode[1])
+    print(mode[2])
     df_param = data.frame(mu, alpha)
     kd <- ks::kde(df_param, gridsize=rep(1401,2) , compute.cont=TRUE)
     contour_95 =with(kd, contourLines(x=eval.points[[1]], y=eval.points[[2]], 
                z=estimate, levels=cont["5%"])[[1]])
     contour_95 = data.frame(contour_95)
-    contour_90 =with(kd, contourLines(x=eval.points[[1]], y=eval.points[[2]],
-    	       z=estimate, levels=cont["25%"])[[1]])
-    contour_90 = data.frame(contour_90) 
-    contour_68 =with(kd, contourLines(x=eval.points[[1]], y=eval.points[[2]],
+    contour_50 =with(kd, contourLines(x=eval.points[[1]], y=eval.points[[2]],
     	       z=estimate, levels=cont["50%"])[[1]])
-    contour_68 = data.frame(contour_68)   
+    contour_50 = data.frame(contour_50) 
+    contour_25 =with(kd, contourLines(x=eval.points[[1]], y=eval.points[[2]],
+    	       z=estimate, levels=cont["75%"])[[1]])
+    contour_25 = data.frame(contour_25)   
     p1 = ggplot(df_param, aes(x=mu, y=alpha)) +
                stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE) +
                geom_path(aes(x=x, y=y), data=contour_95, lwd=0.5) +
-               geom_path(aes(x=x, y=y), data=contour_68, lwd=0.75) +
+               geom_path(aes(x=x, y=y), data=contour_50, lwd=0.5) +
+	       geom_path(aes(x=x, y=y), data=contour_25, lwd=0.75) + 
                scale_fill_distiller(palette="Greys", direction=1) +
                labs(colour = "Density") +
                xlab(expression("Mean ("*mu*")")) +
@@ -42,7 +54,8 @@ plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15000, lab_y=9.5){
 	       theme(
 	           legend.position='none'
   	       )+
-	       geom_point(x = mean_mu, y=mean_alpha, shape=4, colour='red')
+	       geom_point(x = mean_mu, y=mean_alpha, shape=4, colour='red')+
+	       geom_point(x = mode[1], y=mode[2], shape=4, colour='red') 
 #	       geom_text(label=fig_lab, x=lab_x, y=lab_y)
     figname = 'plots/posterior_density_hyde_single_test.png'
 #    print(png(file=figname, units="in", width=7, height=5, res=300))

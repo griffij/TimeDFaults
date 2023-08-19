@@ -25,7 +25,7 @@ setwd('.')
 ###########
 # Real data
 
-datafiles = c('../data/chronologies/Hyde4event_1000_chronologies.csv')
+datafiles = c('../data/chronologies/Hyde_10000_chronologies.csv')
 
 print(datafiles)
 for (i in 1:length(datafiles)){
