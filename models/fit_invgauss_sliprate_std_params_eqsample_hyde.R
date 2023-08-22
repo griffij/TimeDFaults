@@ -44,7 +44,7 @@ for (i in 1:length(datafiles)){
 #print(datalists)
 
 throws = cbind(25.0, 14, 4)# Vertical offsets in meters  
-V_sigma = cbind(1.5, 1.0, 0.25) # Uncertainty on throw (metres)
+V_sigma = cbind(1.5, 1.0, 0.5) # Uncertainty on throw (metres)
 V_tau = 1/(V_sigma**2)[1,]
 slip_times = cbind(112800, 97800, 34200)
 T_sigma = cbind(4400, 8100, 800)
@@ -107,16 +107,17 @@ for (datalist in datalists){
     bayes.mod.params <- c("lambda", "mu", "alpha", "n_events", "n_events_cont",
         "V", "T", "V_sum", "y", "T_sum", "V_obs", "T_obs", "ind_r"#, "mre"
 	)
-    lambdaInit = 1.0
+    alphaInit = 1.0
+    #lambdaInit = 1.0
     muInit = 10000 # Rough estimate of mean(Y)
 	
     # Define starting values
-    bayes.mod.inits <- function(){list("mu"=muInit, "lambda"=lambdaInit)}
+    bayes.mod.inits <- function(){list("mu"=muInit, "alpha"=alphaInit)}# "lambda"=lambdaInit)}
 
     # The model
     bayes.mod.fit <- jags(data = sim.data.jags, inits = bayes.mod.inits,
     		  parameters.to.save = bayes.mod.params, n.chains = 3,
-		  n.iter = 15000, n.burnin = 5000, n.thin = 10,
+		  n.iter = 50000, n.burnin = 10000, n.thin = 20,
 		  model.file = 'invgauss_sliprate_std_param_eqsample_hyde.jags')
     print(bayes.mod.fit)
 
