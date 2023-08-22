@@ -51,6 +51,8 @@ T_sigma = cbind(4400, 8100, 800)
 T_tau = 1/(T_sigma**2)[1,]
 isSlipCensored = (slip_times < 0)
 isSlipCensored = as.numeric(isSlipCensored)
+print("isSlipCensored")
+print(isSlipCensored)
 
 j=1
 for (datalist in datalists){
@@ -67,23 +69,28 @@ for (datalist in datalists){
     # Most recent event in year before present defines minimum length of
     # present open interval
     MRE = abs(datalist[,sl])
-    censorLimitVec = matrix(1, length(datalist[,1]), length(datalist[1,])-1)
-    censorLimitVec[,1] = 1000
+    censorLimitVec = matrix(1, length(datalist[,1]), length(datalist[1,])-2)
+#    censorLimitVec[,1] = 1000
     censorLimitVec[,length(censorLimitVec[1,])] = MRE
 
     # Convert data to inter-event times
     m = data.matrix(datalist)
     inter_event_m = t(abs(diff(t(m)))) # Transpose, take difference and transpose back
-    isCensored = matrix(FALSE, length(datalist[,1]), length(datalist[1,])+1)
-    isCensored[,1] = TRUE
-    isCensored[,length(datalist)+1] = TRUE
+#    isCensored = matrix(FALSE, length(datalist[,1]), length(datalist[1,])+1)
+    isCensored = matrix(FALSE, length(datalist[,1]), length(datalist[1,]))
+#    isCensored[,1] = TRUE
+#     isCensored[,length(datalist)+1] = TRUE
+    isCensored[,length(datalist)] = TRUE
     print(isCensored)
-    Y = matrix(1, length(datalist[,1]), length(datalist[1,])+1)
-    Y[,1] = censorLimitVec[,1]
-    for (p in 2:length(datalist[1,])){
-    	Y[,p] = inter_event_m[,p-1]
+#    Y = matrix(1, length(datalist[,1]), length(datalist[1,])+1)
+    Y = matrix(1, length(datalist[,1]), length(datalist[1,])) 
+#    Y[,1] = censorLimitVec[,1]
+#    for (p in 2:length(datalist[1,])){
+    for (p in 1:length(datalist[1,])-1){
+#        Y[,p] = inter_event_m[,p-1] 
+    	Y[,p] = inter_event_m[,p]
 	}
-    Y[,length(datalist[1,])+1] = censorLimitVec[,length(censorLimitVec[1,])]
+    Y[,length(datalist[1,])] = censorLimitVec[,length(censorLimitVec[1,])]
     print(Y)
     V = throws[1,]
     T = slip_times[1,]
@@ -93,6 +100,7 @@ for (datalist in datalists){
     M = length(V)
     isCensored = as.numeric(isCensored)
     print(Y)
+    print(isCensored)
     # Lets deal with V and T as uncertain observations
     V_obs = V
     T_obs = T
