@@ -12,7 +12,6 @@ data {
 
 model{
   for (i in 1:N){
-   # Prior for lambda parameter
   zeros[i] ~ dpois(zeros.mean[i])
   zeros.mean[i] = -l[i] + C
   # Censoring - now handled in main script
@@ -74,38 +73,19 @@ for (j in 1:(M-1)){
     T_sum[M-j] ~ dsum(T[M-j], T_sum[M-j+1])
     }
 
-# Get random indices
-#vec = c(1)
-#for (k in 1:N_MC){
-#    for (i in 1:N){
-#        Y_obs[k,i] ~ dnorm(y[i], 1e-3)T(0,)
-#    }
-#}
-
-#for (k in 1:N_MC){
-#    for (i in 1:N){
-#        Y_obs[k,i] ~ dnorm (Y_obs_t[i], Y_obs_tau[i])
-#	}
-#    }
-# Priors for true inter-event times
-#for (i in 1:N){
-#    y[i] ~ dunif(0, 50000)
-#    y_tau[i] ~ dunif(1e-8, 1)
-#    Y_obs_t[i] ~ dnorm(y[i], y_tau[i])
-#    Y_obs_tau[i] ~ dunif(1e-8, 1) 
-#}
 
 # Lets track alpha as well
-alpha = pow((mu/lambda), 1/2)
+#alpha = pow((mu/lambda), 1/2)
 # Priors - uninformative
 #alpha ~ dunif(0,10)
-#lambda = pow(alpha,2)/mu
-lambda ~ dunif(0, 100000)
+alpha ~ dnorm(1, 1e-4)T(0,)
+lambda = mu/pow(alpha,2)
+#lambda ~ dunif(0, 100000)
 #lambda ~ dnorm(15000, 1e-8)T(0,)
-mu ~ dunif(0, 150000)
-#mu ~ dnorm(10000, 1e-8)T(0,)
-throw_per_event ~ dnorm(2., 4)T(1.75,2.25) # Estimate of throw per event from trench data
-#throw_per_event ~ dlnorm(0.7, 3.0) # dlnorm(0.7, 8.4) #(0.7, 4.0)#T(0.5,2.5) #(-0.7, 3.8) #(0.0, 4.0) #(-0.73, 1/0.32) #(1, 1/0.707) Try lognormal
+#mu ~ dunif(0, 150000)
+mu ~ dnorm(10000, 1e-8)T(0,)
+#throw_per_event ~ dnorm(2, 4)T(1.5,2.5) #dnorm(2., 4)T(1.75,2.25) # Estimate of throw per event from trench data
+throw_per_event ~ dlnorm(0.6, 0.3)#T(1., 3) # dlnorm(0.7, 8.4) #(0.7, 4.0)#T(0.5,2.5) #(-0.7, 3.8) #(0.0, 4.0) #(-0.73, 1/0.32) #(1, 1/0.707) Try lognormal
 
 # Here we take a random sample from the earthquake chronologies
 ind ~ dunif(1, N_MC)
