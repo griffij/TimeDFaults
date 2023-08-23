@@ -15,8 +15,11 @@ posterior_files = c('outputs/df_posterior_1_hyde.csv')
 plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15000, lab_y=9.5){
     # Estimate density value containing 95% of posterior ditribution
     # Get mean values
-    mean_mu = median(mu)
-    mean_alpha = median(alpha)
+    mean_mu = mean(mu)
+    mean_alpha = mean(alpha)
+    # Get median
+    median_mu = median(mu)
+    median_alpha = median(alpha)
     # Get mode
     mode_vals = hdr.2d(mu, alpha, prob=c(1),
            den=NULL, kde.package = c("ks"),
@@ -29,9 +32,9 @@ plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15000, lab_y=9.5){
     print(mode[2])
     df_param = data.frame(mu, alpha)
     kd <- ks::kde(df_param, gridsize=rep(1401,2) , compute.cont=TRUE)
-    contour_95 =with(kd, contourLines(x=eval.points[[1]], y=eval.points[[2]], 
-               z=estimate, levels=cont["5%"])[[1]])
-    contour_95 = data.frame(contour_95)
+    contour_90 =with(kd, contourLines(x=eval.points[[1]], y=eval.points[[2]], 
+               z=estimate, levels=cont["10%"])[[1]])
+    contour_90 = data.frame(contour_90)
     contour_50 =with(kd, contourLines(x=eval.points[[1]], y=eval.points[[2]],
     	       z=estimate, levels=cont["50%"])[[1]])
     contour_50 = data.frame(contour_50) 
@@ -40,22 +43,23 @@ plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15000, lab_y=9.5){
     contour_25 = data.frame(contour_25)   
     p1 = ggplot(df_param, aes(x=mu, y=alpha)) +
                stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE) +
-               geom_path(aes(x=x, y=y), data=contour_95, lwd=0.5) +
+               geom_path(aes(x=x, y=y), data=contour_90, lwd=0.5) +
                geom_path(aes(x=x, y=y), data=contour_50, lwd=0.5) +
 	       geom_path(aes(x=x, y=y), data=contour_25, lwd=0.75) + 
                scale_fill_distiller(palette="Greys", direction=1) +
                labs(colour = "Density") +
                xlab(expression("Mean ("*mu*")")) +
                ylab(expression("Aperiodicity ("*alpha*")")) +
-               scale_x_continuous(expand = c(0, 0), limits = c(0, 50000),
+               scale_x_continuous(expand = c(0, 0), limits = c(0, 150000),
 	       				 breaks=c(0, 50000, 100000), labels=c("0", "50000", "100000")) +
-               scale_y_continuous(expand = c(0, 0), limits = c(0, 4), breaks = c(0,2,4,6,8,10),
+               scale_y_continuous(expand = c(0, 0), limits = c(0, 10), breaks = c(0,2,4,6,8,10),
 	       				 labels=c("0","2","4","6","8","10")) +
 	       theme(
 	           legend.position='none'
   	       )+
-	       geom_point(x = mean_mu, y=mean_alpha, shape=4, colour='red')+
-	       geom_point(x = mode[1], y=mode[2], shape=4, colour='red') 
+	       geom_point(x = mean_mu, y=mean_alpha, shape=0, colour='red') +
+	       geom_point(x = median_mu, y=median_alpha, shape=1, colour='blue') +
+	       geom_point(x = mode[1], y=mode[2], shape=2, colour='green')
 #	       geom_text(label=fig_lab, x=lab_x, y=lab_y)
     figname = 'plots/posterior_density_hyde_single_test.png'
 #    print(png(file=figname, units="in", width=7, height=5, res=300))

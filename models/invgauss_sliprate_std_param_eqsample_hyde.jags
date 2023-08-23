@@ -82,10 +82,10 @@ alpha ~ dunif(0,10)
 lambda = mu/pow(alpha,2)
 #lambda ~ dunif(0, 100000)
 #lambda ~ dnorm(15000, 1e-8)T(0,)
-mu ~ dunif(0, 150000)
-#mu ~ dnorm(10000, 1e-10)T(0,)
+#mu ~ dunif(0, 150000)
+mu ~ dnorm(11000, 1e-8)T(0,)
 #throw_per_event ~ dnorm(2, 4)T(1.,3) #dnorm(2., 4)T(1.75,2.25) # Estimate of throw per event from trench data
-throw_per_event ~ dlnorm(0.6, 6)T(1,3) # dlnorm(0.7, 8.4) #(0.7, 4.0)#T(0.5,2.5) #(-0.7, 3.8) #(0.0, 4.0) #(-0.73, 1/0.32) #(1, 1/0.707) Try lognormal
+throw_per_event ~ dlnorm(0.66,16.5)#T(1,3) # dlnorm(0.7, 8.4) #(0.7, 4.0)#T(0.5,2.5) #(-0.7, 3.8) #(0.0, 4.0) #(-0.73, 1/0.32) #(1, 1/0.707) Try lognormal
 
 # Here we take a random sample from the earthquake chronologies
 ind ~ dunif(1, N_MC)
