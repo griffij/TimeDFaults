@@ -29,9 +29,9 @@ datafiles = c('../data/chronologies/Hyde_10000_chronologies.csv')
 
 print(datafiles)
 for (i in 1:length(datafiles)){
-#    print(i)
     data = read.csv(datafiles[i], header=FALSE)#, delimiter=',')
-#    print(data)
+    # Convert to ka rather than years to look at sensitivity to priors
+    data = data/1000
     # reverse order
     #datalist = data[,order(ncol(data):1)]
     dl = data*-1 # Make ages positive for years before present
@@ -44,15 +44,27 @@ for (i in 1:length(datafiles)){
 #print(datalists)
 
 throws = cbind(25.0, 14, 4)# Vertical offsets in meters  
+total_throw = throws[1]
 V_sigma = cbind(1.5, 1.0, 0.5) # Uncertainty on throw (metres)
+total_throw_sigma = V_sigma[1]
 V_tau = 1/(V_sigma**2)[1,]
 slip_times = cbind(112800, 97800, 34200)
 T_sigma = cbind(4400, 8100, 800)
 T_tau = 1/(T_sigma**2)[1,]
+
+# Convert to ka rather than years to look at sensitivity to priors
+slip_times = slip_times/1000
+T_sigma = T_sigma/1000
+T_tau = 1/(T_sigma**2)[1,]
+
+total_time = slip_times[1]
+total_time_sigma = T_sigma[1]
 isSlipCensored = (slip_times < 0)
 isSlipCensored = as.numeric(isSlipCensored)
 print("isSlipCensored")
 print(isSlipCensored)
+
+
 
 j=1
 for (datalist in datalists){
@@ -70,24 +82,16 @@ for (datalist in datalists){
     # present open interval
     MRE = abs(datalist[,sl])
     censorLimitVec = matrix(1, length(datalist[,1]), length(datalist[1,])-2)
-#    censorLimitVec[,1] = 1000
     censorLimitVec[,length(censorLimitVec[1,])] = MRE
 
     # Convert data to inter-event times
     m = data.matrix(datalist)
     inter_event_m = t(abs(diff(t(m)))) # Transpose, take difference and transpose back
-#    isCensored = matrix(FALSE, length(datalist[,1]), length(datalist[1,])+1)
     isCensored = matrix(FALSE, length(datalist[,1]), length(datalist[1,]))
-#    isCensored[,1] = TRUE
-#     isCensored[,length(datalist)+1] = TRUE
     isCensored[,length(datalist)] = TRUE
     print(isCensored)
-#    Y = matrix(1, length(datalist[,1]), length(datalist[1,])+1)
     Y = matrix(1, length(datalist[,1]), length(datalist[1,])) 
-#    Y[,1] = censorLimitVec[,1]
-#    for (p in 2:length(datalist[1,])){
     for (p in 1:length(datalist[1,])-1){
-#        Y[,p] = inter_event_m[,p-1] 
     	Y[,p] = inter_event_m[,p]
 	}
     Y[,length(datalist[1,])] = censorLimitVec[,length(censorLimitVec[1,])]
@@ -109,6 +113,8 @@ for (datalist in datalists){
     sim.data.jags <- list("Y_obs", "N", "N_MC"
     		  ,"V_obs", "V_tau", "T_obs", "T_tau"
 	  	  ,"M", "isSlipCensored"
+#		  ,"total_throw", "total_throw_sigma"
+#		  ,"total_time", "total_time_sigma"
 		  , "isCensored", "MRE"
 		  )
     # Define the parameters whose posterior distributions we want to calculate
@@ -117,15 +123,15 @@ for (datalist in datalists){
 	)
     alphaInit = 1.0
     #lambdaInit = 1.0
-    muInit = 10000 # Rough estimate of mean(Y)
+    muInit = 10 #10000 # Rough estimate of mean(Y)
 	
     # Define starting values
-    bayes.mod.inits <- function(){list("mu"=muInit, "alpha"=alphaInit)}# "lambda"=lambdaInit)}
+    bayes.mod.inits <- function(){list("alpha"=alphaInit, "mu"=muInit)}# "mu"=muInit,"lambda"=lambdaInit)}
 
     # The model
     bayes.mod.fit <- jags(data = sim.data.jags, inits = bayes.mod.inits,
     		  parameters.to.save = bayes.mod.params, n.chains = 3,
-		  n.iter = 150000, n.burnin = 10000, n.thin = 20,
+		  n.iter = 100000, n.burnin = 20000, n.thin = 20,
 		  model.file = 'invgauss_sliprate_std_param_eqsample_hyde.jags')
     print(bayes.mod.fit)
 
@@ -209,7 +215,7 @@ ggplot(df_param, aes(x=mu_list, y=alpha_list)) +
 		labs(colour = "Density") +
 		xlab(expression(mu)) +
 		ylab(expression(alpha)) +
-		scale_x_continuous(expand = c(0, 0), limits = c(0, 150000)) +
+		scale_x_continuous(expand = c(0, 0), limits = c(0, 150)) +
 		scale_y_continuous(expand = c(0, 0), limits = c(0, 10))
 #		theme(
 #    		legend.position='none'
