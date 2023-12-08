@@ -157,6 +157,15 @@ for (datalist in datalists){
     bayes.mcmc.combined = as.mcmc.list(mcmclist) # Use this to plot all individual chains
     summary(bayes.mcmc.combined) 
 
+    # Gelman-Rubin convergence diagnostic
+#    gd = gelman.diag(bayes.mod.fit.mcmc, transform=TRUE)
+    g <- matrix(NA, nrow=nvar(bayes.mcmc.combined), ncol=2)
+    for (v in 1:nvar(bayes.mcmc.combined)) {
+    	g[v,] <- gelman.diag(bayes.mcmc.combined[,v])$psrf
+	}
+    print('Gelman-Rubin diagnostics, values near 1 indicate convergence, NaN may be data variables so check')
+    print(g)
+
     # Now plot combined results
     print(xyplot(bayes.mcmc.combined, layout=c(2,2), aspect="fill"))
     # Density plot
