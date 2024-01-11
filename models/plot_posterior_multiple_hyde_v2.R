@@ -81,6 +81,7 @@ for (t in 1:length(hf_times)){
     	    0.5*lambda*((hf_times[t] - mu)^2)/((mu^2)*hf_times[t])
     pdf_f[,t] = exp(li_f[,t])
     hf[,t] = pdf_f[,t] / (1 - cdf_f[,t])
+    print(hf[,t])
     if (t==1){
        xvals = rep(hf_times[t], length(hf[,t]))
        yvals = hf[,t]
@@ -91,6 +92,7 @@ for (t in 1:length(hf_times)){
        }else{
        xvals = c(xvals, rep(hf_times[t], length(hf[,t])))
        yvals = c(yvals, hf[,t])
+       print(yvals)
        mean_hf = c(mean_hf, mean(hf[,t]))
        # Get percentiles
        xval_percentiles = cbind(xval_percentiles, rep(hf_times[t], 5))

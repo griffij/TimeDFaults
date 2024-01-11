@@ -77,8 +77,8 @@ for (j in 1:(M-1)){
 # Lets track alpha as well
 #alpha = pow((mu/lambda), 1/2)
 # Priors - uninformative
-alpha ~ dunif(0,10)
-#alpha ~ dnorm(1, 1e-4)T(0,)
+#alpha ~ dunif(0,10)
+alpha ~ dnorm(1, 5e-2)T(0,)
 lambda = mu/pow(alpha,2)
 #lambda ~ dunif(0, 100000)
 #lambda ~ dnorm(15000, 1e-8)T(0,)
