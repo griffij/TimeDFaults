@@ -68,17 +68,14 @@ print(ncol(datalists))
 
 j=1
 index=1
+figure_filename = paste0('plots/invgauss_fit_sliprate_std_params_eqsample_dunstan_', j, '.pdf')
+pdf(figure_filename) 
 mcmclist = vector("list", 3*length(datalists))
+# For storing the different chronologies once some work is done
+#Y_obs_list = vector("list", length(datalists))
 for (datalist in datalists){
-    # Initialise list for storing each MCMC object
-#    mcmclist = vector("list", 3*length(datalist))
-    figure_filename = paste0('plots/invgauss_fit_sliprate_std_params_eqsample_dunstan_', j, '.pdf')
-    pdf(figure_filename)
     # Get number of events
     sl = length(datalist[0,])#[1]
-
-#	    data = list(cbind(NA, datalist[i,], NA))#[1,]
-#	    data = data[[1]]
     # Most recent event in year before present defines minimum length of
     # present open interval
     MRE = abs(datalist[,sl])
@@ -92,64 +89,78 @@ for (datalist in datalists){
     print(isCensored)
     Y = matrix(1, length(datalist[,1]), length(datalist[1,])) 
     for (p in 1:length(datalist[1,])-1){
-        Y[,p] = inter_event_m[,p]
-        }
+    	Y[,p] = inter_event_m[,p]
+    	}
     Y[,length(datalist[1,])] = censorLimitVec[,length(censorLimitVec[1,])]
-    print(Y)
-    V = throws[1,]
-    T = slip_times[1,]
-    N <- length(Y[1,])
-    print(N) # Number of inter-event times (including censored)
-    N_MC = length(Y[,1]) # Number of Monte Carlo samples of eq chronology
-    M = length(V)
-    isCensored = as.numeric(isCensored)
-    print(Y)
-    print(isCensored)
-    # Lets deal with V and T as uncertain observations
-    V_obs = V
-    T_obs = T
-    Y_obs = Y
-    # Define data
-    sim.data.jags <- list("Y_obs", "N", "N_MC"
-                  ,"V_obs", "V_tau", "T_obs", "T_tau"
-                  ,"M", "isSlipCensored"
-                  , "isCensored", "MRE"
-                  )    
-    # Define the parameters whose posterior distributions we want to calculate
-    bayes.mod.params <- c("lambda", "mu", "alpha", "n_events", "n_events_cont",
-        "V", "T", "V_sum", "y", "T_sum", "V_obs", "T_obs", "ind_r"#, "mre"
-        )
-    alphaInit = 1.0
-    #lambdaInit = 1.0
-    muInit = 10 #10000 # Rough estimate of mean(Y)
+#    print(Y)
+#    if (j==1) {
+#       Y_obs_list = Y
+##       Y_obs_list = list(Y)
+#       }else{
+#       Y_obs_list = cbind(Y_obs_list, Y) # This works but might be dangerous
+#       }
+#    Y_obs_list[j] = Y
+    assign(paste('Y_obs', j, sep='_'), Y)
+    j = j + 1
+    }
+Y_obs_list = list(Y_obs_1, Y_obs_2, Y_obs_3, Y_obs_4)
+print("Y_obs_list")
+print(Y_obs_list)
+#print(Y_obs_list[1,])
+#stop!
+#Y_inds = 1:length(datalists)
+N_chrons = length(datalists) # Number of alternative chronologies
+V = throws[1,]
+T = slip_times[1,]
+N <- length(Y[1,])
+print(N) # Number of inter-event times (including censored)
+N_MC = length(Y[,1]) # Number of Monte Carlo samples of eq chronology
+M = length(V)
+isCensored = as.numeric(isCensored)
+print(Y)
+print(isCensored)
+# Lets deal with V and T as uncertain observations
+V_obs = V
+T_obs = T
+#Y_obs = Y
+# Define data
+sim.data.jags <- list("Y_obs_list", "N", "N_MC", "N_chrons"
+	      ,"V_obs", "V_tau", "T_obs", "T_tau"
+	      ,"M", "isSlipCensored"
+	      , "isCensored", "MRE"
+	      )    
+# Define the parameters whose posterior distributions we want to calculate
+bayes.mod.params <- c("lambda", "mu", "alpha", "n_events", "n_events_cont",
+		 "V", "T", "V_sum", "y", "T_sum", "V_obs", "T_obs", "ind_r", "ind_chron_r"
+		 #, "mre"
+		 )
+alphaInit = 1.0
+#lambdaInit = 1.0
+muInit = 10 #10000 # Rough estimate of mean(Y)
     
-    # Define starting values
-    bayes.mod.inits <- function(){list("mu"=muInit, "alpha"=alphaInit)}
-    # The model
-    bayes.mod.fit <- jags(data = sim.data.jags, inits = bayes.mod.inits,
-    	      parameters.to.save = bayes.mod.params, n.chains = 3,
+# Define starting values
+bayes.mod.inits <- function(){list("mu"=muInit, "alpha"=alphaInit)}
+# The model
+bayes.mod.fit <- jags(data = sim.data.jags, inits = bayes.mod.inits,
+	      parameters.to.save = bayes.mod.params, n.chains = 3,
 	      n.iter = 6000, n.burnin = 1000, n.thin=20,
-	      model.file = 'invgauss_sliprate_std_param_eqsample_dunstan.jags')
+	      model.file = 'invgauss_sliprate_std_param_eqsample_dunstan_combined_chron.jags')
 	      
-    print(bayes.mod.fit)
+print(bayes.mod.fit)
+# Convert to an MCMC object
+bayes.mod.fit.mcmc <- as.mcmc(bayes.mod.fit)
+# Add to list of all MCMC objects
+# Get all three chains
+mcmclist[index] = bayes.mod.fit.mcmc[1]
+mcmclist[index+1] = bayes.mod.fit.mcmc[2]
+mcmclist[index+2] = bayes.mod.fit.mcmc[3]
+#For testing
+print(mcmclist)
+print('index')
+print(index)
+index = index+3
+summary(bayes.mod.fit.mcmc)
 
-    # Convert to an MCMC object
-    bayes.mod.fit.mcmc <- as.mcmc(bayes.mod.fit)
-    # Add to list of all MCMC objects
-    # Get all three chains
-    mcmclist[index] = bayes.mod.fit.mcmc[1]
-    mcmclist[index+1] = bayes.mod.fit.mcmc[2]
-    mcmclist[index+2] = bayes.mod.fit.mcmc[3]
-    #For testing
-    print(mcmclist)
-    print('index')
-    print(index)
-    index = index+3
-#    j = j + 1
-    summary(bayes.mod.fit.mcmc)
-}
-#print(mcmclist)
-#print("mcmclist") 
 # Convert all MCMC models into one MCMC object
 bayes.mcmc.combined = as.mcmc.list(mcmclist) # Use this to plot all individual chains
 bayes.mcmc.combinedlist = as.mcmc.list(mcmclist)

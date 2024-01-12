@@ -61,8 +61,8 @@ png(figname, units="in", width=6, height=6, res=300)
 
 # Now calculate hazard function directly from posterior
 # Probably more efficient to do this way
-seq1 = seq(1, 5000, 20)
-seq2 = seq(5500, 30000, 500)
+seq1 = seq(1, 5, 0.02)
+seq2 = seq(5.500, 30, 0.5)
 hf_times = c(seq1, seq2)
 print(hf_times)
 #hf_times = seq(1, 30000, 100)
@@ -119,7 +119,7 @@ for (i in 1:5){
 # Add mean curve
 lines(xval_percentiles[1,], mean_hf, lty=1, lwd=2)
 # Add legend
-legend(17000, 6.1e-4, legend=c('Mean', 'Median', '68% bounds', '95% bounds'), lty=c(1,4,2,3), lwd=c(2,1,1,1))
+legend(17, 6.1e-4, legend=c('Mean', 'Median', '68% bounds', '95% bounds'), lty=c(1,4,2,3), lwd=c(2,1,1,1))
 
 dev.off()
 figname = 'plots/posterior_hazard_rate2.png'
@@ -128,8 +128,8 @@ png(figname, units="in", width=6, height=6, res=300)
 # Now redo but calculate hazard function for next 500 years, ie
 # taking into account uncertainty on the time of the most recent event,
 # and hence length of the current open interval
-conditional_time = 500
-conditional_step = 10
+conditional_time = 0.500
+conditional_step = 0.01
 percentiles = c(0.025, 0.16, 0.5, 0.84, 0.975)
 hf_times = seq(0, conditional_time, conditional_step) # These will be added to length of current open interval
 cdf_f = matrix(, nrow = length(mu), ncol=length(hf_times))    
