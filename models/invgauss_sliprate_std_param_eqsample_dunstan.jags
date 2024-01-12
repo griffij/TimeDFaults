@@ -8,6 +8,9 @@ data {
  zeros_j[j] = 0
  }
  C = 10000
+# ind ~ dunif(1, N_MC)
+# ind_r = round(ind)
+ #y = Y_obs[ind_r,] # Random sample of single realisation of eq record  
 }
 
 model{
@@ -49,7 +52,7 @@ model{
 	)
   # Uninformative priors for V and T
   V[j] ~ dunif(0, 50)  #'True' offset value
-  T[j] ~ dunif(0, 500000)  #'True' age value
+  T[j] ~ dunif(0, 500)  #'True' age value
   }
 
 # Implement error models on T (Age of surface) and V (Vertical offset) 
@@ -75,25 +78,29 @@ for (j in 1:(M-1)){
     }
 
 # Lets track alpha as well
-#alpha = pow((mu/lambda), 1/2) # ONLY USE IF PRIOR ON LAMBDA
+#alpha = pow((mu/lambda), 1/2)
 # Priors - uninformative
-#alpha ~ dunif(0,10)
-# Vaguely informative prior on alpha
-alpha ~ dnorm(1, 5e-2)T(0,)
+alpha ~ dunif(0,10)
+#alpha ~ dnorm(1, 5e-2)T(0,)
 lambda = mu/pow(alpha,2) # ONLY USE IF PRIOR ON ALPHA
 #lambda = pow(alpha,2)/mu
 #lambda ~ dunif(0, 100000)
 #lambda ~ dnorm(15000, 1e-8)T(0,)
-#mu ~ dunif(0, 150000)
-mu ~ dnorm(0,1e-4)T(0,) 
-throw_per_event ~ dlnorm(0.5, 3.0)
+mu ~ dunif(0, 150)
+#mu ~ dnorm(0,1e-4)T(0,) 
+throw_per_event ~ dlnorm(0.66,16.5) #dlnorm(0.5, 3.0)
 #throw_per_event ~ dnorm(2., 4)T(1.75,2.25) # Estimate of throw per event from trench data
 #throw_per_event ~ dlnorm(0.7, 3.0) # dlnorm(0.7, 8.4) #(0.7, 4.0)#T(0.5,2.5) #(-0.7, 3.8) #(0.0, 4.0) #(-0.73, 1/0.32) #(1, 1/0.707) Try lognormal
 
 # Here we take a random sample from the earthquake chronologies
-ind ~ dunif(0.501, N_MC+0.499)
-ind_r = round(ind)
-y = Y_obs[ind_r,] # Random sample of single realisation of eq record
+#ind ~ dunif(1, N_MC)
+#ind_r = round(ind)
+#y_ind ~ dmulti(ind_r, 1)
+#y_ind_v = inprod(ind_r, y_ind)
+#y_ind_value = max(y_ind_v)
+punif <- rep(1/N_MC, N_MC)
+y_ind ~ dcat(punif[])
+y = Y_obs[y_ind,] # Random sample of single realisation of eq record
 
 # Try sampling prior open interval
 # Track MRE

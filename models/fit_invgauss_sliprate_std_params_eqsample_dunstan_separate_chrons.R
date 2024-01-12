@@ -25,17 +25,16 @@ setwd('.')
 ###########
 # Real data
 
-datafiles = c('../data/chronologies/Dunstan4eventOxcal_10000_chronologies.csv',
-	  '../data/chronologies/Dunstan5eventOxcal_10000_chronologies.csv',
-	  '../data/chronologies/Dunstan5eventOxcalv2_10000_chronologies.csv',
-	  '../data/chronologies/Dunstan6eventOxcal_10000_chronologies.csv')
+datafiles = c('../data/chronologies/Dunstan4eventOxcal_100_chronologies.csv',
+	  '../data/chronologies/Dunstan5eventOxcal_100_chronologies.csv',
+	  '../data/chronologies/Dunstan5eventOxcalv2_100_chronologies.csv',
+	  '../data/chronologies/Dunstan6eventOxcal_100_chronologies.csv')
 print(datafiles)
+
 for (i in 1:length(datafiles)){
-    print(i)
     data = read.csv(datafiles[i], header=FALSE)#, delimiter=',')
     # Convert to ka rather than years to look at sensitivity to priors
     data = data/1000    
-    print(data)
     # reverse order
     #datalist = data[,order(ncol(data):1)]
     dl = data*-1 # Make ages positive for years before present
@@ -45,7 +44,6 @@ for (i in 1:length(datafiles)){
        datalists = list.append(datalists, dl)
        }
     }
-print(datalists)
 
 # Dunstan slip rate data
 throws = cbind(27.5, 17.5, 12.5)#, 3)# Vertical offsets in meters  
@@ -59,8 +57,6 @@ T_sigma = T_sigma/1000
 T_tau = 1/(T_sigma**2)[1,]
 isSlipCensored = (slip_times < 0)
 isSlipCensored = as.numeric(isSlipCensored)
-print(isSlipCensored)
-print(ncol(datalists))
 
 j=1
 #mcmclist = vector("list", 3*length(datalists))
@@ -85,26 +81,26 @@ for (datalist in datalists){
     inter_event_m = t(abs(diff(t(m)))) # Transpose, take difference and transpose back
     isCensored = matrix(FALSE, length(datalist[,1]), length(datalist[1,]))
     isCensored[,length(datalist)] = TRUE
-    print(isCensored)
     Y = matrix(1, length(datalist[,1]), length(datalist[1,])) 
     for (p in 1:length(datalist[1,])-1){
         Y[,p] = inter_event_m[,p]
         }
     Y[,length(datalist[1,])] = censorLimitVec[,length(censorLimitVec[1,])]
-    print(Y)
     V = throws[1,]
     T = slip_times[1,]
     N <- length(Y[1,])
     print(N) # Number of inter-event times (including censored)
     N_MC = length(Y[,1]) # Number of Monte Carlo samples of eq chronology
+    print("N_MC")
+    print(N_MC)
     M = length(V)
     isCensored = as.numeric(isCensored)
     print(Y)
-    print(isCensored)
     # Lets deal with V and T as uncertain observations
     V_obs = V
     T_obs = T
     Y_obs = Y
+    # Define random number list for chronology samples
     # Define data
     sim.data.jags <- list("Y_obs", "N", "N_MC"
                   ,"V_obs", "V_tau", "T_obs", "T_tau"
@@ -113,18 +109,19 @@ for (datalist in datalists){
                   )    
     # Define the parameters whose posterior distributions we want to calculate
     bayes.mod.params <- c("lambda", "mu", "alpha", "n_events", "n_events_cont",
-        "V", "T", "V_sum", "y", "T_sum", "V_obs", "T_obs", "ind_r"#, "mre"
+        "V", "T", "V_sum", "y", "T_sum", "V_obs", "T_obs", "y_ind" #, "mre"
         )
     alphaInit = 1.0
     #lambdaInit = 1.0
+#    ind_rInit = 1
     muInit = 10 #10000 # Rough estimate of mean(Y)
-    
+#    indInit = 1.0
     # Define starting values
     bayes.mod.inits <- function(){list("mu"=muInit, "alpha"=alphaInit)}
     # The model
     bayes.mod.fit <- jags(data = sim.data.jags, inits = bayes.mod.inits,
     	      parameters.to.save = bayes.mod.params, n.chains = 3,
-	      n.iter = 6000, n.burnin = 1000, n.thin=20,
+	      n.iter = 20000, n.burnin = 5000, n.thin=20,
 	      model.file = 'invgauss_sliprate_std_param_eqsample_dunstan.jags')
 	      
     print(bayes.mod.fit)
@@ -136,11 +133,6 @@ for (datalist in datalists){
     mcmclist[index] = bayes.mod.fit.mcmc[1]
     mcmclist[index+1] = bayes.mod.fit.mcmc[2]
     mcmclist[index+2] = bayes.mod.fit.mcmc[3]
-    #For testing
-    print(mcmclist)
-    print('index')
-    print(index)
-#    summary(bayes.mod.fit.mcmc)
 
     # Convert all MCMC models into one MCMC object
     bayes.mcmc.combined = as.mcmc.list(mcmclist) # Use this to plot all individual chains

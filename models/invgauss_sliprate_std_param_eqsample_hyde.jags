@@ -48,7 +48,7 @@ model{
 	)
   # Uninformative priors for V and T
   V[j] ~ dunif(0, 50)  #'True' offset value
-  T[j] ~ dunif(0, 500000)  #'True' age value
+  T[j] ~ dunif(0, 500)  #'True' age value
   }
 
 # Implement error models on T (Age of surface) and V (Vertical offset) 
