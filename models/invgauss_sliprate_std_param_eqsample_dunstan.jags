@@ -92,12 +92,9 @@ throw_per_event ~ dlnorm(0.66,16.5) #dlnorm(0.5, 3.0)
 #throw_per_event ~ dnorm(2., 4)T(1.75,2.25) # Estimate of throw per event from trench data
 #throw_per_event ~ dlnorm(0.7, 3.0) # dlnorm(0.7, 8.4) #(0.7, 4.0)#T(0.5,2.5) #(-0.7, 3.8) #(0.0, 4.0) #(-0.73, 1/0.32) #(1, 1/0.707) Try lognormal
 
-# Here we take a random sample from the earthquake chronologies
-#ind ~ dunif(1, N_MC)
-#ind_r = round(ind)
-#y_ind ~ dmulti(ind_r, 1)
-#y_ind_v = inprod(ind_r, y_ind)
-#y_ind_value = max(y_ind_v)
+# Here we take a random sample from the earthquake chronologies using dcat
+# to draw a sample from the pre-generated Monte Carlo samples
+# of the earthquake record
 punif <- rep(1/N_MC, N_MC)
 y_ind ~ dcat(punif[])
 y = Y_obs[y_ind,] # Random sample of single realisation of eq record

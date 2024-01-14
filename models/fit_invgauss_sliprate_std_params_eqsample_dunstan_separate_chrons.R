@@ -25,10 +25,10 @@ setwd('.')
 ###########
 # Real data
 
-datafiles = c('../data/chronologies/Dunstan4eventOxcal_100_chronologies.csv',
-	  '../data/chronologies/Dunstan5eventOxcal_100_chronologies.csv',
-	  '../data/chronologies/Dunstan5eventOxcalv2_100_chronologies.csv',
-	  '../data/chronologies/Dunstan6eventOxcal_100_chronologies.csv')
+datafiles = c('../data/chronologies/Dunstan4eventOxcal_10000_chronologies.csv',
+	  '../data/chronologies/Dunstan5eventOxcal_10000_chronologies.csv',
+	  '../data/chronologies/Dunstan5eventOxcalv2_10000_chronologies.csv',
+	  '../data/chronologies/Dunstan6eventOxcal_10000_chronologies.csv')
 print(datafiles)
 
 for (i in 1:length(datafiles)){
@@ -121,7 +121,7 @@ for (datalist in datalists){
     # The model
     bayes.mod.fit <- jags(data = sim.data.jags, inits = bayes.mod.inits,
     	      parameters.to.save = bayes.mod.params, n.chains = 3,
-	      n.iter = 20000, n.burnin = 5000, n.thin=20,
+	      n.iter = 100000, n.burnin = 20000, n.thin=20,
 	      model.file = 'invgauss_sliprate_std_param_eqsample_dunstan.jags')
 	      
     print(bayes.mod.fit)
