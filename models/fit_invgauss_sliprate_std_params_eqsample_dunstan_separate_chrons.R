@@ -23,8 +23,9 @@ setwd('.')
 
 
 ###########
-# Real data
+doplots = FALSE
 
+# Real data
 datafiles = c('../data/chronologies/Dunstan4eventOxcal_10000_chronologies.csv',
 	  '../data/chronologies/Dunstan5eventOxcal_10000_chronologies.csv',
 	  '../data/chronologies/Dunstan5eventOxcalv2_10000_chronologies.csv',
@@ -144,6 +145,18 @@ for (datalist in datalists){
     	}
     print('Gelman-Rubin diagnostics, values near 1 indicate convergence, NaN may be data variables so check')
     print(g)
+
+    df_post = do.call(rbind.data.frame, bayes.mcmc.combinedlist)
+    # Dump data to file
+    filename = paste0('outputs/df_posterior_', j, '_dunstan.csv')
+    print(filename)
+    write.csv(df_post, filename, row.names=FALSE)
+
+    # Control whether to do plots to save run time
+    if (isFALSE(doplots)){
+       next
+      }
+
     # Now plot combined results
     print(xyplot(bayes.mcmc.combined, layout=c(2,2), aspect="fill"))
 
@@ -164,17 +177,17 @@ for (datalist in datalists){
     h = h + geom_hex(aes_(color = ~ scales::rescale(..density..)))
     h + scale_color_gradientn("Density", colors = unlist(color_scheme_get()),
       breaks = c(.1, .9), labels = c("low", "high"))
-    df_post = do.call(rbind.data.frame, bayes.mcmc.combinedlist)
+#    df_post = do.call(rbind.data.frame, bayes.mcmc.combinedlist)
 
     print(ggplot(df_post, aes(x=mu, y=alpha)) +
     	     stat_density_2d(aes(fill = ..level..), geom = "polygon") +
 	     xlab(expression(mu)) +
 	     ylab(expression(alpha)))
 
-    # Dump data to file
-    filename = paste0('outputs/df_posterior_', j, '_dunstan.csv')
-    print(filename)
-    write.csv(df_post, filename, row.names=FALSE)
+#    # Dump data to file
+#    filename = paste0('outputs/df_posterior_', j, '_dunstan.csv')
+#    print(filename)
+#    write.csv(df_post, filename, row.names=FALSE)
     print(typeof(df_post$mu))
     if (j==1){
        mu_list = df_post$mu
