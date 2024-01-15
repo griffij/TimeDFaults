@@ -154,6 +154,7 @@ for (datalist in datalists){
 
     # Control whether to do plots to save run time
     if (isFALSE(doplots)){
+       j = j+1
        next
       }
 
