@@ -12,4 +12,5 @@ module load R/4.1.0
 export LD_LIBRARY_PATH=/home/547/jdg547/lib/:$LD_LIBRARY_PATH
 
 cd ../models
-R CMD BATCH fit_invgauss_sliprate_ksamples_std_params_hyde.R
+#R CMD BATCH fit_invgauss_sliprate_ksamples_std_params_hyde.R
+R CMD BATCH fit_invgauss_sliprate_std_params_eqsample_dunstan_separate_chrons.R
