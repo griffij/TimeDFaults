@@ -26,10 +26,10 @@ setwd('.')
 doplots = FALSE
 
 # Real data
-datafiles = c('../data/chronologies/Dunstan4eventOxcal_10000_chronologies.csv',
-	  '../data/chronologies/Dunstan5eventOxcal_10000_chronologies.csv',
-	  '../data/chronologies/Dunstan5eventOxcalv2_10000_chronologies.csv',
-	  '../data/chronologies/Dunstan6eventOxcal_10000_chronologies.csv')
+datafiles = c('../data/chronologies/Dunstan4eventOxcal_1000_chronologies.csv',
+	  '../data/chronologies/Dunstan5eventOxcal_1000_chronologies.csv',
+	  '../data/chronologies/Dunstan5eventOxcalv2_1000_chronologies.csv',
+	  '../data/chronologies/Dunstan6eventOxcal_1000_chronologies.csv')
 print(datafiles)
 
 for (i in 1:length(datafiles)){

@@ -25,7 +25,7 @@ setwd('.')
 ###########
 # Real data
 
-datafiles = c('../data/chronologies/Hyde_10000_chronologies.csv')
+datafiles = c('../data/chronologies/Hyde_1000_chronologies.csv')
 
 print(datafiles)
 for (i in 1:length(datafiles)){
@@ -113,20 +113,18 @@ for (datalist in datalists){
     sim.data.jags <- list("Y_obs", "N", "N_MC"
     		  ,"V_obs", "V_tau", "T_obs", "T_tau"
 	  	  ,"M", "isSlipCensored"
-#		  ,"total_throw", "total_throw_sigma"
-#		  ,"total_time", "total_time_sigma"
 		  , "isCensored", "MRE"
 		  )
     # Define the parameters whose posterior distributions we want to calculate
     bayes.mod.params <- c("lambda", "mu", "alpha", "n_events", "n_events_cont",
-        "V", "T", "V_sum", "y", "T_sum", "V_obs", "T_obs", "ind_r"#, "mre"
+        "V", "T", "V_sum", "y", "T_sum", "V_obs", "T_obs", "y_ind"#, "mre"
 	)
     alphaInit = 1.0
     #lambdaInit = 1.0
     muInit = 10 #10000 # Rough estimate of mean(Y)
 	
     # Define starting values
-    bayes.mod.inits <- function(){list("alpha"=alphaInit, "mu"=muInit)}# "mu"=muInit,"lambda"=lambdaInit)}
+    bayes.mod.inits <- function(){list("alpha"=alphaInit, "mu"=muInit)}
 
     # The model
     bayes.mod.fit <- jags(data = sim.data.jags, inits = bayes.mod.inits,
