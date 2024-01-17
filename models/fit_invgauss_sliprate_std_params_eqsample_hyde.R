@@ -25,7 +25,7 @@ setwd('.')
 ###########
 # Real data
 
-datafiles = c('../data/chronologies/Hyde_1000_chronologies.csv')
+datafiles = c('../data/chronologies/Hyde_10000_chronologies.csv')
 
 print(datafiles)
 for (i in 1:length(datafiles)){
@@ -110,7 +110,7 @@ for (datalist in datalists){
     T_obs = T
     Y_obs = Y
     # Define data
-    sim.data.jags <- list("Y_obs", "N", "N_MC"
+    sim.data.jags <- list("Y_obs", "N"#, "N_MC"
     		  ,"V_obs", "V_tau", "T_obs", "T_tau"
 	  	  ,"M", "isSlipCensored"
 		  , "isCensored", "MRE"
@@ -129,7 +129,7 @@ for (datalist in datalists){
     # The model
     bayes.mod.fit <- jags(data = sim.data.jags, inits = bayes.mod.inits,
     		  parameters.to.save = bayes.mod.params, n.chains = 3,
-		  n.iter = 100000, n.burnin = 20000, n.thin = 20,
+		  n.iter = 500000, n.burnin = 20000, n.thin = 20,
 		  model.file = 'invgauss_sliprate_std_param_eqsample_hyde.jags')
     print(bayes.mod.fit)
 

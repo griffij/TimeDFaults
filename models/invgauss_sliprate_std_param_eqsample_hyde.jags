@@ -96,8 +96,27 @@ throw_per_event ~ dlnorm(0.66,16.5)#T(1,3) # dlnorm(0.7, 8.4) #(0.7, 4.0)#T(0.5,
 #mu ~ dnorm(mu_est, mu_est_tau)
 
 # Here we take a random sample from the earthquake chronologies
-punif <- rep(1/N_MC, N_MC)
-y_ind ~ dcat(punif[])
+# Note that dcat is very slow for large N_MC, so new version
+# below this constructs indices by using dcat of lengths 10
+# and then constructing the indices - NOTE this must
+# be consistent with the number of MC samples of the earthquake record
+# passed to the jags models
+#punif <- rep(1/N_MC, N_MC)
+#y_ind ~ dcat(punif[])
+#y = Y_obs[y_ind,] # Random sample of single realisation of eq record  
+#
+
+ones = rep(1/10, 10)
+ones_ind ~ dcat(ones[])
+tens = rep(1/10, 10)
+tens_ind ~ dcat(tens[])
+hunds = rep(1/10, 10)
+hunds_ind ~ dcat(hunds[])
+#y_ind = (hunds_ind-1)*100 + (tens_ind - 1)*10 + (ones_ind - 1) +1 
+thous = rep(1/10, 10)
+thous_ind ~ dcat(thous[])
+y_ind = (thous_ind - 1)*1000 + (hunds_ind-1)*100 + (tens_ind - 1)*10 + (ones_ind - 1) +1
+
 y = Y_obs[y_ind,] # Random sample of single realisation of eq record
 
 # Try sampling prior open interval

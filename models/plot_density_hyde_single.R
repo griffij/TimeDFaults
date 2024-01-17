@@ -47,7 +47,13 @@ plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15, lab_y=9.5){
     df_mu_prior = data.frame(xvals, mu_prior)
     df_alpha_prior = data.frame(yvals, alpha_prior)
     df_param = data.frame(mu, alpha)
-    kd <- ks::kde(df_param, gridsize=rep(2001,2) , compute.cont=TRUE) #1401
+#    hscv1 <- Hscv(df_param)
+    kd <- ks::kde(df_param, compute.cont=TRUE, positive=TRUE) #1401 gridsize=rep(2001,2) 
+#    dimnames(kd[['estimate']]) <- list(kd[["eval.points"]][[1]], 
+#                                     kd[["eval.points"]][[2]])
+#    library(reshape2)
+#    aa <- melt(kd[['estimate']])
+#    print(aa)
     contour_90 =with(kd, contourLines(x=eval.points[[1]], y=eval.points[[2]], 
                z=estimate, levels=cont["10%"])[[1]])
     contour_90 = data.frame(contour_90)
@@ -58,7 +64,13 @@ plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15, lab_y=9.5){
     	       z=estimate, levels=cont["75%"])[[1]])
     contour_25 = data.frame(contour_25)   
     p1 = ggplot(df_param, aes(x=mu, y=alpha)) +
-               stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE) +
+#    p1 = ggplot(aa, aes(x=Var1, y=Var2)) +
+       	       stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE) +
+#       	       geom_tile(aes(fill=value)) +
+#	       geom_contour(aes(z=value), breaks=kd[["cont"]]["50%"], color="red") +
+#	       geom_contour(aes(z=value), breaks=kd[["cont"]]["5%"], color="purple") + 	  
+#               stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE) +
+#	       geom_density_2d()+
                geom_path(aes(x=x, y=y), data=contour_90, lwd=0.5) +
                geom_path(aes(x=x, y=y), data=contour_50, lwd=0.5) +
 	       geom_path(aes(x=x, y=y), data=contour_25, lwd=0.75) + 

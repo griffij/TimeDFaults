@@ -5,6 +5,7 @@ library(ks)
 library(lattice)
 library(grid)
 library(gridExtra)
+libdrary(hdrcde)
 
 # Read in posterior dataset
 posterior_files = c('outputs/df_posterior_1_dunstan.csv',
@@ -18,8 +19,38 @@ plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15000, lab_y=9.5){
     # Get mean values
     mean_mu = median(mu)
     mean_alpha = median(alpha)
+    # Get median
+    median_mu = median(mu)
+    median_alpha = median(alpha)
+    # Get mode
+    mode_vals = hdr.2d(mu, alpha, prob=c(1),
+           den=NULL, kde.package = c("ks"),
+           h = NULL)
+#    print(mode_vals)
+    mode = mode_vals$mode
+    print('Mode')
+    print(mode)
+    print('Median')
+    cat(median_mu, median_alpha, '\n')
+    print('Mean')
+    cat(mean_mu, mean_alpha)
+    # Here let's add the prior on mu
+    xvals = seq(0,150,by=1)
+    mu_prior = dnorm(xvals, 0, sqrt(10000))*333
+#    mu_prior = dnorm(xvals, 0, sqrt(1000))*33
+    # And on alpha
+    yvals = seq(0,10,by=0.01)
+    #alpha_prior = dnorm(yvals, 1, sqrt(10))*333
+    alpha_prior = dnorm(yvals, 1, sqrt(20))*333
+    print(yvals)
+    print(alpha_prior)
+#    alpha_prior = dunif(yvals, 0, 10)*333 
+#    print(mu_prior)
+    df_mu_prior = data.frame(xvals, mu_prior)
+    df_alpha_prior = data.frame(yvals, alpha_prior)
+
     df_param = data.frame(mu, alpha)
-    kd <- ks::kde(df_param, gridsize=rep(1401,2) , compute.cont=TRUE)
+    kd <- ks::kde(df_param, compute.cont=TRUE, positive=TRUE)
     contour_95 =with(kd, contourLines(x=eval.points[[1]], y=eval.points[[2]], 
                z=estimate, levels=cont["5%"])[[1]])
     contour_95 = data.frame(contour_95)
