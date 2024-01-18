@@ -23,7 +23,7 @@ setwd('.')
 
 
 ###########
-doplots = FALSE
+doplots = TRUE
 
 # Real data
 datafiles = c('../data/chronologies/Dunstan4eventOxcal_10000_chronologies.csv',

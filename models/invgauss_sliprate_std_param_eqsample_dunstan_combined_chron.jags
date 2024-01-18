@@ -8,9 +8,6 @@ data {
  zeros_j[j] = 0
  }
  C = 10000
-# ind ~ dunif(1, N_MC)
-# ind_r = round(ind)
- #y = Y_obs[ind_r,] # Random sample of single realisation of eq record  
 }
 
 model{
@@ -52,7 +49,7 @@ model{
 	)
   # Uninformative priors for V and T
   V[j] ~ dunif(0, 50)  #'True' offset value
-  T[j] ~ dunif(0, 500)  #'True' age value
+  T[j] ~ dunif(0, 500000)  #'True' age value
   }
 
 # Implement error models on T (Age of surface) and V (Vertical offset) 
@@ -78,43 +75,30 @@ for (j in 1:(M-1)){
     }
 
 # Lets track alpha as well
-#alpha = pow((mu/lambda), 1/2)
+#alpha = pow((mu/lambda), 1/2) # ONLY USE IF PRIOR ON LAMBDA
 # Priors - uninformative
 #alpha ~ dunif(0,10)
+# Vaguely informative prior on alpha
 alpha ~ dnorm(1, 5e-2)T(0,)
 lambda = mu/pow(alpha,2) # ONLY USE IF PRIOR ON ALPHA
 #lambda = pow(alpha,2)/mu
 #lambda ~ dunif(0, 100000)
 #lambda ~ dnorm(15000, 1e-8)T(0,)
-#mu ~ dunif(0, 150)
-mu ~ dnorm(10,1e-4)T(0,) 
-throw_per_event ~ dlnorm(0.2,2.8)
-#throw_per_event ~ dlnorm(0.66,16.5) #dlnorm(0.5, 3.0)
+#mu ~ dunif(0, 150000)
+mu ~ dnorm(0,1e-4)T(0,) 
+throw_per_event ~ dlnorm(0.5, 3.0)
 #throw_per_event ~ dnorm(2., 4)T(1.75,2.25) # Estimate of throw per event from trench data
 #throw_per_event ~ dlnorm(0.7, 3.0) # dlnorm(0.7, 8.4) #(0.7, 4.0)#T(0.5,2.5) #(-0.7, 3.8) #(0.0, 4.0) #(-0.73, 1/0.32) #(1, 1/0.707) Try lognormal
 
-# Here we take a random sample from the earthquake chronologies using dcat
-# Note that dcat is very slow for large N_MC, so new version
-# below this constructs indices by using dcat of lengths 10
-# and then constructing the indices - NOTE this must
-# be consistent with the number of MC samples of the earthquake record
-# passed to the jags models
-#punif <- rep(1/N_MC, N_MC)
-#y_ind ~ dcat(punif[])
-#y = Y_obs[y_ind,] # Random sample of single realisation of eq record  
-
-ones = rep(1/10, 10)
-ones_ind ~ dcat(ones[])
-tens = rep(1/10, 10)
-tens_ind ~ dcat(tens[])
-hunds = rep(1/10, 10)
-hunds_ind ~ dcat(hunds[])
-#y_ind = (hunds_ind-1)*100 + (tens_ind - 1)*10 + (ones_ind - 1) +1 
-thous = rep(1/10, 10)
-thous_ind ~ dcat(thous[])
-y_ind = (thous_ind - 1)*1000 + (hunds_ind-1)*100 + (tens_ind - 1)*10 + (ones_ind - 1) +1
-
-y = Y_obs[y_ind,] # Random sample of single realisation of eq record
+# Here we take a random sample of which version of the earthquake chronologies to use
+# i.e., 4, 5 or 6 event version
+ind_chron ~ dunif(0.50001, N_chrons+0.49999)
+ind_chron_r = round(ind_chron)
+Y_obs = Y_obs_list[ind_chron_r,]
+# Here we take a random sample from the earthquake chronologies
+ind ~ dunif(0.50001, N_MC+0.49999)
+ind_r = round(ind)
+y = Y_obs[ind_r,] # Random sample of single realisation of eq record
 
 # Try sampling prior open interval
 # Track MRE
