@@ -54,9 +54,10 @@ plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15, lab_y=9.5){
     contour_90 =with(kd, contourLines(x=eval.points[[1]], y=eval.points[[2]], 
                z=estimate, levels=cont["10%"])[[1]])
     contour_90 = data.frame(contour_90)
-#    contour_95_2 =with(kd, contourLines(x=eval.points[[1]], y=eval.points[[2]],
-#    	       z=estimate, levels=cont["5%"])[[2]])
-#    contour_95_2 = data.frame(contour_95_2)
+    # Need to get second polygon as first is tiny and disappears somewhere
+    contour_90_2 =with(kd, contourLines(x=eval.points[[1]], y=eval.points[[2]],
+    	       z=estimate, levels=cont["10%"])[[2]])
+    contour_90_2 = data.frame(contour_90_2)
     contour_50 =with(kd, contourLines(x=eval.points[[1]], y=eval.points[[2]],
                z=estimate, levels=cont["50%"])[[1]])
     contour_50 = data.frame(contour_50) 
@@ -66,14 +67,15 @@ plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15, lab_y=9.5){
     p1 = ggplot(df_param, aes(x=mu, y=alpha)) +
                stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE) +
                geom_path(aes(x=x, y=y), data=contour_90, lwd=0.25) +
-	       geom_path(aes(x=x, y=y), data=contour_50, lwd=0.25) + 
-               geom_path(aes(x=x, y=y), data=contour_25, lwd=0.5) +
+	       geom_path(aes(x=x, y=y), data=contour_90_2, lwd=0.25) +
+	       geom_path(aes(x=x, y=y), data=contour_50, lwd=0.5) + 
+               geom_path(aes(x=x, y=y), data=contour_25, lwd=0.75) +
                scale_fill_distiller(palette="Greys", direction=1) +
                labs(colour = "Density") +
                xlab(expression("Mean ("*mu*")")) +
                ylab(expression("Aperiodicity ("*alpha*")")) +
-               scale_x_continuous(expand = c(0, 0), limits = c(0, 150),
-	       				 breaks=c(0, 50, 100), labels=c("0", "", "100")) +
+               scale_x_continuous(expand = c(0, 0), limits = c(0, 120),
+	       				 breaks=c(0, 50, 100), labels=c("0", "50", "100")) +
                scale_y_continuous(expand = c(0, 0), limits = c(0, 10), breaks = c(0,2,4,6,8,10),
 	       				 labels=c("0","2","4","6","8","10")) +
 	       theme(
@@ -85,8 +87,8 @@ plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15, lab_y=9.5){
                geom_path(data=df_alpha_prior, aes(x = alpha_prior, y = yvals), colour='black') +
                geom_point(x = mean_mu, y=mean_alpha, shape=0, colour='red') +
                geom_point(x = median_mu, y=median_alpha, shape=1, colour='blue') +
-               geom_point(x = mode[1], y=mode[2], shape=2, colour='green') 
-#              geom_text(label=fig_lab, x=lab_x, y=lab_y)
+               geom_point(x = mode[1], y=mode[2], shape=2, colour='green') +
+              geom_text(label=fig_lab, x=lab_x, y=lab_y)
     return(p1)
     }
 

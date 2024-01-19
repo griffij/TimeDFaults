@@ -1,0 +1,57 @@
+# Use standard parameterisation with mu, lambda
+# Number of censored observations
+data {
+ for (i in 1:N){
+ zeros[i] = 0
+ }
+ C = 10000
+}
+model{
+  for (i in 1:N){
+   # Prior for lambda parameter
+  zeros[i] ~ dpois(zeros.mean[i])
+  zeros.mean[i] = -l[i] + C
+  # Censoring  - now handled in main script
+#  y[i] = ifelse(isCensored[i], censorLimitVec[i], Y[i])
+  # For calculating CDF
+  u1[i] = pow((lambda/y[i]), 1/2)*(y[i]/mu - 1)
+  u2[i] = -1*pow((lambda/y[i]), 1/2)*(y[i]/mu + 1)
+  cdf[i] = pnorm(u1[i], 0, 1) + exp((2*lambda)/mu)*pnorm(u2[i], 0, 1)
+  # Log-likelihood 
+  l[i] = ifelse(isCensored[i],
+       log(1-cdf[i]),
+       0.5*(log(lambda) - log(2*3.1416) - 3*log(y[i])) -
+       0.5*lambda*pow((y[i] - mu), 2)/(pow(mu, 2)*y[i])
+       )
+    }
+    
+
+# Priors - uninformative
+alpha ~ dunif(0,10)
+#alpha ~ dnorm(1, 5e-2)T(0,)
+lambda = mu/pow(alpha,2) # ONLY USE IF PRIOR ON ALPHA
+mu ~ dunif(0, 150)
+#mu ~ dnorm(10,1e-4)T(0,) 
+throw_per_event ~ dlnorm(0.2,2.8)
+#throw_per_event ~ dlnorm(0.66,16.5) #dlnorm(0.5, 3.0)
+#throw_per_event ~ dnorm(2., 4)T(1.75,2.25) # Estimate of throw per event from trench data
+#throw_per_event ~ dlnorm(0.7, 3.0) # dlnorm(0.7, 8.4) #(0.7, 4.0)#T(0.5,2.5) #(-0.7, 3.8) #(0.0, 4.0) #(-0.73, 1/0.32) #(1, 1/0.707) Try lognormal
+
+ones = rep(1/10, 10)
+ones_ind ~ dcat(ones[])
+tens = rep(1/10, 10)
+tens_ind ~ dcat(tens[])
+hunds = rep(1/10, 10)
+hunds_ind ~ dcat(hunds[])
+#y_ind = (hunds_ind-1)*100 + (tens_ind - 1)*10 + (ones_ind - 1) +1 
+thous = rep(1/10, 10)
+thous_ind ~ dcat(thous[])
+y_ind = (thous_ind - 1)*1000 + (hunds_ind-1)*100 + (tens_ind - 1)*10 + (ones_ind - 1) +1
+
+y = Y_obs[y_ind,] # Random sample of single realisation of eq record
+
+# Try sampling prior open interval
+# Track MRE
+mre = MRE
+
+}
