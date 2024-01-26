@@ -8,8 +8,8 @@ library(gridExtra)
 library(hdrcde)
 
 # Read in posterior dataset
-#posterior_files = c('outputs/df_posterior_1_hyde.csv')
-posterior_files = c('outputs/df_posterior_eqonly_1_hyde.csv')
+posterior_files = c('outputs/df_posterior_1_hyde.csv')
+#posterior_files = c('outputs/df_posterior_eqonly_1_hyde.csv')
 #              'outputs/df_posterior_2_hyde.csv')
 #MRE_position = c(5,6,6,7)             
 
@@ -35,13 +35,13 @@ plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15, lab_y=9.5){
     cat(mean_mu, mean_alpha)
     # Here let's add the prior on mu
     xvals = seq(0,150,by=1)
-#    mu_prior = dnorm(xvals, 0, sqrt(10000))*333
-    mu_prior = dunif(xvals, 0, 150)*333
+    mu_prior = dnorm(xvals, 0, sqrt(10000))*333
+#    mu_prior = dunif(xvals, 0, 150)*333
     # And on alpha
     yvals = seq(0,10,by=0.01)
-    #alpha_prior = dnorm(yvals, 1, sqrt(10))*333
+    alpha_prior = dnorm(yvals, 1, sqrt(10))*333
 #    alpha_prior = dnorm(yvals, 1, sqrt(20))*333
-    alpha_prior = dunif(yvals, 0, 10)*333 
+    #alpha_prior = dunif(yvals, 0, 10)*333 
     print(yvals)
     print(alpha_prior)
 #    alpha_prior = dunif(yvals, 0, 10)*333 
@@ -93,7 +93,7 @@ plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15, lab_y=9.5){
 	       geom_point(x = median_mu, y=median_alpha, shape=1, colour='blue') +
 	       geom_point(x = mode[1], y=mode[2], shape=2, colour='green') 
 #	       geom_text(label=fig_lab, x=lab_x, y=lab_y)
-    figname = 'plots/posterior_density_eqonly_hyde.png'
+    figname = 'plots/posterior_density_hyde.png'
 #    print(png(file=figname, units="in", width=7, height=5, res=300))
 #    print(dev.off())
     return(p1)
@@ -129,7 +129,7 @@ for (filename in posterior_files){
 #p_combined = plot_posterior_2d(mu, alpha, fig_lab=l, lab_x=7000, lab_y=9.8)# +
 #	   geom_text(label=l, x=7000, y=9.8)
 #plot_list[[i]] = p_combined
-figname = 'plots/posterior_density_hyde_single.png'
+figname = 'plots/posterior_density_hyde.png'
 png(file=figname, units="in", width=4.5, height=5, res=300)
 #pl = list(pl, pt)
 #print(plot_list)
