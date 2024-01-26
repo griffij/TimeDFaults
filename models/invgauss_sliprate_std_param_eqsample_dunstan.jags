@@ -8,9 +8,6 @@ data {
  zeros_j[j] = 0
  }
  C = 10000
-# ind ~ dunif(1, N_MC)
-# ind_r = round(ind)
- #y = Y_obs[ind_r,] # Random sample of single realisation of eq record  
 }
 
 model{

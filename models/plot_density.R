@@ -8,10 +8,14 @@ library(gridExtra)
 library(hdrcde)
 
 # Read in posterior dataset
-posterior_files = c('outputs/df_posterior_1_dunstan.csv',
-              'outputs/df_posterior_2_dunstan.csv',
-              'outputs/df_posterior_3_dunstan.csv',
-              'outputs/df_posterior_4_dunstan.csv')
+posterior_files = c('outputs/df_posterior_1_eq_only_dunstan.csv',
+              'outputs/df_posterior_2_eq_only_dunstan.csv',
+              'outputs/df_posterior_3_eq_only_dunstan.csv',
+               'outputs/df_posterior_4_eq_only_dunstan.csv')
+#posterior_files = c('outputs/df_posterior_1_dunstan.csv',
+#              'outputs/df_posterior_2_dunstan.csv',
+#              'outputs/df_posterior_3_dunstan.csv',
+#              'outputs/df_posterior_4_dunstan.csv')
 #MRE_position = c(5,6,6,7)             
 
 plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15, lab_y=9.5){
@@ -36,15 +40,16 @@ plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15, lab_y=9.5){
     cat(mean_mu, mean_alpha)
     # Here let's add the prior on mu
     xvals = seq(0,150,by=1)
-    mu_prior = dnorm(xvals, 0, sqrt(10000))*333
+#    mu_prior = dnorm(xvals, 0, sqrt(10000))*333
 #    mu_prior = dnorm(xvals, 0, sqrt(1000))*33
+    mu_prior = dunif(xvals, 0, 150)*333
     # And on alpha
     yvals = seq(0,10,by=0.01)
     #alpha_prior = dnorm(yvals, 1, sqrt(10))*333
-    alpha_prior = dnorm(yvals, 1, sqrt(20))*333
+#    alpha_prior = dnorm(yvals, 1, sqrt(20))*333
+    alpha_prior = dunif(yvals, 0, 10)*333  
     print(yvals)
     print(alpha_prior)
-#    alpha_prior = dunif(yvals, 0, 10)*333 
 #    print(mu_prior)
     df_mu_prior = data.frame(xvals, mu_prior)
     df_alpha_prior = data.frame(yvals, alpha_prior)
@@ -124,7 +129,8 @@ l = paste0(labels[[i]], ')')
 p_combined = plot_posterior_2d(mu, alpha, fig_lab=l, lab_x=7, lab_y=9.8)# +
 #	   geom_text(label=l, x=7, y=9.8)
 plot_list[[i]] = p_combined
-figname = 'plots/posterior_density_dunstan.png'
+#figname = 'plots/posterior_density_dunstan.png'
+figname = 'plots/posterior_density_eq_only_dunstan.png'
 png(file=figname, units="in", width=7, height=5, res=300)
 #pl = list(pl, pt)
 print(plot_list)
