@@ -77,14 +77,15 @@ for (j in 1:(M-1)){
 # Lets track alpha as well
 #alpha = pow((mu/lambda), 1/2)
 # Priors - uninformative
-alpha ~ dunif(0,10)
-#alpha ~ dnorm(1, 5e-2)T(0,)
+#alpha ~ dunif(0,10)
+alpha ~ dnorm(1, 0.0625)T(0,) # equivalent to sigma=4
 lambda = mu/pow(alpha,2)
 #lambda ~ dunif(0, 100000)
 #lambda ~ dnorm(15000, 1e-8)T(0,)
-mu ~ dunif(0, 150)
+#mu ~ dunif(0, 150)
 #mu ~ dnorm(11000, 1e-8)T(0,)
-#mu ~ dnorm(0,1e-4)T(0,)
+#mu ~ dnorm(1,1e-4)T(0,)
+mu ~ dnorm(10,4e-4)T(0,) # equivalent to sigma=50
 # Try defining vaguely informative mu based on largest, oldest offset
 #total_throw_dist ~ dnorm(total_throw, 1/(total_throw_sigma**2))
 #total_time_dist ~ dnorm(total_time, 1/(total_time_sigma**2))
@@ -121,5 +122,6 @@ y = Y_obs[y_ind,] # Random sample of single realisation of eq record
 
 # Try sampling prior open interval
 # Track MRE
-mre = MRE
+mre = MRE[y_ind]
+#mre = MRE
 }

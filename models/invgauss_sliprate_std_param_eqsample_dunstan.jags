@@ -78,13 +78,13 @@ for (j in 1:(M-1)){
 #alpha = pow((mu/lambda), 1/2)
 # Priors - uninformative
 #alpha ~ dunif(0,10)
-alpha ~ dnorm(1, 5e-2)T(0,)
+alpha ~ dnorm(1, 0.0625)T(0,)
 lambda = mu/pow(alpha,2) # ONLY USE IF PRIOR ON ALPHA
 #lambda = pow(alpha,2)/mu
 #lambda ~ dunif(0, 100000)
 #lambda ~ dnorm(15000, 1e-8)T(0,)
 #mu ~ dunif(0, 150)
-mu ~ dnorm(10,1e-4)T(0,) 
+mu ~ dnorm(10,4e-4)T(0,) 
 throw_per_event ~ dlnorm(0.2,2.8)
 #throw_per_event ~ dlnorm(0.66,16.5) #dlnorm(0.5, 3.0)
 #throw_per_event ~ dnorm(2., 4)T(1.75,2.25) # Estimate of throw per event from trench data
@@ -115,5 +115,6 @@ y = Y_obs[y_ind,] # Random sample of single realisation of eq record
 
 # Try sampling prior open interval
 # Track MRE
-mre = MRE
+mre = MRE[y_ind]
+#mre = MRE
 }

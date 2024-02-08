@@ -8,7 +8,10 @@ library(gridExtra)
 library(hdrcde)
 
 # Read in posterior dataset
-posterior_files = c('outputs/df_posterior_1_hyde.csv')
+#posterior_files = c('outputs/hyde_eqonly_alpha_unif_1_10_mu_unif_0_150_tpe_lnorm_0.66_16.5/df_posterior_eqonly_1_hyde.csv')
+posterior_files = c('outputs/hyde_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.66_16.5/df_posterior_1_hyde.csv')
+#posterior_files = c('outputs/hyde_alpha_norm_1_0.05_mu_norm_10_0.0001_tpe_lnorm_0.66_16.5/df_posterior_1_hyde.csv')
+#posterior_files = c('outputs/hyde_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.66_16.5/df_posterior_1_hyde.csv')
 #posterior_files = c('outputs/df_posterior_eqonly_1_hyde.csv')
 #              'outputs/df_posterior_2_hyde.csv')
 #MRE_position = c(5,6,6,7)             
@@ -35,13 +38,13 @@ plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15, lab_y=9.5){
     cat(mean_mu, mean_alpha)
     # Here let's add the prior on mu
     xvals = seq(0,150,by=1)
-    mu_prior = dnorm(xvals, 0, sqrt(10000))*333
+    mu_prior = dnorm(xvals, 10, sqrt(2500))*333
 #    mu_prior = dunif(xvals, 0, 150)*333
     # And on alpha
     yvals = seq(0,10,by=0.01)
-    alpha_prior = dnorm(yvals, 1, sqrt(10))*333
-#    alpha_prior = dnorm(yvals, 1, sqrt(20))*333
-    #alpha_prior = dunif(yvals, 0, 10)*333 
+#    alpha_prior = dnorm(yvals, 1, sqrt(10))*333
+    alpha_prior = dnorm(yvals, 1, sqrt(16))*333
+#    alpha_prior = dunif(yvals, 0, 10)*333 
     print(yvals)
     print(alpha_prior)
 #    alpha_prior = dunif(yvals, 0, 10)*333 

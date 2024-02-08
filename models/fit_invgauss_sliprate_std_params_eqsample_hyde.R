@@ -117,7 +117,7 @@ for (datalist in datalists){
 		  )
     # Define the parameters whose posterior distributions we want to calculate
     bayes.mod.params <- c("lambda", "mu", "alpha", "n_events", "n_events_cont",
-        "V", "T", "V_sum", "y", "T_sum", "V_obs", "T_obs", "y_ind"#, "mre"
+        "V", "T", "V_sum", "y", "T_sum", "V_obs", "T_obs", "y_ind", "mre"
 	)
     alphaInit = 1.0
     #lambdaInit = 1.0
