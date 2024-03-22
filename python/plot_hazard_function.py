@@ -41,7 +41,7 @@ plt.savefig('BPT_asymptotic_hazard_function.png')
 # Now plot CDF
 plt.clf()
 times = np.arange(1, 30000, 100)
-alpha_vals = [1.5]# [0.5, 1.0, 1.5]#, 2.0, 3.]
+alpha_vals = [0.5, 1.0, 1.5, 2.0, 3.]
 linestyles = ['solid', 'dotted', 'dashed', 'dashdot', (0, (5, 10))]
 for i,alpha in enumerate(alpha_vals):
     cdf = bpt_cdf(mu, alpha, times)

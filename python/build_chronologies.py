@@ -16,7 +16,7 @@ from glob import glob
 paramfiles = ['../params/Hyde_combined_OSL_CRN.txt']
 # Number of sample chronologies to generate
 current_year = 2023 # Offst for OxCal models defined in AD/BC
-n_samples = 10000
+n_samples = 1000
 
 names, event_sets, event_certainties, num_events, \
     tect_regions, fault_styles = get_event_sets(paramfiles, ['all'], ['all'], 1,
