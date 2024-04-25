@@ -11,7 +11,7 @@ x = np.arange(0.01, 10, 0.1)
 #sig_x = 0.5
 # Dunstan
 mu_x = 2
-sig_x = 1.5
+sig_x = 1.0
 #Convert to parameters
 mu = np.log(mu_x**2/np.sqrt(mu_x**2 + sig_x**2))
 sig2 = np.log(1  + sig_x**2/mu_x**2)
