@@ -85,7 +85,7 @@ lambda = mu/pow(alpha,2) # ONLY USE IF PRIOR ON ALPHA
 #lambda ~ dnorm(15000, 1e-8)T(0,)
 #mu ~ dunif(0, 150)
 mu ~ dnorm(10,4e-4)T(0,) 
-throw_per_event ~ dlnorm(0.2,2.8)
+throw_per_event ~ dlnorm(0.58, 4.48) #dlnorm(0.47,2.24) #dlnorm(0.2,2.8)
 #throw_per_event ~ dlnorm(0.66,16.5) #dlnorm(0.5, 3.0)
 #throw_per_event ~ dnorm(2., 4)T(1.75,2.25) # Estimate of throw per event from trench data
 #throw_per_event ~ dlnorm(0.7, 3.0) # dlnorm(0.7, 8.4) #(0.7, 4.0)#T(0.5,2.5) #(-0.7, 3.8) #(0.0, 4.0) #(-0.73, 1/0.32) #(1, 1/0.707) Try lognormal

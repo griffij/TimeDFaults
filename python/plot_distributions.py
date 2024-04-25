@@ -10,8 +10,8 @@ x = np.arange(0.01, 10, 0.1)
 #mu_x = 2
 #sig_x = 0.5
 # Dunstan
-mu_x = 1.5
-sig_x = 1
+mu_x = 2
+sig_x = 1.5
 #Convert to parameters
 mu = np.log(mu_x**2/np.sqrt(mu_x**2 + sig_x**2))
 sig2 = np.log(1  + sig_x**2/mu_x**2)
@@ -29,4 +29,5 @@ norm2 = norm()#loc=2, scale=1)
 y2 = np.exp(norm2.pdf(x))
 plt.plot(x,y)
 #plt.plot(x, y2, c='r')
-plt.savefig('lognorm.png')
+figname = 'lognorm_%.2f_%.2f.png' % (mu_x, sig_x)
+plt.savefig(figname)

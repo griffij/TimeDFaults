@@ -14,14 +14,14 @@ library(rlist)
 #              'outputs/df_posterior_2_eq_only_dunstan.csv',
 #              'outputs/df_posterior_3_eq_only_dunstan.csv',
 #               'outputs/df_posterior_4_eq_only_dunstan.csv')
-posterior_files = c('outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.2_0.8/df_posterior_1_dunstan.csv',
-              'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.2_0.8/df_posterior_2_dunstan.csv',
-              'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.2_0.8/df_posterior_3_dunstan.csv',
-              'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.2_0.8/df_posterior_4_dunstan.csv')
-#posterior_files = c('outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.66_16.5/df_posterior_1_dunstan.csv',
-#		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.66_16.5/df_posterior_2_dunstan.csv',
-#		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.66_16.5/df_posterior_3_dunstan.csv',
-#		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.66_16.5/df_posterior_4_dunstan.csv')
+#posterior_files = c('outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.47_2.24/df_posterior_1_dunstan.csv',
+#              'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.47_2.24/df_posterior_2_dunstan.csv',
+#              'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.47_2.24/df_posterior_3_dunstan.csv',
+#              'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.47_2.24/df_posterior_4_dunstan.csv')
+posterior_files = c('outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_1_dunstan.csv',
+		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_2_dunstan.csv',
+		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_3_dunstan.csv',
+		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_4_dunstan.csv')
 #posterior_files = c('outputs/dunstan_alpha_norm_1_0.005_mu_norm_0_0.0001_tpe_lnorm_0.2_0.8/df_posterior_1_dunstan.csv',
 #		'outputs/dunstan_alpha_norm_1_0.005_mu_norm_0_0.0001_tpe_lnorm_0.2_0.8/df_posterior_2_dunstan.csv',
 #		'outputs/dunstan_alpha_norm_1_0.005_mu_norm_0_0.0001_tpe_lnorm_0.2_0.8/df_posterior_3_dunstan.csv',

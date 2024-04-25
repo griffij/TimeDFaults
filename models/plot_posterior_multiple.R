@@ -8,10 +8,15 @@ library(lattice)
 library(ks)
 
 # Read in posterior dataset
-posterior_files = c('outputs/df_posterior_1_dunstan.csv',
-	      'outputs/df_posterior_2_dunstan.csv',
-	      'outputs/df_posterior_3_dunstan.csv',
-	      'outputs/df_posterior_4_dunstan.csv')
+#posterior_files = c('outputs/df_posterior_1_dunstan.csv',
+#	      'outputs/df_posterior_2_dunstan.csv',
+#	      'outputs/df_posterior_3_dunstan.csv',
+#	      'outputs/df_posterior_4_dunstan.csv')
+#dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.47_2.24
+posterior_files = c('outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_1_dunstan.csv',
+               'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_2_dunstan.csv',
+               'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_3_dunstan.csv',
+               'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_4_dunstan.csv')
 MRE_position = c(5,6,6,7)	      
 i=1
 for (filename in posterior_files){
@@ -38,7 +43,7 @@ figname = 'plots/posterior_mu.png'
 png(figname, units="in", width=6, height=6, res=300)     
 print("Mean mu")
 print(mean(mu))
-mu_percentiles = quantile(mu, probs = c(0.025, 0.26, 0.5, 0.84, 0.975))
+mu_percentiles = quantile(mu, probs = c(0.025, 0.26, 0.5, 0.84, 0.975), na.rm=TRUE)
 print("0.025, 0.26, 0.5, 0.84, 0.975")
 print(mu_percentiles)
 d = density(mu)
@@ -49,7 +54,7 @@ figname = 'plots/posterior_alpha.png'
 png(figname, units="in", width=6, height=6, res=300)
 print("mean alpha")
 print(mean(alpha))
-alpha_percentiles = quantile(alpha, probs = c(0.025, 0.26, 0.5, 0.84, 0.975))
+alpha_percentiles = quantile(alpha, probs = c(0.025, 0.26, 0.5, 0.84, 0.975), na.rm=TRUE)
 print("0.025, 0.26, 0.5, 0.84, 0.975")
 print(alpha_percentiles)    
 da = density(alpha)
@@ -61,8 +66,8 @@ png(figname, units="in", width=6, height=6, res=300)
 
 # Now calculate hazard function directly from posterior
 # Probably more efficient to do this way
-seq1 = seq(1, 5, 0.02)
-seq2 = seq(5.500, 30, 0.5)
+seq1 = seq(0.01, 0.55, 0.01)
+seq2 = seq(0.5500, 3, 0.05)
 hf_times = c(seq1, seq2)
 print(hf_times)
 #hf_times = seq(1, 30000, 100)
@@ -74,6 +79,8 @@ pdf_f = matrix(, nrow = length(mu), ncol=length(hf_times))
 hf = matrix(, nrow = length(mu), ncol=length(hf_times))    
 
 for (t in 1:length(hf_times)){
+#    print(t)
+#    print(((lambda/(hf_times[t]))^(1/2)) * ((hf_times[t])/mu - 1))
     u1_f[,t] = ((lambda/(hf_times[t]))^(1/2)) * ((hf_times[t])/mu - 1)  
     u2_f[,t] = -1*((lambda/(hf_times[t]))^(1/2))*((hf_times[t])/mu + 1)  
     cdf_f[,t] = pnorm(u1_f[,t], 0, 1) + exp((2*lambda)/mu)*pnorm(u2_f[,t], 0, 1)  
@@ -88,28 +95,28 @@ for (t in 1:length(hf_times)){
        mean_hf = mean(hf[,t])
        # Get percentiles
        xval_percentiles = rep(hf_times[t], 5)
-       yval_percentiles = quantile(hf[,t], probs = c(0.025, 0.26, 0.5, 0.84, 0.975))
+       yval_percentiles = quantile(hf[,t], probs = c(0.025, 0.26, 0.5, 0.84, 0.975), na.rm=TRUE)
        }else{
        xvals = c(xvals, rep(hf_times[t], length(hf[,t])))
        yvals = c(yvals, hf[,t])
        mean_hf = c(mean_hf, mean(hf[,t]))
        # Get percentiles
        xval_percentiles = cbind(xval_percentiles, rep(hf_times[t], 5))
-       yval_percentiles = cbind(yval_percentiles, quantile(hf[,t], probs = c(0.025, 0.26, 0.5, 0.84, 0.975)))
+       yval_percentiles = cbind(yval_percentiles, quantile(hf[,t], probs = c(0.025, 0.26, 0.5, 0.84, 0.975), na.rm=TRUE))
        }
     }
 
 xval_percentiles = do.call(rbind, as.list(xval_percentiles))
 yval_percentiles = do.call(rbind, as.list(yval_percentiles))
-xval_percentiles = matrix(xval_percentiles, nrow=5)
-yval_percentiles = matrix(yval_percentiles, nrow=5)
+xval_percentiles = matrix(xval_percentiles, nrow=5)*1e4
+yval_percentiles = matrix(yval_percentiles, nrow=5)/1e4
 df = data.frame(xvals, yvals)
 df2 = data.frame(xval_percentiles, yval_percentiles)
 linestyles = c(3,2,4,2,3)
 for (i in 1:5){
     if (i==1){
        plot(xval_percentiles[i,], yval_percentiles[i,], type='l', lty=linestyles[i],
-       				  ylim = c(0, max(yval_percentiles)), xlim = c(0, max(hf_times)),
+       				  ylim = c(0, max(yval_percentiles)), xlim = c(0, max(hf_times)*1e4),
 				  xlab = 'Time elapsed since most recent event (years)',
 				  ylab = 'Hazard rate')
        }else{
@@ -117,9 +124,9 @@ for (i in 1:5){
        }
     }
 # Add mean curve
-lines(xval_percentiles[1,], mean_hf, lty=1, lwd=2)
+lines(xval_percentiles[1,], mean_hf/1e4, lty=1, lwd=2)
 # Add legend
-legend(17, 6.1e-4, legend=c('Mean', 'Median', '68% bounds', '95% bounds'), lty=c(1,4,2,3), lwd=c(2,1,1,1))
+legend(17000, 6.1e-4, legend=c('Mean', 'Median', '68% bounds', '95% bounds'), lty=c(1,4,2,3), lwd=c(2,1,1,1))
 
 dev.off()
 figname = 'plots/posterior_hazard_rate2.png'
@@ -128,15 +135,26 @@ png(figname, units="in", width=6, height=6, res=300)
 # Now redo but calculate hazard function for next 500 years, ie
 # taking into account uncertainty on the time of the most recent event,
 # and hence length of the current open interval
-conditional_time = 0.500
-conditional_step = 0.01
+conditional_time =  500 # years
+conditional_step =  1 # years
 percentiles = c(0.025, 0.16, 0.5, 0.84, 0.975)
 hf_times = seq(0, conditional_time, conditional_step) # These will be added to length of current open interval
+print('hf_times')
+print(hf_times)
+hf_times = hf_times/1e4 # convert to ka
+print(hf_times)
+print(length(hf_times))
 cdf_f = matrix(, nrow = length(mu), ncol=length(hf_times))    
 li_f = matrix(, nrow = length(mu), ncol=length(hf_times))    
 pdf_f = matrix(, nrow = length(mu), ncol=length(hf_times))    
 hf = matrix(, nrow = length(mu), ncol=length(hf_times))
 for (t in 1:length(hf_times)){
+    print('t')
+    print(t)
+    print(lambda)
+    print(hf_times[t])
+    print(y)
+    print(mu)
     u1_f[,t] = ((lambda/(hf_times[t] + y))^(1/2)) * ((hf_times[t]+y)/mu - 1)  
     u2_f[,t] = -1*((lambda/(hf_times[t] + y))^(1/2))*((hf_times[t] + y)/mu + 1)  
     cdf_f[,t] = pnorm(u1_f[,t], 0, 1) + exp((2*lambda)/mu)*pnorm(u2_f[,t], 0, 1) 
@@ -151,21 +169,21 @@ for (t in 1:length(hf_times)){
        mean_hf = mean(hf[,t])
        # Get percentiles
        xval_percentiles = rep(hf_times[t], 5)
-       yval_percentiles = quantile(hf[,t], probs = percentiles)
+       yval_percentiles = quantile(hf[,t], probs = percentiles, na.rm=TRUE)
        }else{
        xvals = c(xvals, rep(hf_times[t], length(hf[,t])))
        yvals = c(yvals, hf[,t])
        mean_hf = c(mean_hf, mean(hf[,t]))
        # Get percentiles
        xval_percentiles = cbind(xval_percentiles, rep(hf_times[t], 5))
-       yval_percentiles = cbind(yval_percentiles, quantile(hf[,t], probs = c(0.025, 0.16, 0.5, 0.84, 0.975)))
+       yval_percentiles = cbind(yval_percentiles, quantile(hf[,t], probs = c(0.025, 0.16, 0.5, 0.84, 0.975), na.rm=TRUE))
        }
     }
 
 xval_percentiles = do.call(rbind, as.list(xval_percentiles))
 yval_percentiles = do.call(rbind, as.list(yval_percentiles))
-xval_percentiles = matrix(xval_percentiles, nrow=5)
-yval_percentiles = matrix(yval_percentiles, nrow=5)
+xval_percentiles = matrix(xval_percentiles, nrow=5)*1e4 # Convert kyr back to years
+yval_percentiles = matrix(yval_percentiles, nrow=5)/1e4
 df = data.frame(xvals, yvals)
 df2 = data.frame(xval_percentiles, yval_percentiles)
 linestyles = c(3,2,4,2,3)
@@ -175,7 +193,7 @@ linestyles = c(3,2,4,2,3)
 for (i in 1:5){
     if (i==1){
        plot(xval_percentiles[i,], yval_percentiles[i,], type='l', lty=linestyles[i],
-                                  ylim = c(0, max(yval_percentiles)), xlim = c(0, max(hf_times)),
+                                  ylim = c(0, max(yval_percentiles)), xlim = c(0, max(hf_times)*1e4),
                                   xlab = 'Time elapsed since 2020 (years)',
                                   ylab = 'Hazard rate')
        }else{
