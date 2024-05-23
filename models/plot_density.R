@@ -14,14 +14,14 @@ library(rlist)
 #              'outputs/df_posterior_2_eq_only_dunstan.csv',
 #              'outputs/df_posterior_3_eq_only_dunstan.csv',
 #               'outputs/df_posterior_4_eq_only_dunstan.csv')
-#posterior_files = c('outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.47_2.24/df_posterior_1_dunstan.csv',
-#              'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.47_2.24/df_posterior_2_dunstan.csv',
-#              'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.47_2.24/df_posterior_3_dunstan.csv',
-#              'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.47_2.24/df_posterior_4_dunstan.csv')
-posterior_files = c('outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_1_dunstan.csv',
-		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_2_dunstan.csv',
-		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_3_dunstan.csv',
-		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_4_dunstan.csv')
+posterior_files = c('outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.58_4.48/df_posterior_1_dunstan.csv',
+              'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.58_4.48/df_posterior_2_dunstan.csv',
+              'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.58_4.48/df_posterior_3_dunstan.csv',
+              'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.58_4.48/df_posterior_4_dunstan.csv')
+#posterior_files = c('outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_1_dunstan.csv',
+#		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_2_dunstan.csv',
+#		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_3_dunstan.csv',
+#		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_4_dunstan.csv')
 #posterior_files = c('outputs/dunstan_alpha_norm_1_0.005_mu_norm_0_0.0001_tpe_lnorm_0.2_0.8/df_posterior_1_dunstan.csv',
 #		'outputs/dunstan_alpha_norm_1_0.005_mu_norm_0_0.0001_tpe_lnorm_0.2_0.8/df_posterior_2_dunstan.csv',
 #		'outputs/dunstan_alpha_norm_1_0.005_mu_norm_0_0.0001_tpe_lnorm_0.2_0.8/df_posterior_3_dunstan.csv',
@@ -49,14 +49,14 @@ plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15, lab_y=9.5){
     cat(mean_mu, mean_alpha)
     # Here let's add the prior on mu
     xvals = seq(0,150,by=1)
-    mu_prior = dnorm(xvals, 10, sqrt(2500))*333
+#    mu_prior = dnorm(xvals, 10, sqrt(2500))*333
 #    mu_prior = dnorm(xvals, 0, sqrt(1000))*33
-#    mu_prior = dunif(xvals, 0, 150)*333
+    mu_prior = dunif(xvals, 0, 150)*333
     # And on alpha
     yvals = seq(0,10,by=0.01)
     #alpha_prior = dnorm(yvals, 1, sqrt(10))*333
-    alpha_prior = dnorm(yvals, 1, sqrt(16))*333
-#    alpha_prior = dunif(yvals, 0, 10)*333  
+#    alpha_prior = dnorm(yvals, 1, sqrt(16))*333
+    alpha_prior = dunif(yvals, 0, 10)*333  
     df_mu_prior = data.frame(xvals, mu_prior)
     df_alpha_prior = data.frame(yvals, alpha_prior)
 
@@ -237,17 +237,21 @@ for (filename in posterior_files){
     if (i==1){
        mu = df_post$mu
        lambda = df_post$lambda
+       all_mu = mu
        y = df_post$mre
        alpha = df_post$alpha
+       all_alpha = alpha
        pl = plot_posterior_2d(mu=mu, alpha=alpha, fig_lab=l)
        plot_list[[i]] = pl
     }else {
 #       mu = c(mu, df_post$mu)
-       mu = df_post$mu 
+       mu = df_post$mu
+       all_mu = c(all_mu, mu)
        lambda = c(lambda, df_post$lambda)
        y = c(y, df_post$mre)
 #       alpha = c(alpha, df_post$alpha)
        alpha = df_post$alpha
+       all_alpha = c(all_alpha, alpha)
        pt = plot_posterior_2d(mu=mu, alpha=alpha, fig_lab=l)
        plot_list[[i]] = pt 
        }
@@ -256,7 +260,7 @@ for (filename in posterior_files){
 
 # Now do combined plot
 l = paste0(labels[[i]], ')') 
-p_combined = plot_posterior_2d(mu, alpha, fig_lab=l, lab_x=7, lab_y=9.8)# +
+p_combined = plot_posterior_2d(all_mu, all_alpha, fig_lab=l, lab_x=7, lab_y=9.8)# +
 #	   geom_text(label=l, x=7, y=9.8)
 plot_list[[i]] = p_combined
 figname = 'plots/posterior_density_dunstan.png'
@@ -270,6 +274,21 @@ grid.arrange(#pl, pt, nrow=2)
     layout_matrix = rbind(c(NA, 1, 2, 5, NA),
     		    	  c(NA, 3, 4, 5, NA))
     )
+print(warnings())
+warnings()
+dev.off()
+
+plot.new()
+figname = 'plots/posterior_density_dunstan_combined.png'
+png(file=figname, units="in", width=4.5, height=5, res=300) 
+plot_list <- vector("list", 1) 
+p_combined = plot_posterior_2d(all_mu, all_alpha, fig_lab='', lab_x=7, lab_y=9.8)
+plot_list[[1]] = p_combined
+grid.arrange(
+	grobs = plot_list,
+	widths=c(0.1,1,0.1),
+	layout_matrix = rbind(c(NA, 1, NA))
+	)
 print(warnings())
 warnings()
 dev.off()
