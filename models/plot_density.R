@@ -10,14 +10,14 @@ library(rlist)
 
 # Read in posterior dataset
 
-#posterior_files = c('outputs/df_posterior_1_eq_only_dunstan.csv',
-#              'outputs/df_posterior_2_eq_only_dunstan.csv',
-#              'outputs/df_posterior_3_eq_only_dunstan.csv',
-#               'outputs/df_posterior_4_eq_only_dunstan.csv')
-posterior_files = c('outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.58_4.48/df_posterior_1_dunstan.csv',
-              'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.58_4.48/df_posterior_2_dunstan.csv',
-              'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.58_4.48/df_posterior_3_dunstan.csv',
-              'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.58_4.48/df_posterior_4_dunstan.csv')
+posterior_files = c('outputs/dunstan_eqonly_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.2_0.8/df_posterior_1_eq_only_dunstan.csv',
+              'outputs/dunstan_eqonly_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.2_0.8/df_posterior_2_eq_only_dunstan.csv',
+              'outputs/dunstan_eqonly_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.2_0.8/df_posterior_3_eq_only_dunstan.csv',
+               'outputs/dunstan_eqonly_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.2_0.8/df_posterior_4_eq_only_dunstan.csv')
+#posterior_files = c('outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.58_4.48/df_posterior_1_dunstan.csv',
+#              'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.58_4.48/df_posterior_2_dunstan.csv',
+#              'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.58_4.48/df_posterior_3_dunstan.csv',
+#              'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.58_4.48/df_posterior_4_dunstan.csv')
 #posterior_files = c('outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_1_dunstan.csv',
 #		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_2_dunstan.csv',
 #		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_3_dunstan.csv',
@@ -50,7 +50,7 @@ plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15, lab_y=9.5){
     # Here let's add the prior on mu
     xvals = seq(0,150,by=1)
 #    mu_prior = dnorm(xvals, 10, sqrt(2500))*333
-#    mu_prior = dnorm(xvals, 0, sqrt(1000))*33
+##    mu_prior = dnorm(xvals, 0, sqrt(1000))*33
     mu_prior = dunif(xvals, 0, 150)*333
     # And on alpha
     yvals = seq(0,10,by=0.01)
@@ -215,11 +215,11 @@ plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15, lab_y=9.5){
   	       )+
 #	       geom_point(x = mean_mu, y=mean_alpha, shape=4, colour='red') +
 #	       geom_text(label=fig_lab, x=lab_x, y=lab_y)
-	       geom_path(data=df_mu_prior, aes(x = xvals, y = mu_prior), colour='black') +
-               geom_path(data=df_alpha_prior, aes(x = alpha_prior, y = yvals), colour='black') +
-               geom_point(x = mean_mu, y=mean_alpha, shape=0, colour='red') +
-               geom_point(x = median_mu, y=median_alpha, shape=1, colour='blue') +
-               geom_point(x = mode[1], y=mode[2], shape=2, colour='green') +
+	       geom_path(data=df_mu_prior, aes(x = xvals, y = mu_prior), colour='darkorange3') +
+               geom_path(data=df_alpha_prior, aes(x = alpha_prior, y = yvals), colour='darkorange3') +
+               geom_point(x = mean_mu, y=mean_alpha, shape=0, colour='red', size=4) +
+               geom_point(x = median_mu, y=median_alpha, shape=1, colour='blue', size=4) +
+               geom_point(x = mode[1], y=mode[2], shape=2, colour='green', size=4) +
               geom_text(label=fig_lab, x=lab_x, y=lab_y)
     for (i in 1:length(contour_list)){
     	p1 = p1 + geom_path(aes(x=x, y=y), data=contour_list[[i]], lwd=contour_lw[[i]])
