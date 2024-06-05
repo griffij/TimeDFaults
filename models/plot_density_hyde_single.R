@@ -42,7 +42,7 @@ plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15, lab_y=9.5){
 #    mu_prior = dunif(xvals, 0, 150)*333
     # And on alpha
     yvals = seq(0,10,by=0.01)
-#    alpha_prior = dnorm(yvals, 1, sqrt(10))*333
+###    alpha_prior = dnorm(yvals, 1, sqrt(10))*333
     alpha_prior = dnorm(yvals, 1, sqrt(16))*333
 #    alpha_prior = dunif(yvals, 0, 10)*333 
     print(yvals)
@@ -90,11 +90,11 @@ plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15, lab_y=9.5){
 	       theme(
 	           legend.position='none'
   	       )+
-	       geom_path(data=df_mu_prior, aes(x = xvals, y = mu_prior), colour='black') +
-	       geom_path(data=df_alpha_prior, aes(x = alpha_prior, y = yvals), colour='black') +
-	       geom_point(x = mean_mu, y=mean_alpha, shape=0, colour='red') +
-	       geom_point(x = median_mu, y=median_alpha, shape=1, colour='blue') +
-	       geom_point(x = mode[1], y=mode[2], shape=2, colour='green') 
+	       geom_path(data=df_mu_prior, aes(x = xvals, y = mu_prior), colour='darkorange3') +
+	       geom_path(data=df_alpha_prior, aes(x = alpha_prior, y = yvals), colour='darkorange3') +
+	       geom_point(x = mean_mu, y=mean_alpha, shape=15, colour='red', size=3) +
+	       geom_point(x = median_mu, y=median_alpha, shape=16, colour='blue', size=3) +
+	       geom_point(x = mode[1], y=mode[2], shape=17, colour='green', size=3) 
 #	       geom_text(label=fig_lab, x=lab_x, y=lab_y)
     figname = 'plots/posterior_density_hyde.png'
 #    print(png(file=figname, units="in", width=7, height=5, res=300))
