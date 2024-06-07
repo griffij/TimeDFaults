@@ -8,11 +8,6 @@ library(lattice)
 library(ks)
 
 # Read in posterior dataset
-#posterior_files = c('outputs/df_posterior_1_dunstan.csv',
-#	      'outputs/df_posterior_2_dunstan.csv',
-#	      'outputs/df_posterior_3_dunstan.csv',
-#	      'outputs/df_posterior_4_dunstan.csv')
-#dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.47_2.24
 posterior_files = c('outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_1_dunstan.csv',
                'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_2_dunstan.csv',
                'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_3_dunstan.csv',
@@ -80,10 +75,9 @@ png(figname, units="in", width=6, height=6, res=300)
 #seq1 = seq(0.01, 0.55, 0.01)
 #seq2 = seq(0.5500, 3, 0.05)
 seq1 = seq(0.01, 0.51, 0.01)
-seq2 = seq(0.5100, 30.01, 0.5)
+seq2 = seq(0.5100, 25.01, 0.5)
 hf_times = c(seq1, seq2)
-print(hf_times)
-#hf_times = seq(1, 30000, 100)
+
 u1_f = matrix(, nrow = length(mu), ncol=length(hf_times))
 u2_f = matrix(, nrow = length(mu), ncol=length(hf_times))    
 cdf_f = matrix(, nrow = length(mu), ncol=length(hf_times))    
@@ -139,7 +133,7 @@ for (i in 1:5){
 # Add mean curve
 lines(xval_percentiles[1,], mean_hf/1e3, lty=1, lwd=2)
 # Add legend
-legend(17000, 6.1e-4, legend=c('Mean', 'Median', '68% bounds', '95% bounds'), lty=c(1,4,2,3), lwd=c(2,1,1,1))
+#legend(17000, 6.1e-4, legend=c('Mean', 'Median', '68% bounds', '95% bounds'), lty=c(1,4,2,3), lwd=c(2,1,1,1))
 
 dev.off()
 figname = 'plots/posterior_hazard_rate2.png'
@@ -149,14 +143,14 @@ png(figname, units="in", width=6, height=6, res=300)
 # taking into account uncertainty on the time of the most recent event,
 # and hence length of the current open interval
 conditional_time =  500 # years
-conditional_step =  1 # years
+conditional_step =  10 # years
 percentiles = c(0.025, 0.16, 0.5, 0.84, 0.975)
 hf_times = seq(0, conditional_time, conditional_step) # These will be added to length of current open interval
-print('hf_times')
-print(hf_times)
+#print('hf_times')
+#print(hf_times)
 hf_times = hf_times/1e3 # convert to ka
-print(hf_times)
-print(length(hf_times))
+#print(hf_times)
+#print(length(hf_times))
 cdf_f = matrix(, nrow = length(mu), ncol=length(hf_times))    
 li_f = matrix(, nrow = length(mu), ncol=length(hf_times))    
 pdf_f = matrix(, nrow = length(mu), ncol=length(hf_times))    
@@ -164,12 +158,12 @@ hf = matrix(, nrow = length(mu), ncol=length(hf_times))
 u1_f = matrix(, nrow = length(mu), ncol=length(hf_times))
 u2_f = matrix(, nrow = length(mu), ncol=length(hf_times)) 
 for (t in 1:length(hf_times)){
-    print('t')
-    print(t)
-    print(lambda)
-    print(hf_times[t])
-    print(y)
-    print(mu)
+#    print('t')
+#    print(t)
+#    print(lambda)
+#    print(hf_times[t])
+#    print(y)
+#    print(mu)
     u1_f[,t] = ((lambda/(hf_times[t] + y))^(1/2)) * ((hf_times[t]+y)/mu - 1)  
     u2_f[,t] = -1*((lambda/(hf_times[t] + y))^(1/2))*((hf_times[t] + y)/mu + 1)  
     cdf_f[,t] = pnorm(u1_f[,t], 0, 1) + exp((2*lambda)/mu)*pnorm(u2_f[,t], 0, 1) 

@@ -8,17 +8,8 @@ library(lattice)
 library(ks)
 
 # Read in posterior dataset
-#posterior_files = c('outputs/df_posterior_1_dunstan.csv',
-#	      'outputs/df_posterior_2_dunstan.csv',
-#	      'outputs/df_posterior_3_dunstan.csv',
-#	      'outputs/df_posterior_4_dunstan.csv')
-#posterior_files = c('outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.66_16.5/df_posterior_1_dunstan.csv',
-#               'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.66_16.5/df_posterior_2_dunstan.csv',
-#               'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.66_16.5/df_posterior_3_dunstan.csv',
-#               'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.66_16.5/df_posterior_4_dunstan.csv')
 posterior_files = c('outputs/hyde_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.66_16.5/df_posterior_1_hyde.csv')
-#posterior_files = c('outputs/hyde_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.66_16.5/df_posterior_1_hyde.csv')
-#MRE_position = c(5,6,6,7)	      
+
 i=1
 for (filename in posterior_files){
     df_post = read.csv(filename)
@@ -79,7 +70,7 @@ png(figname, units="in", width=6, height=6, res=300)
 # Now calculate hazard function directly from posterior
 # Probably more efficient to do this way
 seq1 = seq(0.01, 0.51, 0.01)
-seq2 = seq(0.5100, 30.01, 0.5)
+seq2 = seq(0.5100, 25.01, 0.5)
 hf_times = c(seq1, seq2)
 print(hf_times)
 #hf_times = seq(1, 30000, 100)
@@ -95,23 +86,25 @@ for (t in 1:length(hf_times)){
 #    print(((lambda/(hf_times[t]))^(1/2)) * ((hf_times[t])/mu - 1))
     u1_f[,t] = ((lambda/(hf_times[t]))^(1/2)) * ((hf_times[t])/mu - 1)  
     u2_f[,t] = -1*((lambda/(hf_times[t]))^(1/2))*((hf_times[t])/mu + 1)  
-    cdf_f[,t] = pnorm(u1_f[,t], 0, 1) + exp((2*lambda)/mu)*pnorm(u2_f[,t], 0, 1)  
+#    cdf_f[,t] = pnorm(u1_f[,t], 0, 1) + exp((2*lambda)/mu)*pnorm(u2_f[,t], 0, 1)
+    cdf_f[,t] = pnorm(u1_f[,t], 0, 1) + exp((2*lambda)/mu)*pnorm(u2_f[,t], 0, 1)
     # Hazard function - first calculate pdf
     li_f[,t] = 0.5*(log(lambda) - log(2*3.1416) - 3*log(hf_times[t])) -
     	    0.5*lambda*((hf_times[t] - mu)^2)/((mu^2)*hf_times[t])
     pdf_f[,t] = exp(li_f[,t])
     hf[,t] = pdf_f[,t] / (1 - cdf_f[,t])
+    hf[,t][is.infinite(hf[,t])] = NA
     if (t==1){
        xvals = rep(hf_times[t], length(hf[,t]))
        yvals = hf[,t]
-       mean_hf = mean(hf[,t])
+       mean_hf = mean(hf[,t], na.rm=TRUE)
        # Get percentiles
        xval_percentiles = rep(hf_times[t], 5)
        yval_percentiles = quantile(hf[,t], probs = c(0.025, 0.26, 0.5, 0.84, 0.975), na.rm=TRUE)
        }else{
        xvals = c(xvals, rep(hf_times[t], length(hf[,t])))
        yvals = c(yvals, hf[,t])
-       mean_hf = c(mean_hf, mean(hf[,t]))
+       mean_hf = c(mean_hf, mean(hf[,t], na.rm=TRUE))
        # Get percentiles
        xval_percentiles = cbind(xval_percentiles, rep(hf_times[t], 5))
        yval_percentiles = cbind(yval_percentiles, quantile(hf[,t], probs = c(0.025, 0.26, 0.5, 0.84, 0.975), na.rm=TRUE))
@@ -137,10 +130,9 @@ for (i in 1:5){
        }
     }
 # Add mean curve
-
 lines(xval_percentiles[1,], mean_hf/1e3, lty=1, lwd=2)
 # Add legend
-legend(17000, 6.1e-4, legend=c('Mean', 'Median', '68% bounds', '95% bounds'), lty=c(1,4,2,3), lwd=c(2,1,1,1))
+#legend(17000, 6.1e-4, legend=c('Mean', 'Median', '68% bounds', '95% bounds'), lty=c(1,4,2,3), lwd=c(2,1,1,1))
 
 dev.off()
 figname = 'plots/posterior_hazard_hyde_rate2.png'
@@ -220,6 +212,8 @@ for (i in 1:5){
     lines(xval_percentiles[i,], yval_percentiles[i,], lty=linestyles[i], lwd=1)
        }
     }
+print(mean_hf)
+#stop
 lines(xval_percentiles[1,], mean_hf, lty=1, lwd=2)
 # Add legend
 legend(300, 1.2e-4, legend=c('Mean', 'Median', '68% bounds', '95% bounds'), lty=c(1,4,2,3), lwd=c(2,1,1,1))   
