@@ -40,18 +40,27 @@ plt.savefig('BPT_asymptotic_hazard_function.png')
 
 # Now plot CDF
 plt.clf()
-times = np.arange(1, 30000, 100)
-alpha_vals = [0.5, 1.0, 1.5, 2.0, 3.]
+times = np.arange(1, 50000, 100)
+alpha_vals = [4.3, 3.9, 2.3] # Dunstan
+mu_vals = [33.1, 26.3, 11.2] # Dunstan
+fault_name = 'Dunstan'
+#alpha_vals = [1.3, 0.8, 0.3]
+#mu_vals = [19.1, 13.3, 11.8]
+#fault_name = 'Hyde' 
 linestyles = ['solid', 'dotted', 'dashed', 'dashdot', (0, (5, 10))]
+labels = ['Mean', 'Median', 'Mode']
 for i,alpha in enumerate(alpha_vals):
-    cdf = bpt_cdf(mu, alpha, times)
-    plt.plot(times, cdf, linestyle=linestyles[i], c = '0.3', label=(r'$\alpha$ = ' + str(alpha)))
-plt.xlabel('Time (years)')
-plt.ylabel('Cumulative density')
+    cdf = bpt_cdf(mu_vals[i]*1000, alpha, times)
+    plt.plot(times/1000, cdf, linestyle=linestyles[i], c = '0.3',
+             label=(labels[i] + ': ' + r'$\alpha$ = ' + str(alpha) + ', $\mu$ = ' + str(mu_vals[i])))
+plt.xlabel('Inter-event time (kyr)', fontsize=12)
+plt.ylabel('Cumulative density', fontsize=12)
+plt.xlim(0,50)
+plt.ylim(0,1)
 plt.legend(fontsize=12, handlelength=3)
-plt.annotate(mean_label, (0.4, 0.1), xycoords = 'axes fraction', fontsize = 12) 
-plt.savefig('BPT_CDF.png')
-
+#plt.annotate(mean_label, (0.4, 0.1), xycoords = 'axes fraction', fontsize = 12) 
+plt.savefig('BPT_CDF_%s.png' % fault_name)
+print('Mode prob < 2000 years', bpt_cdf(mu_vals[2]*1000, alpha_vals[2], 2000))
 # Now plot hazard function
 plt.clf()
 for i,alpha in enumerate(alpha_vals):
@@ -70,22 +79,25 @@ plt.savefig('BPT_hazard_function.png')
 # Now plot BPT pdf
 plt.clf()
 for i,alpha in enumerate(alpha_vals):
-    pdf = bpt_pdf(mu, alpha, times)
-    plt.plot(times, pdf, linestyle=linestyles[i], c = 'lightskyblue', linewidth=3, label=(r'$\alpha$ = ' + str(alpha)))
+    pdf = bpt_pdf(mu_vals[i]*1000, alpha, times)
+    plt.plot(times/1000, pdf*1000, linestyle=linestyles[i], c = '0.3',
+#             linewidth=3,
+             label=(labels[i] + ': ' + r'$\alpha$ = ' + str(alpha) + ', $\mu$ = ' + str(mu_vals[i])))
 # Add exponential function for comparision
-exp_dist = expon(scale=mu)
-pdf_expon = exp_dist.pdf(times)
+#exp_dist = expon(scale=mu)
+#pdf_expon = exp_dist.pdf(times)
 #plt.plot(times, pdf_expon, c = '0.7', linestyle=linestyles[0], label='Exponential')
-#plt.xlabel('Inter-event time')
-#plt.ylabel('Density')
-#plt.annotate(mean_label, (0.4, 0.9), xycoords = 'axes fraction', fontsize = 12)   
-#plt.legend(fontsize=12, handlelength=3)
-ax = plt.gca()
-ax.axes.xaxis.set_visible(False)
-ax.axes.yaxis.set_visible(False)
-
+plt.xlabel('Inter-event time (kyr)', fontsize=12)
+plt.ylabel('Density', fontsize=12)
+#plt.annotate(mean_label, (0.4, 0.1), xycoords = 'axes fraction', fontsize = 12) 
+plt.legend(fontsize=12, handlelength=3)
+#ax = plt.gca()
+#ax.axes.xaxis.set_visible(False)
+#ax.axes.yaxis.set_visible(False)
+plt.xlim(0,50)
+plt.ylim(0,)
 plt.tight_layout()
-plt.savefig('BPT_PDF.png')
+plt.savefig('BPT_pdf_%s.png' % fault_name)
 
 # Now we do for gamma distribution
 # Now we do for gamma distribution

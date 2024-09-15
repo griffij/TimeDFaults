@@ -18,14 +18,40 @@ library(rlist)
 #              'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.58_4.48/df_posterior_2_dunstan.csv',
 #              'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.58_4.48/df_posterior_3_dunstan.csv',
 #              'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.58_4.48/df_posterior_4_dunstan.csv')
-posterior_files = c('outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_1_dunstan.csv',
-		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_2_dunstan.csv',
-		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_3_dunstan.csv',
-		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_4_dunstan.csv')
+#posterior_files = c('outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_1_dunstan.csv',
+#		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_2_dunstan.csv',
+#		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_3_dunstan.csv',
+#		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_4_dunstan.csv')
 #posterior_files = c('outputs/dunstan_alpha_norm_1_0.005_mu_norm_0_0.0001_tpe_lnorm_0.2_0.8/df_posterior_1_dunstan.csv',
 #		'outputs/dunstan_alpha_norm_1_0.005_mu_norm_0_0.0001_tpe_lnorm_0.2_0.8/df_posterior_2_dunstan.csv',
 #		'outputs/dunstan_alpha_norm_1_0.005_mu_norm_0_0.0001_tpe_lnorm_0.2_0.8/df_posterior_3_dunstan.csv',
 #		'outputs/dunstan_alpha_norm_1_0.005_mu_norm_0_0.0001_tpe_lnorm_0.2_0.8/df_posterior_4_dunstan.csv')
+#posterior_files = c('outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.79_11.29/df_posterior_1_dunstan.csv',
+#		'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.79_11.29/df_posterior_2_dunstan.csv',
+#		'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.79_11.29/df_posterior_3_dunstan.csv',
+#		'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.79_11.29/df_posterior_4_dunstan.csv')
+#posterior_files = c('outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.79_11.29/df_posterior_1_dunstan.csv',
+#		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.79_11.29/df_posterior_2_dunstan.csv',
+#		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.79_11.29/df_posterior_3_dunstan.csv',
+#		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.79_11.29/df_posterior_4_dunstan.csv')
+#posterior_files = c('outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.69_8.33/df_posterior_1_dunstan.csv',
+#		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.69_8.33/df_posterior_2_dunstan.csv',
+#		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.69_8.33/df_posterior_3_dunstan.csv',
+#		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.69_8.33/df_posterior_4_dunstan.csv')
+#posterior_files = c('outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.69_8.33/df_posterior_1_dunstan.csv',
+#		'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.69_8.33/df_posterior_2_dunstan.csv',
+#		'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.69_8.33/df_posterior_3_dunstan.csv',
+#		'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.69_8.33/df_posterior_4_dunstan.csv')
+
+#posterior_files = c('outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.63_7.60/df_posterior_1_dunstan.csv',
+#		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.63_7.60/df_posterior_2_dunstan.csv',
+#		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.63_7.60/df_posterior_3_dunstan.csv',
+#		'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.63_7.60/df_posterior_4_dunstan.csv')
+posterior_files = c('outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.63_7.60/df_posterior_1_dunstan.csv',
+		'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.63_7.60/df_posterior_2_dunstan.csv',
+		'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.63_7.60/df_posterior_3_dunstan.csv',
+		'outputs/dunstan_alpha_unif_0_10_mu_unif_0_150_tpe_lnorm_0.63_7.60/df_posterior_4_dunstan.csv')
+		
 #MRE_position = c(5,6,6,7)             
 
 plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15, lab_y=9.5){
@@ -54,7 +80,7 @@ plot_posterior_2d <-function(mu, alpha, fig_lab, lab_x=15, lab_y=9.5){
 #    mu_prior = dunif(xvals, 0, 150)*333
     # And on alpha
     yvals = seq(0,10,by=0.01)
-    #alpha_prior = dnorm(yvals, 1, sqrt(10))*333
+    ##alpha_prior = dnorm(yvals, 1, sqrt(10))*333
     alpha_prior = dnorm(yvals, 1, sqrt(16))*333
 #    alpha_prior = dunif(yvals, 0, 10)*333  
     df_mu_prior = data.frame(xvals, mu_prior)

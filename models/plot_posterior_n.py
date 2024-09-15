@@ -8,16 +8,16 @@ import matplotlib
 from matplotlib import pyplot as plt
 
 #datafiles = ['outputs/hyde_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.66_16.5/df_posterior_1_hyde.csv']
-datafiles = ['outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_1_dunstan.csv',
-              'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_2_dunstan.csv',
-              'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_3_dunstan.csv',
-              'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.58_4.48/df_posterior_4_dunstan.csv']
+datafiles = ['outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.63_7.60/df_posterior_1_dunstan.csv',
+              'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.63_7.60/df_posterior_2_dunstan.csv',
+              'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.63_7.60/df_posterior_3_dunstan.csv',
+              'outputs/dunstan_alpha_norm_1_0.0625_mu_norm_10_0.0004_tpe_lnorm_0.63_7.60/df_posterior_4_dunstan.csv']
 name = datafiles[0].split('/')[1].split('_')[0]
 print('name', name)
 if name == 'hyde':
     max_val = 12.5
 else:
-    max_val = 35.5
+    max_val = 25.5
 column_names = ['"n_events[1]"', '"n_events[2]"', '"n_events[3]"','"n_events[4]"']
 
 #Get header

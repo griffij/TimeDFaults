@@ -47,11 +47,11 @@ for (i in 1:length(datafiles)){
     }
 
 # Dunstan slip rate data
-throws = cbind(27.5, 17.5, 12.5, 3)# Vertical offsets in meters  
-V_sigma = cbind(4, 3, 2, 1) # Uncertainty on throw (metres)
+throws = cbind(27.5, 19.0, 13.0, 5.5)# Vertical offsets in meters  
+V_sigma = cbind(2, 1.5, 1, 2) # Uncertainty on throw (metres)
 V_tau = 1/(V_sigma**2)[1,]
 slip_times = cbind(321100, 182400, 92000, 26200)
-T_sigma = cbind(8600, 13600, 5600, 2500, 2900)
+T_sigma = cbind(8600, 13600, 5600, 2900)
 # Convert to ka rather than years to look at sensitivity to priors  
 slip_times = slip_times/1000
 T_sigma = T_sigma/1000

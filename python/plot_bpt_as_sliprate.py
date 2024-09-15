@@ -12,8 +12,8 @@ from scipy.stats import lognorm, norm
 np.random.seed(7) #7
 
 offset = 2
-#datafile = './brownian_oscillators_sigma_0.75_0.5.csv'
-datafile = './brownian_oscillators_sigma_0.75_1.csv'
+datafile = './brownian_oscillators_sigma_0.75_0.5.csv'
+#datafile = './brownian_oscillators_sigma_0.75_1.csv'
 figfilename = datafile.rstrip('csv') + 'png'
 data = np.genfromtxt(datafile, delimiter=',', skip_header=1)[:,1]
 data = data[np.where(data>0)]
@@ -59,16 +59,20 @@ offsets_sub = offsets_sub+yerrors
 # Plot 'true' slip rate
 plt.plot(data, offsets, c='0.5', linestyle='-', linewidth=0.5)
 plt.plot(data_sub, offsets_sub, c='k')
-plt.scatter(data_sub, offsets_sub, c='darkorange', marker='s')
+plt.scatter(data_sub[-3:], offsets_sub[-3:], c='red', marker='s')
+plt.scatter(data_sub[:-3], offsets_sub[:-3], c='darkorange', marker='s') 
 # Add error bars
-plt.errorbar(data_sub, offsets_sub, yerr=1.5*yerrors, xerr = 1.5*xerrors, ecolor='darkorange') #0.5*data_sub*yerrors, xerr=0.3*offsets_sub*xerrors)
+plt.errorbar(data_sub[-3:], offsets_sub[-3:], yerr=1.5*yerrors[-3:], xerr = 1.5*xerrors[-3:], ecolor='red') #0.5*data_sub*yerrors, xerr=0.3*offsets_sub*xerrors)
+plt.errorbar(data_sub[:-3], offsets_sub[:-3], yerr=1.5*yerrors[:-3], xerr = 1.5*xerrors[:-3], ecolor='darkorange')
 #plt.errorbar(data_sub, offsets_sub, xerr=2*xerrors)
 plt.yticks(fontsize=14)
 plt.xticks(fontsize=14)
 plt.xlabel('Age', fontsize=16)
 plt.ylabel('Displacement', fontsize=16)
+ax = plt.gca()
+ax.set_aspect(0.25)
 plt.xlim(0, 28)
 plt.ylim(0, 50)
-plt.tight_layout()
+#plt.tight_layout()
 #figfilename = 'brownian_oscillator_slip_rate.png'
 plt.savefig(figfilename)

@@ -11,8 +11,8 @@ x = np.arange(0.01, 10, 0.01)
 #sig_x = 0.5
 # Dunstan
 #median = 2.5
-mu_xs = [2.0, 2.4]
-sig_xs = [0.5, 0.75]
+mu_xs = [2.0, 2.0] #2.1 #2.3
+sig_xs = [0.5, 0.75] #0.75 #0.7
 #Convert to parameters
 #mu = np.log(median)
 
