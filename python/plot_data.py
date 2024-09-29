@@ -17,22 +17,26 @@ data[:,0] = data[:,0]/1000
 data[:,1] = data[:,1]/1000
 data_dunstan[:,0] = data_dunstan[:,0]/1000
 data_dunstan[:,1] = data_dunstan[:,1]/1000   
+# Convert age uncertainties to 2 sigma
+data[:,1] = data[:,1]*2.
+data_dunstan[:,1] = data_dunstan[:,1]*2.
 print(data)
 print(paleo_data)
-paleo_offsets = [2,4,6,8]
+paleo_offsets = [1.8,4,6,8]
 paleo_offsets_dunstan = [1.5,3.0,4.5,6.,7.5]
 
 
-plt.scatter(data[:,0], data[:,2], marker='s', c='mediumblue',)
-plt.errorbar(data[:,0], data[:,2],xerr=data[:,1]*2, yerr=data[:,3]*2, fmt='o', c='mediumblue',)
-plt.scatter(paleo_data[:,0], paleo_offsets, marker='s', c='cornflowerblue')
+plt.scatter(data[:,0], data[:,2], marker='s', c='mediumblue', label='Hyde displacement')
+plt.errorbar(data[:,0], data[:,2],xerr=data[:,1], yerr=data[:,3], fmt='o', c='mediumblue',)
+plt.scatter(paleo_data[:,0], paleo_offsets, marker='s', c='cornflowerblue', label='Hyde paleoearthquake')
 plt.errorbar(paleo_data[:,0], paleo_offsets, xerr=((paleo_data[:,0]-paleo_data[:,1]), (paleo_data[:,2]-paleo_data[:,0])), yerr=[0.5,0.5,0.5,0.5],fmt='o', c='cornflowerblue')
-plt.scatter(data_dunstan[:,0], data_dunstan[:,2], marker='o', c='saddlebrown')
-plt.errorbar(data_dunstan[:,0], data_dunstan[:,2],xerr=data_dunstan[:,1]*2, yerr=data_dunstan[:,3]*2, fmt='o', c='saddlebrown')
-plt.scatter(paleo_data_dunstan[:,0], paleo_offsets_dunstan, marker='o', c='sandybrown')
+plt.scatter(data_dunstan[:,0], data_dunstan[:,2], marker='o', c='saddlebrown', label='Dunstan displacement')
+plt.errorbar(data_dunstan[:,0], data_dunstan[:,2],xerr=data_dunstan[:,1], yerr=data_dunstan[:,3], fmt='o', c='saddlebrown')
+plt.scatter(paleo_data_dunstan[:,0], paleo_offsets_dunstan, marker='o', c='sandybrown', label='Dunstan paleoearthquake')
 plt.errorbar(paleo_data_dunstan[:,0], paleo_offsets_dunstan,
              xerr=((paleo_data_dunstan[:,0]-paleo_data_dunstan[:,1]),(paleo_data_dunstan[:,2]-paleo_data_dunstan[:,0])), yerr=[0.5,0.5,0.5,0.5,0.5],
-             fmt='o', c='sandybrown') 
+             fmt='o', c='sandybrown')
+plt.legend()
 ax = plt.gca()
 # Add rectangle for inset 
 rect = Rectangle((0, 0), 50, 9,                                                                           
@@ -49,11 +53,11 @@ fig.add_axes([0.51, 0.17, 0.37, 0.30])
 ax = plt.gca()
 
 plt.scatter(data[:,0], data[:,2],marker='s', c='mediumblue')
-plt.errorbar(data[:,0], data[:,2],xerr=data[:,1]*2, yerr=data[:,3]*2, fmt='o', c='mediumblue')
+plt.errorbar(data[:,0], data[:,2],xerr=data[:,1], yerr=data[:,3], fmt='o', c='mediumblue')
 plt.scatter(paleo_data[:,0], paleo_offsets, marker='s', c='cornflowerblue')
 plt.errorbar(paleo_data[:,0], paleo_offsets, xerr=((paleo_data[:,0]-paleo_data[:,1]), (paleo_data[:,2]-paleo_data[:,0])), yerr=[0.5,0.5,0.5,0.5],fmt='o', c='cornflowerblue')
 plt.scatter(data_dunstan[:,0], data_dunstan[:,2], marker='o', c='saddlebrown')
-plt.errorbar(data_dunstan[:,0], data_dunstan[:,2],xerr=data_dunstan[:,1]*2, yerr=data_dunstan[:,3]*2, fmt='o', c='saddlebrown')
+plt.errorbar(data_dunstan[:,0], data_dunstan[:,2],xerr=data_dunstan[:,1], yerr=data_dunstan[:,3], fmt='o', c='saddlebrown')
 plt.scatter(paleo_data_dunstan[:,0], paleo_offsets_dunstan, marker='o', c='sandybrown')
 plt.errorbar(paleo_data_dunstan[:,0], paleo_offsets_dunstan,
              xerr=((paleo_data_dunstan[:,0]-paleo_data_dunstan[:,1]),(paleo_data_dunstan[:,2]-paleo_data_dunstan[:,0])), yerr=[0.5,0.5,0.5,0.5,0.5],
